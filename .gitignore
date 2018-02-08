@@ -1,0 +1,7 @@
+/artifacts
+.vs
+*.userprefs
+UpgradeLog*.htm
+bin/
+obj/
+*.user
