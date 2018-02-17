@@ -13,7 +13,13 @@ namespace Eto.CodeEditor.Test
 			ClientSize = new Size(400, 400);
 
 
-			Content = new CodeEditor { Text = "Some code" };
+			Content = new CodeEditor { Text =
+        @"// Just some sample code
+for( int i=0; i<10; i++ )
+{
+  print(i);
+}"
+      };
 		}
 	}
 
