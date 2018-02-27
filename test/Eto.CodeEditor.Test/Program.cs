@@ -23,10 +23,10 @@ for( int i=0; i<10; i++ )
 		}
 	}
 
-    class Program
+    public class Program
     {
 		[STAThread]
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
 			new Application(Eto.Platform.Detect).Run(new MainForm());
         }

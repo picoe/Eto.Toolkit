@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 using ObjCRuntime;
 //using Scintilla;
 
+namespace ScintillaNET
+{
+	
 static class CFunctions
 {
   // extern int Scintilla_LinkLexers ();
@@ -119,4 +122,6 @@ public struct SCNotification
   public int updated;
 
   public int listCompletionMethod;
+}
+
 }

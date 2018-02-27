@@ -29,6 +29,7 @@
     <UseSGen>false</UseSGen>
     <HttpClientHandler>HttpClientHandler</HttpClientHandler>
     <LinkMode>None</LinkMode>
+    <AOTMode>None</AOTMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -46,12 +47,10 @@
     <UseSGen>false</UseSGen>
     <HttpClientHandler>HttpClientHandler</HttpClientHandler>
     <LinkMode>None</LinkMode>
+    <AOTMode>None</AOTMode>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="Xamarin.Mac" />
-    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,6 +70,10 @@
     <ProjectReference Include="..\..\lib\Eto\src\Eto.Mac\Eto.XamMac2-net45.csproj">
       <Project>{856E8C70-2702-11E4-8C21-0800200C9A66}</Project>
       <Name>Eto.XamMac2-net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Scintilla.XamMac2\Scintilla.XamMac2.csproj">
+      <Project>{810B1BCD-8E09-4F69-8726-B6ED91E243E7}</Project>
+      <Name>Scintilla.XamMac2</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
