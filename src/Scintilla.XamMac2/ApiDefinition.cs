@@ -20,6 +20,11 @@ namespace ScintillaNET
 		[Export("scrollView")]
 		NSScrollView ScrollView { get; }
 
+    // -(NSString *)string;
+    // -(void)setString:(NSString *)aString;
+    [Export("string")]
+    string Text { get; set; }
+
 
 		// -(void)setGeneralProperty:(int)property parameter:(long)parameter value:(long)value;
 		[Export("setGeneralProperty:parameter:value:")]
@@ -52,6 +57,10 @@ namespace ScintillaNET
 		// -(NSColor *)getColorProperty:(int)property parameter:(long)parameter;
 		[Export("getColorProperty:parameter:")]
 		NSColor GetColorProperty(int property, nint parameter);
-	}
+
+    // -(void)setReferenceProperty:(int)property parameter:(long)parameter value:(const void *)value;
+    [Export("setReferenceProperty:parameter:value:")]
+    void SetReferenceProperty(int property, nint parameter, IntPtr value);
+}
 
 }

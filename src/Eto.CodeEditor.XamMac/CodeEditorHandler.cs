@@ -12,6 +12,7 @@ using ScintillaNET;
 using Foundation;
 using System.IO;
 using ObjCRuntime;
+using System.Runtime.InteropServices;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
 
@@ -26,15 +27,20 @@ namespace Eto.CodeEditor.XamMac2
 
 		public string Text
 		{
-			get => null;
+			get => Control.Text;
 			set
 			{
-				//Control.Value = value ?? string.Empty;
+				Control.Text = value ?? string.Empty;
 			}
 		}
 
 		public override NSView ContainerControl => Control;
 
 		public override bool Enabled { get; set; }
+
+    public void SetKeywords(int set, string keywords)
+    {
+      Control.SetKeywords(set, keywords);
+    }
 	}
 }

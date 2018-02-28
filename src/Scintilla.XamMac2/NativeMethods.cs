@@ -6,6 +6,7 @@ using System.Text;
 
 namespace ScintillaNET
 {
+
     public static class NativeMethods
     {
         #region Constants
