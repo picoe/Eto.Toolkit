@@ -26,13 +26,51 @@ namespace Eto.CodeEditor.Wpf
 			set => WinFormsControl.Text = value;
 		}
 
+        public void SetKeywords(int set, string keywords)
+        {
+            WinFormsControl.SetKeywords(set, keywords);
+        }
+
+        public Lexer Lexer
+        {
+            get { return ToCodeEditor(WinFormsControl.Lexer); }
+            set { WinFormsControl.Lexer = ToScintillaNet(value); }
+        }
+
+        static ScintillaNET.Lexer ToScintillaNet(Lexer l)
+        {
+            switch (l)
+            {
+                case Lexer.Cpp:
+                    return ScintillaNET.Lexer.Cpp;
+                case Lexer.VB:
+                    return ScintillaNET.Lexer.Vb;
+                case Lexer.Python:
+                    return ScintillaNET.Lexer.Python;
+            }
+            return ScintillaNET.Lexer.Null;
+        }
+        static Lexer ToCodeEditor(ScintillaNET.Lexer l)
+        {
+            switch (l)
+            {
+                case ScintillaNET.Lexer.Cpp:
+                    return Lexer.Cpp;
+                case ScintillaNET.Lexer.Vb:
+                    return Lexer.VB;
+                case ScintillaNET.Lexer.Python:
+                    return Lexer.Python;
+            }
+            return Lexer.Cpp;
+        }
+
         void SetupTheme()
         {
             // just style things enough that you can tell you're working in a code editor
 
-            WinFormsControl.Lexer = ScintillaNET.Lexer.Cpp;
-            WinFormsControl.SetKeywords(0, "abstract as base break case catch checked continue default delegate do else event explicit extern false finally fixed for foreach goto if implicit in interface internal is lock namespace new null object operator out override params private protected public readonly ref return sealed sizeof stackalloc switch this throw true try typeof unchecked unsafe using virtual while");
-            WinFormsControl.SetKeywords(1, "bool byte char class const decimal double enum float int long sbyte short static string struct uint ulong ushort void");
+            //WinFormsControl.Lexer = ScintillaNET.Lexer.Cpp;
+            //WinFormsControl.SetKeywords(0, "abstract as base break case catch checked continue default delegate do else event explicit extern false finally fixed for foreach goto if implicit in interface internal is lock namespace new null object operator out override params private protected public readonly ref return sealed sizeof stackalloc switch this throw true try typeof unchecked unsafe using virtual while");
+            //WinFormsControl.SetKeywords(1, "bool byte char class const decimal double enum float int long sbyte short static string struct uint ulong ushort void");
             WinFormsControl.Styles[ScintillaNET.Style.Cpp.Comment].ForeColor = System.Drawing.Color.Gray;
             WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLine].ForeColor = System.Drawing.Color.Gray;
             WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentDoc].ForeColor = System.Drawing.Color.Gray;
