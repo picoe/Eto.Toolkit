@@ -12,19 +12,19 @@ using Eto.CodeEditor.Wpf;
 
 namespace Eto.CodeEditor.Wpf
 {
-	public class CodeEditorHandler : Eto.Wpf.Forms.WindowsFormsHostHandler<ScintillaNET.Scintilla, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
+    public class CodeEditorHandler : Eto.Wpf.Forms.WindowsFormsHostHandler<ScintillaNET.Scintilla, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
     {
-		public CodeEditorHandler()
-		{
-			WinFormsControl = new ScintillaNET.Scintilla();
+        public CodeEditorHandler()
+        {
+            WinFormsControl = new ScintillaNET.Scintilla();
             SetupTheme();
-		}
+        }
 
-		public string Text
-		{
-			get => WinFormsControl.Text;
-			set => WinFormsControl.Text = value;
-		}
+        public string Text
+        {
+            get => WinFormsControl.Text;
+            set => WinFormsControl.Text = value;
+        }
 
         public void SetKeywords(int set, string keywords)
         {
@@ -80,9 +80,9 @@ namespace Eto.CodeEditor.Wpf
         {
             var fg = System.Drawing.Color.FromArgb(forecolor.Rb, forecolor.Gb, forecolor.Bb);
             var bg = System.Drawing.Color.FromArgb(backcolor.Rb, backcolor.Gb, backcolor.Bb);
-            if( section == Section.Comment )
+            if (section == Section.Comment)
             {
-                if( forecolor != Eto.Drawing.Colors.Transparent)
+                if (forecolor != Eto.Drawing.Colors.Transparent)
                 {
                     WinFormsControl.Styles[ScintillaNET.Style.Cpp.Comment].ForeColor = fg;
                     WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLine].ForeColor = fg;
@@ -95,7 +95,7 @@ namespace Eto.CodeEditor.Wpf
                     WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentDoc].BackColor = bg;
                 }
             }
-            if (section == Section.Keyword )
+            if (section == Section.Keyword)
             {
                 if (forecolor != Eto.Drawing.Colors.Transparent)
                 {
@@ -107,6 +107,30 @@ namespace Eto.CodeEditor.Wpf
                     WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word].BackColor = bg;
                     WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word2].BackColor = bg;
                 }
+            }
+            if (section == Section.LineNumber)
+            {
+                if (forecolor != Eto.Drawing.Colors.Transparent)
+                {
+                    WinFormsControl.Styles[ScintillaNET.Style.LineNumber].ForeColor = fg;
+                }
+                if (backcolor != Eto.Drawing.Colors.Transparent)
+                {
+                    WinFormsControl.Styles[ScintillaNET.Style.LineNumber].BackColor = bg;
+                }
+
+            }
+        }
+
+        public int LineNumberColumnWidth
+        {
+            get
+            {
+                return WinFormsControl.Margins[0].Width;
+            }
+            set
+            {
+                WinFormsControl.Margins[0].Width = value;
             }
         }
 
@@ -133,10 +157,10 @@ namespace Eto.CodeEditor.Wpf
             //WinFormsControl.Styles[ScintillaNET.Style.Default].Font = "Consolas";
             //WinFormsControl.Styles[ScintillaNET.Style.Default].Size = 10;
             // Show line numbers
-            WinFormsControl.Margins[0].Width = 60;
+            //WinFormsControl.Margins[0].Width = 60;
 
-            WinFormsControl.Styles[ScintillaNET.Style.LineNumber].BackColor = System.Drawing.Color.White;
-            WinFormsControl.Styles[ScintillaNET.Style.LineNumber].ForeColor = System.Drawing.Color.CadetBlue;
+            //WinFormsControl.Styles[ScintillaNET.Style.LineNumber].BackColor = System.Drawing.Color.White;
+            //WinFormsControl.Styles[ScintillaNET.Style.LineNumber].ForeColor = System.Drawing.Color.CadetBlue;
 
         }
     }

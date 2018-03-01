@@ -38,6 +38,12 @@ namespace Eto.CodeEditor
             set => Handler.FontSize = value;
         }
 
+        public int LineNumberColumnWidth
+        {
+            get => Handler.LineNumberColumnWidth;
+            set => Handler.LineNumberColumnWidth = value;
+        }
+
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
             Handler.SetColor(section, foreground, background);
@@ -50,6 +56,7 @@ namespace Eto.CodeEditor
             Lexer Lexer { get; set; }
             string FontName { get; set; }
             int FontSize { get; set; }
+            int LineNumberColumnWidth { get; set; }
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
         }
     }
@@ -57,7 +64,8 @@ namespace Eto.CodeEditor
     public enum Section
     {
         Comment,
-        Keyword
+        Keyword,
+        LineNumber
     }
 
     public enum Lexer
