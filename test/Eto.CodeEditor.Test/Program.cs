@@ -33,6 +33,11 @@ for( int i=0; i<10; i++ )
         editor.FontName = "Menlo";
         editor.FontSize = 14;
       }
+      else
+      {
+        editor.FontName = "Consolas";
+        editor.FontSize = 10;
+      }
       Content = editor;
 		}
 	}
