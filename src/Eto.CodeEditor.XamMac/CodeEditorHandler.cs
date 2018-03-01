@@ -102,6 +102,18 @@ namespace Eto.CodeEditor.XamMac2
             }
         }
 
+        public int LineNumberColumnWidth
+        {
+            get
+            {
+                return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETMARGINWIDTHN);
+            }
+            set
+            {
+                Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINWIDTHN, 0, value);
+            }
+        }
+
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
             NSColor fg = NSColor.FromRgb(foreground.R, foreground.G, foreground.B);
@@ -131,7 +143,19 @@ namespace Eto.CodeEditor.XamMac2
                 if (background != Eto.Drawing.Colors.Transparent)
                 {
                     Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_C_WORD, bg);
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.SCE_C_WORD2, fg);
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_C_WORD2, fg);
+                }
+            }
+
+            if (section == Section.LineNumber)
+            {
+                if (foreground != Eto.Drawing.Colors.Transparent)
+                {
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.STYLE_LINENUMBER, fg);
+                }
+                if (background != Eto.Drawing.Colors.Transparent)
+                {
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_LINENUMBER, bg);
                 }
             }
         }

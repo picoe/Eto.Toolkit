@@ -29,16 +29,17 @@ for( int i=0; i<10; i++ )
       editor.SetColor(Section.Comment, Colors.Gray, Colors.Transparent);
       editor.SetColor(Section.Keyword, Colors.CadetBlue, Colors.Transparent);
       editor.SetColor(Section.LineNumber, Colors.CadetBlue, Colors.White);
-      editor.LineNumberColumnWidth = 60;
       if (Eto.Forms.Application.Instance.Platform.IsMac)
       {
         editor.FontName = "Menlo";
         editor.FontSize = 14;
+        editor.LineNumberColumnWidth = 40;
       }
       else
       {
         editor.FontName = "Consolas";
         editor.FontSize = 10;
+        editor.LineNumberColumnWidth = 60;
       }
       Content = editor;
 		}
