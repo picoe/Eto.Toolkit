@@ -1,14 +1,14 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor", "Eto.CodeEditor\Eto.CodeEditor.csproj", "{9AC91936-41E2-4481-980E-80FF089FEB8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eto.CodeEditor", "Eto.CodeEditor\Eto.CodeEditor.csproj", "{9AC91936-41E2-4481-980E-80FF089FEB8A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.XamMac2", "Eto.CodeEditor.XamMac\Eto.CodeEditor.XamMac2.csproj", "{160DE3A8-EDD5-4256-9433-87DAEC4CF259}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.Wpf", "Eto.CodeEditor.Wpf\Eto.CodeEditor.Wpf.csproj", "{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto", "..\lib\Eto\src\Eto\Eto.csproj", "{FA7BCDFF-E308-4C44-8699-D834C2C679DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eto", "..\lib\Eto\src\Eto\Eto.csproj", "{FA7BCDFF-E308-4C44-8699-D834C2C679DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.Wpf", "..\lib\Eto\src\Eto.Wpf\Eto.Wpf.csproj", "{63137FA0-CA55-11E3-9C1A-0800200C9A66}"
 EndProject
@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.XamMac2-net45", "..\lib
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeEditor", "CodeEditor", "{646F64B2-57A5-4096-854F-F83D981AF1E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.Test", "..\test\Eto.CodeEditor.Test\Eto.CodeEditor.Test.csproj", "{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eto.CodeEditor.TestAppWin", "..\test\Eto.CodeEditor.Test\Eto.CodeEditor.TestAppWin.csproj", "{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scintilla.XamMac2", "Scintilla.XamMac2\Scintilla.XamMac2.csproj", "{810B1BCD-8E09-4F69-8726-B6ED91E243E7}"
 EndProject
@@ -56,8 +56,8 @@ Global
 		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Release|Any CPU.Build.0 = Release|Any CPU
 		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Release|Mac.ActiveCfg = Release|Any CPU
-		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Release|Windows.ActiveCfg = Release|Any CPU
 		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Release|Mac.Build.0 = Release|Any CPU
+		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Release|Windows.ActiveCfg = Release|Any CPU
 		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Debug|Mac.ActiveCfg = Debug|Any CPU
@@ -100,17 +100,17 @@ Global
 		{856E8C70-2702-11E4-8C21-0800200C9A66}.Release|Mac.ActiveCfg = Release|Any CPU
 		{856E8C70-2702-11E4-8C21-0800200C9A66}.Release|Mac.Build.0 = Release|Any CPU
 		{856E8C70-2702-11E4-8C21-0800200C9A66}.Release|Windows.ActiveCfg = Release|Any CPU
-		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Any CPU.ActiveCfg = Debug|Mac
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Any CPU.ActiveCfg = Debug|Windows
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Any CPU.Build.0 = Debug|Windows
 		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Mac.ActiveCfg = Debug|Mac
 		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Mac.Build.0 = Debug|Mac
 		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Windows.ActiveCfg = Debug|Windows
 		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Windows.Build.0 = Debug|Windows
-		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Release|Any CPU.ActiveCfg = Release|Mac
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Release|Any CPU.ActiveCfg = Release|Windows
 		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Release|Mac.ActiveCfg = Release|Mac
 		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Release|Mac.Build.0 = Release|Mac
 		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Release|Windows.ActiveCfg = Release|Windows
 		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Release|Windows.Build.0 = Release|Windows
-		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Any CPU.Build.0 = Debug|Mac
 		{810B1BCD-8E09-4F69-8726-B6ED91E243E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{810B1BCD-8E09-4F69-8726-B6ED91E243E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{810B1BCD-8E09-4F69-8726-B6ED91E243E7}.Debug|Mac.ActiveCfg = Debug|Any CPU
