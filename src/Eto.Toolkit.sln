@@ -1,0 +1,94 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor", "Eto.CodeEditor\Eto.CodeEditor.csproj", "{9AC91936-41E2-4481-980E-80FF089FEB8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.XamMac2", "Eto.CodeEditor.XamMac\Eto.CodeEditor.XamMac2.csproj", "{160DE3A8-EDD5-4256-9433-87DAEC4CF259}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.Wpf", "Eto.CodeEditor.Wpf\Eto.CodeEditor.Wpf.csproj", "{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeEditor", "CodeEditor", "{646F64B2-57A5-4096-854F-F83D981AF1E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.TestAppWin", "..\test\Eto.CodeEditor.TestAppWin\Eto.CodeEditor.TestAppWin.csproj", "{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scintilla.XamMac2", "Scintilla.XamMac2\Scintilla.XamMac2.csproj", "{810B1BCD-8E09-4F69-8726-B6ED91E243E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.TestAppMac", "..\test\Eto.CodeEditor.TestAppMac\Eto.CodeEditor.TestAppMac.csproj", "{DD626F6E-2487-41A7-8D97-B3F673EC117B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.TestApp", "..\test\Eto.CodeEditor.TestApp\Eto.CodeEditor.TestApp.csproj", "{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Mac = Debug|Mac
+		Debug|Windows = Debug|Windows
+		Release|Mac = Release|Mac
+		Release|Windows = Release|Windows
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9AC91936-41E2-4481-980E-80FF089FEB8A}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{9AC91936-41E2-4481-980E-80FF089FEB8A}.Debug|Mac.Build.0 = Debug|Any CPU
+		{9AC91936-41E2-4481-980E-80FF089FEB8A}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{9AC91936-41E2-4481-980E-80FF089FEB8A}.Debug|Windows.Build.0 = Debug|Any CPU
+		{9AC91936-41E2-4481-980E-80FF089FEB8A}.Release|Mac.ActiveCfg = Release|Any CPU
+		{9AC91936-41E2-4481-980E-80FF089FEB8A}.Release|Mac.Build.0 = Release|Any CPU
+		{9AC91936-41E2-4481-980E-80FF089FEB8A}.Release|Windows.ActiveCfg = Release|Any CPU
+		{9AC91936-41E2-4481-980E-80FF089FEB8A}.Release|Windows.Build.0 = Release|Any CPU
+		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Debug|Mac.Build.0 = Debug|Any CPU
+		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Release|Mac.ActiveCfg = Release|Any CPU
+		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Release|Mac.Build.0 = Release|Any CPU
+		{160DE3A8-EDD5-4256-9433-87DAEC4CF259}.Release|Windows.ActiveCfg = Release|Any CPU
+		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Debug|Windows.Build.0 = Debug|Any CPU
+		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Release|Mac.ActiveCfg = Release|Any CPU
+		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Release|Mac.Build.0 = Release|Any CPU
+		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Release|Windows.ActiveCfg = Release|Any CPU
+		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Release|Windows.Build.0 = Release|Any CPU
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Mac.Build.0 = Debug|Any CPU
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Windows.Build.0 = Debug|Any CPU
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Release|Mac.ActiveCfg = Release|Any CPU
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Release|Mac.Build.0 = Release|Any CPU
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Release|Windows.ActiveCfg = Release|Any CPU
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Release|Windows.Build.0 = Release|Any CPU
+		{810B1BCD-8E09-4F69-8726-B6ED91E243E7}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{810B1BCD-8E09-4F69-8726-B6ED91E243E7}.Debug|Mac.Build.0 = Debug|Any CPU
+		{810B1BCD-8E09-4F69-8726-B6ED91E243E7}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{810B1BCD-8E09-4F69-8726-B6ED91E243E7}.Release|Mac.ActiveCfg = Release|Any CPU
+		{810B1BCD-8E09-4F69-8726-B6ED91E243E7}.Release|Mac.Build.0 = Release|Any CPU
+		{810B1BCD-8E09-4F69-8726-B6ED91E243E7}.Release|Windows.ActiveCfg = Release|Any CPU
+		{DD626F6E-2487-41A7-8D97-B3F673EC117B}.Debug|Mac.ActiveCfg = Debug|Mac
+		{DD626F6E-2487-41A7-8D97-B3F673EC117B}.Debug|Mac.Build.0 = Debug|Mac
+		{DD626F6E-2487-41A7-8D97-B3F673EC117B}.Debug|Windows.ActiveCfg = Debug|Mac
+		{DD626F6E-2487-41A7-8D97-B3F673EC117B}.Release|Mac.ActiveCfg = Release|Mac
+		{DD626F6E-2487-41A7-8D97-B3F673EC117B}.Release|Mac.Build.0 = Release|Mac
+		{DD626F6E-2487-41A7-8D97-B3F673EC117B}.Release|Windows.ActiveCfg = Release|Mac
+		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}.Debug|Mac.Build.0 = Debug|Any CPU
+		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}.Debug|Windows.Build.0 = Debug|Any CPU
+		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}.Release|Mac.ActiveCfg = Release|Any CPU
+		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}.Release|Mac.Build.0 = Release|Any CPU
+		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}.Release|Windows.ActiveCfg = Release|Any CPU
+		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}.Release|Windows.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9AC91936-41E2-4481-980E-80FF089FEB8A} = {646F64B2-57A5-4096-854F-F83D981AF1E8}
+		{160DE3A8-EDD5-4256-9433-87DAEC4CF259} = {646F64B2-57A5-4096-854F-F83D981AF1E8}
+		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9} = {646F64B2-57A5-4096-854F-F83D981AF1E8}
+		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6} = {646F64B2-57A5-4096-854F-F83D981AF1E8}
+		{810B1BCD-8E09-4F69-8726-B6ED91E243E7} = {646F64B2-57A5-4096-854F-F83D981AF1E8}
+		{DD626F6E-2487-41A7-8D97-B3F673EC117B} = {646F64B2-57A5-4096-854F-F83D981AF1E8}
+		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B} = {646F64B2-57A5-4096-854F-F83D981AF1E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B290EE1E-3782-4C57-A127-FD078514CD8C}
+	EndGlobalSection
+EndGlobal
