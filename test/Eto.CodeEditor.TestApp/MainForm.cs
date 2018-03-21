@@ -1,7 +1,7 @@
 ﻿using Eto.Drawing;
 using Eto.Forms;
 
-namespace Eto.CodeEditor
+namespace Eto.CodeEditor.TestApp
 {
     public class MainForm : Form
     {

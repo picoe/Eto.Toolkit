@@ -1,6 +1,7 @@
 ﻿using AppKit;
 using System;
 using Eto.Forms;
+using Eto.CodeEditor.TestApp;
 
 namespace Eto.CodeEditor.TestAppMac
 {
