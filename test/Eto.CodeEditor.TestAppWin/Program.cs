@@ -1,4 +1,5 @@
 ﻿using System;
+using Eto.CodeEditor.TestApp;
 using Eto.Drawing;
 using Eto.Forms;
 

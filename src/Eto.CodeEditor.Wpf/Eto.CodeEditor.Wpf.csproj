@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\artifacts\core\Debug\net45\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\artifacts\core\Release\net45\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -80,20 +80,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\Eto\src\Eto.Wpf\Eto.Wpf.csproj">
-      <Project>{63137fa0-ca55-11e3-9c1a-0800200c9a66}</Project>
-      <Name>Eto.Wpf</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\lib\Eto\src\Eto\Eto.csproj">
-      <Project>{fa7bcdff-e308-4c44-8699-d834c2c679dd}</Project>
-      <Name>Eto</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Eto.CodeEditor\Eto.CodeEditor.csproj">
       <Project>{9ac91936-41e2-4481-980e-80ff089feb8a}</Project>
       <Name>Eto.CodeEditor</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Eto.Platform.Wpf">
+      <Version>2.4.1</Version>
+    </PackageReference>
     <PackageReference Include="jacobslusser.ScintillaNET">
       <Version>3.6.3</Version>
     </PackageReference>

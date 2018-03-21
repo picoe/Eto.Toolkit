@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net45</TargetFramework>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\artifacts\test\Debug</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\..\artifacts\test\Release</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Eto.Platform.Wpf" Version="2.4.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Eto.CodeEditor\Eto.CodeEditor.csproj" />
+    <ProjectReference Include="..\..\src\Eto.CodeEditor.Wpf\Eto.CodeEditor.Wpf.csproj" />
+    <ProjectReference Include="..\Eto.CodeEditor.TestApp\Eto.CodeEditor.TestApp.csproj" />
+  </ItemGroup>
+
+</Project>
