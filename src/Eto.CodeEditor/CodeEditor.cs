@@ -28,15 +28,9 @@ namespace Eto.CodeEditor
             _language = language;
             Handler.SetProgrammingLanguage( language, GetKeywords(language) );
 
-            SetColor(Section.Comment, Drawing.Colors.Gray, Drawing.Colors.Transparent);
-            SetColor(Section.Keyword, Drawing.Colors.CadetBlue, Drawing.Colors.Transparent);
-            SetColor(Section.LineNumber, Drawing.Colors.CadetBlue, Drawing.Colors.White);
-            if (Eto.Forms.Application.Instance.Platform.IsMac)
-            {
-                FontName = "Menlo";
-                FontSize = 14;
-                LineNumberColumnWidth = 40;
-            }
+            SetColor(Section.Comment, Drawing.Colors.Gray, Drawing.Colors.White);
+            SetColor(Section.Keyword, Drawing.Colors.SeaGreen, Drawing.Colors.White);
+            SetColor(Section.LineNumber, Drawing.Colors.Gray, Drawing.Colors.White);
         }
 
         new IHandler Handler => (IHandler)base.Handler;

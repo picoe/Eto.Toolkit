@@ -23,6 +23,10 @@ namespace Eto.CodeEditor.XamMac2
         public CodeEditorHandler()
         {
             Control = new ScintillaView();
+
+            FontName = "Menlo";
+            FontSize = 14;
+            LineNumberColumnWidth = 40;
         }
 
         public string Text
@@ -43,40 +47,33 @@ namespace Eto.CodeEditor.XamMac2
             Control.SetKeywords(set, keywords);
         }
 
-        public Lexer Lexer
+        public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
         {
-            get
+            int which = ScintillaNET.NativeMethods.SCLEX_CPP;
+            switch (language)
             {
-                nint prop = Control.GetGeneralProperty(ScintillaNET.NativeMethods.SCI_GETLEXER);
-                switch (prop)
-                {
-                    case ScintillaNET.NativeMethods.SCLEX_CPP:
-                        return Lexer.Cpp;
-                    case ScintillaNET.NativeMethods.SCLEX_VB:
-                        return Lexer.VB;
-                    case ScintillaNET.NativeMethods.SCLEX_PYTHON:
-                        return Lexer.Python;
-                }
-                return Lexer.Cpp;
+                case ProgrammingLanguage.CSharp:
+                case ProgrammingLanguage.GLSL:
+                    which = ScintillaNET.NativeMethods.SCLEX_CPP;
+                    break;
+                case ProgrammingLanguage.VB:
+                    which = ScintillaNET.NativeMethods.SCLEX_VB;
+                    break;
+                case ProgrammingLanguage.Python:
+                    which = ScintillaNET.NativeMethods.SCLEX_PYTHON;
+                    break;
             }
-            set
+            Control.SetGeneralProperty(ScintillaNET.NativeMethods.SCI_SETLEXER, which, 0);
+
+            if (keywordSets != null)
             {
-                int which = ScintillaNET.NativeMethods.SCLEX_CPP;
-                switch (value)
+                for (int i = 0; i < keywordSets.Length; i++)
                 {
-                    case Lexer.Cpp:
-                        which = ScintillaNET.NativeMethods.SCLEX_CPP;
-                        break;
-                    case Lexer.VB:
-                        which = ScintillaNET.NativeMethods.SCLEX_VB;
-                        break;
-                    case Lexer.Python:
-                        which = ScintillaNET.NativeMethods.SCLEX_PYTHON;
-                        break;
+                    SetKeywords(i, keywordSets[i]);
                 }
-                Control.SetGeneralProperty(ScintillaNET.NativeMethods.SCI_SETLEXER, which, 0);
             }
         }
+
 
         public string FontName
         {
@@ -116,9 +113,10 @@ namespace Eto.CodeEditor.XamMac2
 
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
-            NSColor fg = NSColor.FromRgb(foreground.R, foreground.G, foreground.B);
-            NSColor bg = NSColor.FromRgb(background.R, background.G, background.B);
-
+            string fg = foreground.ToHex(false);
+            string bg = background.ToHex(false);
+            //NSColor fg = NSColor.FromRgba(foreground.R, foreground.G, foreground.B, foreground.A);
+            //NSColor bg = NSColor.FromRgba(background.R, background.G, background.B, background.A);
             if (section == Section.Comment)
             {
                 if (foreground != Eto.Drawing.Colors.Transparent)
@@ -143,7 +141,7 @@ namespace Eto.CodeEditor.XamMac2
                 if (background != Eto.Drawing.Colors.Transparent)
                 {
                     Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_C_WORD, bg);
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_C_WORD2, fg);
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_C_WORD2, bg);
                 }
             }
 
