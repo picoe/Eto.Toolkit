@@ -7,6 +7,38 @@ namespace Eto.CodeEditor
     [Handler(typeof(IHandler))]
     public class CodeEditor : Control
     {
+        static string[] GetKeywords(ProgrammingLanguage language)
+        {
+            switch (language)
+            {
+                case ProgrammingLanguage.CSharp:
+                    return new string[]
+                    {
+                    "abstract as base break case catch checked continue default delegate do else event explicit extern false finally fixed for foreach goto if implicit in interface internal is lock namespace new null object operator out override params private protected public readonly ref return sealed sizeof stackalloc switch this throw true try typeof unchecked unsafe using virtual while",
+                    "bool byte char class const decimal double enum float int long sbyte short static string struct uint ulong ushort void"
+                    };
+                default:
+                    return new string[0];
+            }
+        }
+
+        readonly ProgrammingLanguage _language;
+        public CodeEditor(ProgrammingLanguage language)
+        {
+            _language = language;
+            Handler.SetProgrammingLanguage( language, GetKeywords(language) );
+
+            SetColor(Section.Comment, Drawing.Colors.Gray, Drawing.Colors.Transparent);
+            SetColor(Section.Keyword, Drawing.Colors.CadetBlue, Drawing.Colors.Transparent);
+            SetColor(Section.LineNumber, Drawing.Colors.CadetBlue, Drawing.Colors.White);
+            if (Eto.Forms.Application.Instance.Platform.IsMac)
+            {
+                FontName = "Menlo";
+                FontSize = 14;
+                LineNumberColumnWidth = 40;
+            }
+        }
+
         new IHandler Handler => (IHandler)base.Handler;
 
         public string Text
@@ -15,15 +47,9 @@ namespace Eto.CodeEditor
             set => Handler.Text = value;
         }
 
-        public void SetKeywords(int set, string keywords)
+        public ProgrammingLanguage Language
         {
-            Handler.SetKeywords(set, keywords);
-        }
-
-        public Lexer Lexer
-        {
-            get => Handler.Lexer;
-            set => Handler.Lexer = value;
+            get => _language;
         }
 
         public string FontName
@@ -52,8 +78,7 @@ namespace Eto.CodeEditor
         public new interface IHandler : Control.IHandler
         {
             string Text { get; set; }
-            void SetKeywords(int set, string keywords);
-            Lexer Lexer { get; set; }
+            void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets);
             string FontName { get; set; }
             int FontSize { get; set; }
             int LineNumberColumnWidth { get; set; }
@@ -68,9 +93,11 @@ namespace Eto.CodeEditor
         LineNumber
     }
 
-    public enum Lexer
+    public enum ProgrammingLanguage
     {
-        Cpp,
+        None,
+        CSharp,
+        GLSL,
         VB,
         Python
     }
