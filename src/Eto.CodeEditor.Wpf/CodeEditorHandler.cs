@@ -20,6 +20,18 @@ namespace Eto.CodeEditor.Wpf
             SetupTheme();
         }
 
+        public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
+        {
+            Language = language;
+            if(keywordSets!=null)
+            {
+                for( int i=0; i<keywordSets.Length; i++ )
+                {
+                    SetKeywords(i, keywordSets[i]);
+                }
+            }
+        }
+
         public string Text
         {
             get => WinFormsControl.Text;
@@ -31,37 +43,30 @@ namespace Eto.CodeEditor.Wpf
             WinFormsControl.SetKeywords(set, keywords);
         }
 
-        public Lexer Lexer
+        ProgrammingLanguage _language = ProgrammingLanguage.None;
+        public ProgrammingLanguage Language
         {
-            get { return ToCodeEditor(WinFormsControl.Lexer); }
-            set { WinFormsControl.Lexer = ToScintillaNet(value); }
+            get { return _language; }
+            set
+            {
+                _language = value;
+                WinFormsControl.Lexer = ToScintillaNet(value);
+            }
         }
 
-        static ScintillaNET.Lexer ToScintillaNet(Lexer l)
+        static ScintillaNET.Lexer ToScintillaNet(ProgrammingLanguage l)
         {
             switch (l)
             {
-                case Lexer.Cpp:
+                case ProgrammingLanguage.CSharp:
+                case ProgrammingLanguage.GLSL:
                     return ScintillaNET.Lexer.Cpp;
-                case Lexer.VB:
+                case ProgrammingLanguage.VB:
                     return ScintillaNET.Lexer.Vb;
-                case Lexer.Python:
+                case ProgrammingLanguage.Python:
                     return ScintillaNET.Lexer.Python;
             }
             return ScintillaNET.Lexer.Null;
-        }
-        static Lexer ToCodeEditor(ScintillaNET.Lexer l)
-        {
-            switch (l)
-            {
-                case ScintillaNET.Lexer.Cpp:
-                    return Lexer.Cpp;
-                case ScintillaNET.Lexer.Vb:
-                    return Lexer.VB;
-                case ScintillaNET.Lexer.Python:
-                    return Lexer.Python;
-            }
-            return Lexer.Cpp;
         }
 
         public string FontName
@@ -162,6 +167,9 @@ namespace Eto.CodeEditor.Wpf
             //WinFormsControl.Styles[ScintillaNET.Style.LineNumber].BackColor = System.Drawing.Color.White;
             //WinFormsControl.Styles[ScintillaNET.Style.LineNumber].ForeColor = System.Drawing.Color.CadetBlue;
 
+            FontName = "Consolas";
+            FontSize = 10;
+            LineNumberColumnWidth = 40;
         }
     }
 }
