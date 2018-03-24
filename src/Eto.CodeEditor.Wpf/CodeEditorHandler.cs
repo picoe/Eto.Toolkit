@@ -139,6 +139,18 @@ namespace Eto.CodeEditor.Wpf
             }
         }
 
+        public event EventHandler TextChanged
+        {
+            add
+            {
+                WinFormsControl.TextChanged += value;
+            }
+            remove
+            {
+                WinFormsControl.TextChanged -= value;
+            }
+        }
+
         void SetupTheme()
         {
             // just style things enough that you can tell you're working in a code editor

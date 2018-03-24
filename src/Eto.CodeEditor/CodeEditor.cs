@@ -83,6 +83,8 @@ namespace Eto.CodeEditor
             int FontSize { get; set; }
             int LineNumberColumnWidth { get; set; }
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
+
+            event EventHandler TextChanged;
         }
     }
 
