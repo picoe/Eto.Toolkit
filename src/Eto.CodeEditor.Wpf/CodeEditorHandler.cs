@@ -133,10 +133,15 @@ namespace Eto.CodeEditor.Wpf
         private const int WarningIndex = 21;
         public void SetupIndicatorStyles()
         {
-            WinFormsControl.Indicators[ErrorIndex].Style = IndicatorStyle.Squiggle;
+            WinFormsControl.Indicators[ErrorIndex].Style = IndicatorStyle.RoundBox;
             WinFormsControl.Indicators[ErrorIndex].ForeColor = Color.Red;
-            WinFormsControl.Indicators[WarningIndex].Style = IndicatorStyle.Squiggle;
-            WinFormsControl.Indicators[WarningIndex].ForeColor = Color.Orange;
+            WinFormsControl.Indicators[ErrorIndex].Alpha = 255;
+            WinFormsControl.Indicators[ErrorIndex].Under = true;
+
+            WinFormsControl.Indicators[WarningIndex].Style = IndicatorStyle.RoundBox;
+            WinFormsControl.Indicators[WarningIndex].ForeColor = Color.Gold;
+            WinFormsControl.Indicators[WarningIndex].Alpha = 255;
+            WinFormsControl.Indicators[WarningIndex].Under = true;
         }
         public void ClearAllErrorIndicators()
         {
