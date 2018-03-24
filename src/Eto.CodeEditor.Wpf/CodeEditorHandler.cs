@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Eto;
 using Eto.Forms;
 using Eto.CodeEditor;
 using Eto.CodeEditor.Wpf;
+using ScintillaNET;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
 
@@ -125,6 +127,36 @@ namespace Eto.CodeEditor.Wpf
                 }
 
             }
+        }
+
+        private const int ErrorIndex = 20;
+        private const int WarningIndex = 21;
+        public void SetupIndicatorStyles()
+        {
+            WinFormsControl.Indicators[ErrorIndex].Style = IndicatorStyle.Squiggle;
+            WinFormsControl.Indicators[ErrorIndex].ForeColor = Color.Red;
+            WinFormsControl.Indicators[WarningIndex].Style = IndicatorStyle.Squiggle;
+            WinFormsControl.Indicators[WarningIndex].ForeColor = Color.Orange;
+        }
+        public void ClearAllErrorIndicators()
+        {
+            WinFormsControl.IndicatorCurrent = ErrorIndex;
+            WinFormsControl.IndicatorClearRange(0, WinFormsControl.TextLength);
+        }
+        public void ClearAllWarningIndicators()
+        {
+            WinFormsControl.IndicatorCurrent = WarningIndex;
+            WinFormsControl.IndicatorClearRange(0, WinFormsControl.TextLength);
+        }
+        public void AddErrorIndicator(int position, int length)
+        {
+            WinFormsControl.IndicatorCurrent = ErrorIndex;
+            WinFormsControl.IndicatorFillRange(position, length);
+        }
+        public void AddWarningIndicator(int position, int length)
+        {
+            WinFormsControl.IndicatorCurrent = WarningIndex;
+            WinFormsControl.IndicatorFillRange(position, length);
         }
 
         public int LineNumberColumnWidth
