@@ -75,6 +75,18 @@ namespace Eto.CodeEditor
             Handler.SetColor(section, foreground, background);
         }
 
+        public event EventHandler TextChanged
+        {
+            add
+            {
+                Handler.TextChanged += value;
+            }
+            remove
+            {
+                Handler.TextChanged -= value;
+            }
+        }
+
         public new interface IHandler : Control.IHandler
         {
             string Text { get; set; }
