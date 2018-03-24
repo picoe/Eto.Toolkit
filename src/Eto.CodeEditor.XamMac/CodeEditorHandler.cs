@@ -158,6 +158,10 @@ namespace Eto.CodeEditor.XamMac2
             }
         }
 
-
+        public event EventHandler TextChanged
+        {
+            add { }
+            remove { }
+        }
     }
 }

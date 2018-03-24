@@ -21,8 +21,14 @@ for( int i=0; i<10; i++ )
   print(i);
 }"
             };
+            editor.TextInput += Editor_TextInput;
 
             Content = editor;
+        }
+
+        private void Editor_TextInput(object sender, TextInputEventArgs e)
+        {
+            int i = 0;
         }
     }
 }
