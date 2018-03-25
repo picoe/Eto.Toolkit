@@ -200,6 +200,9 @@ namespace Eto.CodeEditor.XamMac2
             Control.Message(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
         }
 
+        public void ClearAllTypeNameIndicators() { }
+        public void AddTypeNameIndicator(int position, int length) { }
+
 
         public event EventHandler TextChanged
         {
