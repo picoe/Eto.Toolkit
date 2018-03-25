@@ -6,7 +6,7 @@ using ObjCRuntime;
 //using Scintilla;
 
 // @protocol ScintillaNotificationProtocol
-[Protocol, Model]
+[Protocol]
 interface ScintillaNotificationProtocol
 {
     // @required -(void)notification:(SCNotification *)notification;
@@ -76,5 +76,10 @@ interface ScintillaView
     // -(NSString *)getStringProperty:(int)property parameter:(long)parameter;
     [Export("getStringProperty:parameter:")]
     string GetStringProperty(int property, nint parameter);
+
+    // -(sptr_t)message:(unsigned int)message wParam:(uptr_t)wParam lParam:(sptr_t)lParam;
+    [Export("message:wParam:lParam:")]
+    IntPtr Message(uint message, IntPtr wParam, IntPtr lParam);
+
 }
 

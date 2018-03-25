@@ -34,8 +34,8 @@ namespace Eto.CodeEditor
             _language = language;
             Handler.SetProgrammingLanguage( language, GetKeywords(language) );
 
-            SetColor(Section.Comment, Drawing.Colors.Gray, Drawing.Colors.White);
-            SetColor(Section.Keyword, Drawing.Colors.SeaGreen, Drawing.Colors.White);
+            SetColor(Section.Comment, Drawing.Colors.DarkGray, Drawing.Colors.White);
+            SetColor(Section.Keyword, Drawing.Colors.Blue, Drawing.Colors.White);
             SetColor(Section.LineNumber, Drawing.Colors.Gray, Drawing.Colors.White);
         }
 
@@ -75,6 +75,35 @@ namespace Eto.CodeEditor
             Handler.SetColor(section, foreground, background);
         }
 
+        public void SetupIndicatorStyles()
+        {
+            Handler.SetupIndicatorStyles();
+        }
+        public void ClearAllErrorIndicators()
+        {
+            Handler.ClearAllErrorIndicators();
+        }
+        public void ClearAllWarningIndicators()
+        {
+            Handler.ClearAllWarningIndicators();
+        }
+        public void ClearAllTypeNameIndicators()
+        {
+            Handler.ClearAllTypeNameIndicators();
+        }
+        public void AddErrorIndicator(int position, int length)
+        {
+            Handler.AddErrorIndicator(position, length);
+        }
+        public void AddWarningIndicator(int position, int length)
+        {
+            Handler.AddWarningIndicator(position, length);
+        }
+        public void AddTypeNameIndicator(int position, int length)
+        {
+            Handler.AddTypeNameIndicator(position, length);
+        }
+
         public event EventHandler TextChanged
         {
             add
@@ -95,6 +124,14 @@ namespace Eto.CodeEditor
             int FontSize { get; set; }
             int LineNumberColumnWidth { get; set; }
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
+
+            void SetupIndicatorStyles();
+            void ClearAllErrorIndicators();
+            void ClearAllWarningIndicators();
+            void ClearAllTypeNameIndicators();
+            void AddErrorIndicator(int position, int length);
+            void AddWarningIndicator(int position, int length);
+            void AddTypeNameIndicator(int position, int length);
 
             event EventHandler TextChanged;
         }
