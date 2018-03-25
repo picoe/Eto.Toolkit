@@ -15,20 +15,15 @@ namespace Eto.CodeEditor.TestApp
             var editor = new CodeEditor(ProgrammingLanguage.CSharp)
             {
                 Text =
-              @"// Just some sample code
+@"// Just some sample code
 for( int i=0; i<10; i++ )
 {
   print(i);
 }"
             };
-            editor.TextInput += Editor_TextInput;
-
+            editor.SetupIndicatorStyles();
+      editor.AddErrorIndicator(13, 6);
             Content = editor;
-        }
-
-        private void Editor_TextInput(object sender, TextInputEventArgs e)
-        {
-            int i = 0;
         }
     }
 }

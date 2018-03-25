@@ -3,8 +3,6 @@ using System.Runtime.InteropServices;
 using ObjCRuntime;
 //using Scintilla;
 
-namespace ScintillaNET
-{
 	
 static class CFunctions
 {
@@ -124,4 +122,3 @@ public struct SCNotification
   public int listCompletionMethod;
 }
 
-}

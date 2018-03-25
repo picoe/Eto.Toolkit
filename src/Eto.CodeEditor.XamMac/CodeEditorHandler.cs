@@ -157,6 +157,49 @@ namespace Eto.CodeEditor.XamMac2
                 }
             }
         }
+        private const int ErrorIndex = 20;
+        private const int WarningIndex = 21;
+        public void SetupIndicatorStyles()
+        {
+            SetupIndicator(ErrorIndex, NativeMethods.INDIC_SQUIGGLE, Eto.Drawing.Colors.Red);
+            SetupIndicator(WarningIndex, NativeMethods.INDIC_SQUIGGLE, Eto.Drawing.Colors.Gold);
+        }
+
+        void SetupIndicator(uint index, int style, Eto.Drawing.Color forecolor)
+        {
+            Control.Message(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(index), new IntPtr(style));
+            int abgr = forecolor.Rb | forecolor.Gb << 8 | forecolor.Bb << 16;
+            Control.Message(NativeMethods.SCI_INDICSETFORE, new IntPtr(index), new IntPtr(abgr));
+            Control.Message(NativeMethods.SCI_INDICSETALPHA, new IntPtr(index), new IntPtr(0));
+            Control.Message(NativeMethods.SCI_INDICSETUNDER, new IntPtr(index), new IntPtr(1));
+        }
+
+        public void ClearAllErrorIndicators()
+        {
+            Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(ErrorIndex), IntPtr.Zero);
+            int length = Text.Length;
+            Control.Message(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(length));
+        }
+
+        public void ClearAllWarningIndicators()
+        {
+            Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(WarningIndex), IntPtr.Zero);
+            int length = Text.Length;
+            Control.Message(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(length));
+        }
+
+        public void AddErrorIndicator(int position, int length)
+        {
+            Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(ErrorIndex), IntPtr.Zero);
+            Control.Message(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
+        }
+
+        public void AddWarningIndicator(int position, int length)
+        {
+            Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(WarningIndex), IntPtr.Zero);
+            Control.Message(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
+        }
+
 
         public event EventHandler TextChanged
         {
