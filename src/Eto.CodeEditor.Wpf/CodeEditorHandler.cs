@@ -131,17 +131,22 @@ namespace Eto.CodeEditor.Wpf
 
         private const int ErrorIndex = 20;
         private const int WarningIndex = 21;
+        private const int TypeNameIndex = 22;
+
         public void SetupIndicatorStyles()
         {
-            WinFormsControl.Indicators[ErrorIndex].Style = IndicatorStyle.RoundBox;
-            WinFormsControl.Indicators[ErrorIndex].ForeColor = Color.Red;
+            WinFormsControl.Indicators[ErrorIndex].Style = IndicatorStyle.CompositionThick;
+            WinFormsControl.Indicators[ErrorIndex].ForeColor = Color.Crimson;
             WinFormsControl.Indicators[ErrorIndex].Alpha = 255;
-            WinFormsControl.Indicators[ErrorIndex].Under = true;
+            //WinFormsControl.Indicators[ErrorIndex].Under = true;
 
-            WinFormsControl.Indicators[WarningIndex].Style = IndicatorStyle.RoundBox;
-            WinFormsControl.Indicators[WarningIndex].ForeColor = Color.Gold;
+            WinFormsControl.Indicators[WarningIndex].Style = IndicatorStyle.CompositionThick;
+            WinFormsControl.Indicators[WarningIndex].ForeColor = Color.DarkOrange;
             WinFormsControl.Indicators[WarningIndex].Alpha = 255;
-            WinFormsControl.Indicators[WarningIndex].Under = true;
+            //WinFormsControl.Indicators[WarningIndex].Under = true;
+
+            WinFormsControl.Indicators[TypeNameIndex].Style = IndicatorStyle.TextFore;
+            WinFormsControl.Indicators[TypeNameIndex].ForeColor = Color.SkyBlue;
         }
         public void ClearAllErrorIndicators()
         {
@@ -153,6 +158,12 @@ namespace Eto.CodeEditor.Wpf
             WinFormsControl.IndicatorCurrent = WarningIndex;
             WinFormsControl.IndicatorClearRange(0, WinFormsControl.TextLength);
         }
+        public void ClearAllTypeNameIndicators()
+        {
+            WinFormsControl.IndicatorCurrent = TypeNameIndex;
+            WinFormsControl.IndicatorClearRange(0, WinFormsControl.TextLength);
+        }
+
         public void AddErrorIndicator(int position, int length)
         {
             WinFormsControl.IndicatorCurrent = ErrorIndex;
@@ -161,6 +172,11 @@ namespace Eto.CodeEditor.Wpf
         public void AddWarningIndicator(int position, int length)
         {
             WinFormsControl.IndicatorCurrent = WarningIndex;
+            WinFormsControl.IndicatorFillRange(position, length);
+        }
+        public void AddTypeNameIndicator(int position, int length)
+        {
+            WinFormsControl.IndicatorCurrent = TypeNameIndex;
             WinFormsControl.IndicatorFillRange(position, length);
         }
 
@@ -195,15 +211,15 @@ namespace Eto.CodeEditor.Wpf
             //WinFormsControl.Lexer = ScintillaNET.Lexer.Cpp;
             //WinFormsControl.SetKeywords(0, "abstract as base break case catch checked continue default delegate do else event explicit extern false finally fixed for foreach goto if implicit in interface internal is lock namespace new null object operator out override params private protected public readonly ref return sealed sizeof stackalloc switch this throw true try typeof unchecked unsafe using virtual while");
             //WinFormsControl.SetKeywords(1, "bool byte char class const decimal double enum float int long sbyte short static string struct uint ulong ushort void");
-            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.Comment].ForeColor = System.Drawing.Color.Gray;
-            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLine].ForeColor = System.Drawing.Color.Gray;
-            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentDoc].ForeColor = System.Drawing.Color.Gray;
+            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.Comment].ForeColor = System.Drawing.Color.Black;
+            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLine].ForeColor = System.Drawing.Color.Black;
+            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentDoc].ForeColor = System.Drawing.Color.Black;
             WinFormsControl.Styles[ScintillaNET.Style.Cpp.Number].ForeColor = System.Drawing.Color.Black;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.String].ForeColor = System.Drawing.Color.Red;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Character].ForeColor = System.Drawing.Color.Black;
+            WinFormsControl.Styles[ScintillaNET.Style.Cpp.String].ForeColor = System.Drawing.Color.Brown;
+            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Character].ForeColor = System.Drawing.Color.Brown;
             WinFormsControl.Styles[ScintillaNET.Style.Cpp.Preprocessor].ForeColor = System.Drawing.Color.Black;
             WinFormsControl.Styles[ScintillaNET.Style.Cpp.Operator].ForeColor = System.Drawing.Color.Black;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Regex].ForeColor = System.Drawing.Color.Black;
+            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Regex].ForeColor = System.Drawing.Color.Crimson;
             WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLineDoc].ForeColor = System.Drawing.Color.Black;
             //WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word].ForeColor = System.Drawing.Color.Blue;
             //WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word2].ForeColor = System.Drawing.Color.CadetBlue;
@@ -215,6 +231,8 @@ namespace Eto.CodeEditor.Wpf
 
             //WinFormsControl.Styles[ScintillaNET.Style.LineNumber].BackColor = System.Drawing.Color.White;
             //WinFormsControl.Styles[ScintillaNET.Style.LineNumber].ForeColor = System.Drawing.Color.CadetBlue;
+
+            WinFormsControl.AutomaticFold = AutomaticFold.Click;
 
             FontName = "Consolas";
             FontSize = 10;

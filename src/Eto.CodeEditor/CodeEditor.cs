@@ -34,8 +34,8 @@ namespace Eto.CodeEditor
             _language = language;
             Handler.SetProgrammingLanguage( language, GetKeywords(language) );
 
-            SetColor(Section.Comment, Drawing.Colors.Gray, Drawing.Colors.White);
-            SetColor(Section.Keyword, Drawing.Colors.SeaGreen, Drawing.Colors.White);
+            SetColor(Section.Comment, Drawing.Colors.Green, Drawing.Colors.White);
+            SetColor(Section.Keyword, Drawing.Colors.Blue, Drawing.Colors.White);
             SetColor(Section.LineNumber, Drawing.Colors.Gray, Drawing.Colors.White);
         }
 
@@ -87,6 +87,10 @@ namespace Eto.CodeEditor
         {
             Handler.ClearAllWarningIndicators();
         }
+        public void ClearAllTypeNameIndicators()
+        {
+            Handler.ClearAllTypeNameIndicators();
+        }
         public void AddErrorIndicator(int position, int length)
         {
             Handler.AddErrorIndicator(position, length);
@@ -94,6 +98,10 @@ namespace Eto.CodeEditor
         public void AddWarningIndicator(int position, int length)
         {
             Handler.AddWarningIndicator(position, length);
+        }
+        public void AddTypeNameIndicator(int position, int length)
+        {
+            Handler.AddTypeNameIndicator(position, length);
         }
 
         public event EventHandler TextChanged
@@ -120,8 +128,10 @@ namespace Eto.CodeEditor
             void SetupIndicatorStyles();
             void ClearAllErrorIndicators();
             void ClearAllWarningIndicators();
+            void ClearAllTypeNameIndicators();
             void AddErrorIndicator(int position, int length);
             void AddWarningIndicator(int position, int length);
+            void AddTypeNameIndicator(int position, int length);
 
             event EventHandler TextChanged;
         }
