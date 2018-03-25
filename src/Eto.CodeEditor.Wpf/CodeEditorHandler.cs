@@ -137,16 +137,14 @@ namespace Eto.CodeEditor.Wpf
         {
             WinFormsControl.Indicators[ErrorIndex].Style = IndicatorStyle.CompositionThick;
             WinFormsControl.Indicators[ErrorIndex].ForeColor = Color.Crimson;
-            WinFormsControl.Indicators[ErrorIndex].Alpha = 255;
-            //WinFormsControl.Indicators[ErrorIndex].Under = true;
-
+            //WinFormsControl.Indicators[ErrorIndex].Alpha = 255;
+   
             WinFormsControl.Indicators[WarningIndex].Style = IndicatorStyle.CompositionThick;
             WinFormsControl.Indicators[WarningIndex].ForeColor = Color.DarkOrange;
-            WinFormsControl.Indicators[WarningIndex].Alpha = 255;
-            //WinFormsControl.Indicators[WarningIndex].Under = true;
+            //WinFormsControl.Indicators[WarningIndex].Alpha = 255;
 
             WinFormsControl.Indicators[TypeNameIndex].Style = IndicatorStyle.TextFore;
-            WinFormsControl.Indicators[TypeNameIndex].ForeColor = Color.SkyBlue;
+            WinFormsControl.Indicators[TypeNameIndex].ForeColor = Color.FromArgb(43, 145, 175);
         }
         public void ClearAllErrorIndicators()
         {

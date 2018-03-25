@@ -34,7 +34,7 @@ namespace Eto.CodeEditor
             _language = language;
             Handler.SetProgrammingLanguage( language, GetKeywords(language) );
 
-            SetColor(Section.Comment, Drawing.Colors.Green, Drawing.Colors.White);
+            SetColor(Section.Comment, Drawing.Colors.DarkGray, Drawing.Colors.White);
             SetColor(Section.Keyword, Drawing.Colors.Blue, Drawing.Colors.White);
             SetColor(Section.LineNumber, Drawing.Colors.Gray, Drawing.Colors.White);
         }
