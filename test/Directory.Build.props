@@ -5,4 +5,5 @@
 		<BaseIntermediateOutputPath>$(BasePath)artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<RestoreProjectStyle Condition="'$(RestoreProjectStyle)' == ''">PackageReference</RestoreProjectStyle>
 	</PropertyGroup>
+	<Import Condition="Exists('$(BasePath)..\Eto.Toolkit.Common.props')" Project="$(BasePath)..\Eto.Toolkit.Common.props" />
 </Project>

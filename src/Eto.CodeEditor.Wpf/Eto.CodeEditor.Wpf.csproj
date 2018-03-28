@@ -89,7 +89,7 @@
     <PackageReference Include="Eto.Platform.Wpf">
       <Version>2.4.1</Version>
     </PackageReference>
-    <PackageReference Include="jacobslusser.ScintillaNET">
+    <PackageReference Include="jacobslusser.ScintillaNET.Signed">
       <Version>3.6.3</Version>
     </PackageReference>
   </ItemGroup>
