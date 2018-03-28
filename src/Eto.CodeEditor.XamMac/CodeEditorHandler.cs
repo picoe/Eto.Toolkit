@@ -12,6 +12,7 @@ using ScintillaNET;
 using Foundation;
 using System.IO;
 using ObjCRuntime;
+using AppKit;
 using System.Runtime.InteropServices;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
@@ -20,6 +21,12 @@ namespace Eto.CodeEditor.XamMac2
 {
     public class CodeEditorHandler : Eto.Mac.Forms.MacView<ScintillaView, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
     {
+        static CodeEditorHandler()
+        {
+            var path = Path.Combine(NSBundle.MainBundle.PrivateFrameworksPath, "Scintilla.framework", "Scintilla");
+            Dlfcn.dlopen(path, 4);
+        }
+
         public CodeEditorHandler()
         {
             Control = new ScintillaView();
