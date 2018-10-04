@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <HtmlRendererPath>..\..\lib\HtmlRenderer\</HtmlRendererPath>
+    <OutputPath>$(BasePath)\artifacts\core\$(Configuration)</OutputPath>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="$(HtmlRendererPath)Source\HtmlRenderer\Core\Utils\ImageError.png">
+      <Link>Core\ImageError.png</Link>
+      <LogicalName>TheArtOfDev.HtmlRenderer.Core.Utils.ImageError.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(HtmlRendererPath)Source\HtmlRenderer\Core\Utils\ImageLoad.png">
+      <Link>Core\ImageLoad.png</Link>
+      <LogicalName>TheArtOfDev.HtmlRenderer.Core.Utils.ImageLoad.png</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(HtmlRendererPath)Source\HtmlRenderer\**\*.cs">
+      <Link>Core\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+    </Compile>
+    
+  </ItemGroup>
+  
+
+  <ItemGroup>
+    <PackageReference Include="Eto.Forms" Version="2.4.1" />
+  </ItemGroup>
+</Project>

@@ -18,6 +18,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.TestAppMac",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.TestApp", "..\test\Eto.CodeEditor.TestApp\Eto.CodeEditor.TestApp.csproj", "{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HtmlRenderer", "HtmlRenderer", "{C5C9E1F4-B112-4BDE-A589-722E87D63962}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.HtmlRenderer", "Eto.HtmlRenderer\Eto.HtmlRenderer.csproj", "{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.HtmlRenderer.TestApp", "..\test\Eto.HtmlRenderer.TestApp\Eto.HtmlRenderer.TestApp.csproj", "{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mac = Debug|Mac
@@ -75,6 +81,22 @@ Global
 		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}.Release|Mac.Build.0 = Release|Any CPU
 		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}.Release|Windows.ActiveCfg = Release|Any CPU
 		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}.Release|Windows.Build.0 = Release|Any CPU
+		{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2}.Debug|Mac.Build.0 = Debug|Any CPU
+		{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2}.Debug|Windows.Build.0 = Debug|Any CPU
+		{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2}.Release|Mac.ActiveCfg = Release|Any CPU
+		{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2}.Release|Mac.Build.0 = Release|Any CPU
+		{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2}.Release|Windows.ActiveCfg = Release|Any CPU
+		{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2}.Release|Windows.Build.0 = Release|Any CPU
+		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}.Debug|Mac.Build.0 = Debug|Any CPU
+		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}.Debug|Windows.Build.0 = Debug|Any CPU
+		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}.Release|Mac.ActiveCfg = Release|Any CPU
+		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}.Release|Mac.Build.0 = Release|Any CPU
+		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}.Release|Windows.ActiveCfg = Release|Any CPU
+		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}.Release|Windows.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,6 +109,8 @@ Global
 		{810B1BCD-8E09-4F69-8726-B6ED91E243E7} = {646F64B2-57A5-4096-854F-F83D981AF1E8}
 		{DD626F6E-2487-41A7-8D97-B3F673EC117B} = {646F64B2-57A5-4096-854F-F83D981AF1E8}
 		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B} = {646F64B2-57A5-4096-854F-F83D981AF1E8}
+		{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2} = {C5C9E1F4-B112-4BDE-A589-722E87D63962}
+		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB} = {C5C9E1F4-B112-4BDE-A589-722E87D63962}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B290EE1E-3782-4C57-A127-FD078514CD8C}

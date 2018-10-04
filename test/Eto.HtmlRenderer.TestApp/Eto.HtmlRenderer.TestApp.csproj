@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net461</TargetFramework>
+    <OutputPath>$(BasePath)\artifacts\test\$(Configuration)</OutputPath>
+  </PropertyGroup>
+	
+  <ItemGroup>
+    <None Remove="Logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Eto.HtmlRenderer\Eto.HtmlRenderer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Eto.Platform.Wpf" Version="2.4.1" />
+    <PackageReference Include="Eto.Platform.Gtk" Version="2.4.1" />
+    <PackageReference Include="Eto.Platform.XamMac2" Version="2.4.1" />
+  </ItemGroup>
+</Project>
