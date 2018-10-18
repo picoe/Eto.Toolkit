@@ -15,45 +15,30 @@ using TheArtOfDev.HtmlRenderer.Adapters;
 
 namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
 {
+
     /// <summary>
     /// Adapter for Eto Image object for core.
+    /// TODO: Implement animation
     /// </summary>
-    internal sealed class ImageAdapter : RImage
+    internal sealed class ImageAdapter : RImage, IImageAdapter
     {
-        /// <summary>
-        /// the underline win-forms image.
-        /// </summary>
-        private readonly Image _image;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="T:System.Object"/> class.
         /// </summary>
         public ImageAdapter(Image image)
         {
-            _image = image;
+            Image = image;
         }
 
         /// <summary>
         /// the underline Eto image.
         /// </summary>
-        public Image Image
-        {
-            get { return _image; }
-        }
+        public Image Image { get; }
 
-        public override double Width
-        {
-            get { return _image.Width; }
-        }
+        public override double Width => Image.Width;
 
-        public override double Height
-        {
-            get { return _image.Height; }
-        }
+        public override double Height => Image.Height;
 
-        public override void Dispose()
-        {
-            _image.Dispose();
-        }
+        public override void Dispose() => Image.Dispose();
     }
 }

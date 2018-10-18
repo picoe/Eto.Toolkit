@@ -26,5 +26,6 @@
 
   <ItemGroup>
     <PackageReference Include="Eto.Forms" Version="2.4.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
   </ItemGroup>
 </Project>

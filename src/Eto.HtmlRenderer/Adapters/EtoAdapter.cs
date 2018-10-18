@@ -16,6 +16,8 @@ using Eto.Forms;
 using TheArtOfDev.HtmlRenderer.Adapters.Entities;
 using TheArtOfDev.HtmlRenderer.Adapters;
 using TheArtOfDev.HtmlRenderer.Eto.Utilities;
+using System;
+using System.Linq;
 
 namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
 {
@@ -104,7 +106,42 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
 
         protected override RImage ConvertImageInt(object image)
         {
-            return image != null ? new ImageAdapter((Image)image) : null;
+            if (image is Stream stream)
+            {
+                MemoryStream ms = null;
+                try
+                {
+                    long originalPosition;
+                    if (!stream.CanSeek)
+                    {
+                        ms = new MemoryStream();
+                        stream.CopyTo(ms);
+                        originalPosition = 0;
+                        stream = ms;
+                    }
+                    else
+                    {
+                        originalPosition = stream.Position;
+                    }
+
+                    var img = SixLabors.ImageSharp.Image.Load(stream, out var format);
+                    if (img.Frames.Count > 1 && img.Frames.Any(r => r.MetaData.FrameDelay > 0))
+                    {
+                        return new ImageSharpImageAdapter(img);
+                    }
+                    img.Dispose();
+
+                    stream.Position = originalPosition;
+                    return new ImageAdapter(new Bitmap(stream));
+                }
+                finally
+                {
+                    ms?.Dispose();
+                }
+            }
+            if (image is Image bitmap)
+                return new ImageAdapter(bitmap);
+            return null;
         }
 
         protected override RImage ImageFromStreamInt(Stream memoryStream)
@@ -141,13 +178,15 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
 
         protected override void SetToClipboardInt(RImage image)
         {
-            new Clipboard().Image = ((ImageAdapter)image).Image;
+            new Clipboard().Image = ((IImageAdapter)image).Image;
         }
 
         protected override RContextMenu CreateContextMenuInt()
         {
             return new ContextMenuAdapter();
         }
+
+        protected override RTimer CreateTimerInt() => new TimerAdapter();
 
         protected override void SaveToFileInt(RImage image, string name, string extension, RControl control = null)
         {
@@ -178,7 +217,7 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
                             format = ImageFormat.Jpeg;
                             break;
                     }
-                    var realImage = ((ImageAdapter)image).Image;
+                    var realImage = ((IImageAdapter)image).Image;
                     var bitmap = realImage as Bitmap;
                     if (bitmap == null && realImage is Icon icon)
                     {
