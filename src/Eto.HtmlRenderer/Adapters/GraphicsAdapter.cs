@@ -163,7 +163,7 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
 
         public override RBrush GetTextureBrush(RImage image, RRect dstRect, RPoint translateTransformLocation)
         {
-            var brush = new TextureBrush(((ImageAdapter)image).Image);
+            var brush = new TextureBrush(((IImageAdapter)image).Image);
             //brush.
             brush.Transform = Matrix.FromTranslation((float)translateTransformLocation.X, (float)translateTransformLocation.Y);
             return new BrushAdapter(brush, true);
@@ -200,12 +200,12 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
 
         public override void DrawImage(RImage image, RRect destRect, RRect srcRect)
         {
-            _g.DrawImage(((ImageAdapter)image).Image, Utils.Convert(destRect), Utils.Convert(srcRect));
+            _g.DrawImage(((IImageAdapter)image).Image, Utils.Convert(destRect), Utils.Convert(srcRect));
         }
 
         public override void DrawImage(RImage image, RRect destRect)
         {
-            _g.DrawImage(((ImageAdapter)image).Image, Utils.Convert(destRect));
+            _g.DrawImage(((IImageAdapter)image).Image, Utils.Convert(destRect));
         }
 
         public override void DrawPath(RPen pen, RGraphicsPath path)

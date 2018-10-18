@@ -12,7 +12,7 @@ namespace Eto.HtmlRenderer.TestApp
         public MainForm()
         {
             Title = "Eto.HtmlRenderer Test App";
-            ClientSize = new Size(400, 400);
+            //ClientSize = new Size(400, 400);
             if (Platform.IsMac)
                 Menu = new MenuBar();
 
@@ -22,9 +22,9 @@ namespace Eto.HtmlRenderer.TestApp
             //htmlPanel.MaximumSize = new Size(300, int.MaxValue);
             htmlPanel.ImageLoad += (sender, e) =>
             {
-                e.Callback(Bitmap.FromResource($"Eto.HtmlRenderer.TestApp.{e.Src}"));
+                e.Callback(GetType().Assembly.GetManifestResourceStream($"Eto.HtmlRenderer.TestApp.{e.Src}"));
             };
-            htmlPanel.Text = "<p>This is some <b>bold</b> text.</p><img src='Logo.png'>";
+            htmlPanel.Text = "<p>This is some <b>bold</b> text.</p><img src='Logo.png'><img src='Logo.gif'>";
             Content = new Scrollable { Content = htmlPanel, ExpandContentWidth = false, ExpandContentHeight = false };
         }
     }
