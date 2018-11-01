@@ -14,7 +14,7 @@ using Eto.Drawing;
 
 namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
 {
-	interface IImageAdapter
+	public interface IImageAdapter
 	{
 		Image Image { get; }
 	}
