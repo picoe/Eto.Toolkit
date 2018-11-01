@@ -43,12 +43,24 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
         {
             // try/catch for platforms like Gtk where some fonts can't be found
 
-            try { AddFontFamilyMapping("monospace", Fonts.Monospace(10).FamilyName); } catch { }
-            try { AddFontFamilyMapping("serif", Fonts.Serif(10).FamilyName); } catch { }
-            try { AddFontFamilyMapping("sans-serif", Fonts.Sans(10).FamilyName); } catch { }
-            try { AddFontFamilyMapping("sans", Fonts.Sans(10).FamilyName); } catch { }
-            try { AddFontFamilyMapping("cursive", Fonts.Cursive(10).FamilyName); } catch { }
-            try { AddFontFamilyMapping("fantasy", Fonts.Fantasy(10).FamilyName); } catch { }
+            try
+            { AddFontFamilyMapping("monospace", Fonts.Monospace(10).FamilyName); }
+            catch { }
+            try
+            { AddFontFamilyMapping("serif", Fonts.Serif(10).FamilyName); }
+            catch { }
+            try
+            { AddFontFamilyMapping("sans-serif", Fonts.Sans(10).FamilyName); }
+            catch { }
+            try
+            { AddFontFamilyMapping("sans", Fonts.Sans(10).FamilyName); }
+            catch { }
+            try
+            { AddFontFamilyMapping("cursive", Fonts.Cursive(10).FamilyName); }
+            catch { }
+            try
+            { AddFontFamilyMapping("fantasy", Fonts.Fantasy(10).FamilyName); }
+            catch { }
 
             var defaultFont = SystemFonts.Default()?.FamilyName;
             if (defaultFont != null)
@@ -124,12 +136,23 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
                         originalPosition = stream.Position;
                     }
 
-                    var img = SixLabors.ImageSharp.Image.Load(stream, out var format);
-                    if (img.Frames.Count > 1 && img.Frames.Any(r => r.MetaData.FrameDelay > 0))
-                    {
-                        return new ImageSharpImageAdapter(img);
-                    }
-                    img.Dispose();
+                    RImage adapter = null;
+
+                    // todo: remove when Eto supports extracting frames from GIF files directly.
+#if USE_SDIMAGE
+                    if (adapter == null)
+                        adapter = SystemDrawingImageAdapter.TryGet(stream);
+#endif
+#if USE_MACIMAGE
+                    if (adapter == null)
+                        adapter = MacImageAdapter.TryGet(stream);
+#endif
+#if USE_IMAGESHARP
+                    if (adapter == null)
+                        adapter = ImageSharpImageAdapter.TryGet(stream);
+#endif
+                    if (adapter != null)
+                        return adapter;
 
                     stream.Position = originalPosition;
                     return new ImageAdapter(new Bitmap(stream));
@@ -141,6 +164,8 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
             }
             if (image is Image bitmap)
                 return new ImageAdapter(bitmap);
+            if (image is RImage rimage)
+                return rimage;
             return null;
         }
 

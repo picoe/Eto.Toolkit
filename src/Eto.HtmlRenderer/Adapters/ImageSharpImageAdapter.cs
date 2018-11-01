@@ -9,7 +9,7 @@
 // 
 // - Sun Tsu,
 // "The Art of War"
-
+#if USE_IMAGESHARP
 using Eto.Drawing;
 using TheArtOfDev.HtmlRenderer.Adapters;
 using System.Collections.Generic;
@@ -27,6 +27,18 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
         IList<RImageFrame> _frames;
         int _currentFrame;
         Dictionary<int, Bitmap> _images = new Dictionary<int, Bitmap>();
+
+
+        public static ImageSharpImageAdapter TryGet(Stream stream)
+        {
+            var img = SixLabors.ImageSharp.Image.Load(stream, out var format);
+            if (img.Frames.Count > 1 && img.Frames.Any(r => r.MetaData.FrameDelay > 0))
+            {
+                return new ImageSharpImageAdapter(img);
+            }
+            img.Dispose();
+            return null;
+        }
 
         public ImageSharpImageAdapter(SixLabors.ImageSharp.Image<Rgba32> image, bool preloadFrames = true)
         {
@@ -85,5 +97,6 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
         Image IImageAdapter.Image => GetFrame(_currentFrame);
 
         public override void Dispose() => Image.Dispose();
-	}
+    }
 }
+#endif
