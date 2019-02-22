@@ -62,7 +62,7 @@
         <PackageReference Include="Eto.Platform.XamMac2" Version="2.4.1" />
       </ItemGroup>
       <PropertyGroup>
-        <DefineConstants>$(DefineConstants);USE_MACIMAGE</DefineConstants>
+        <DefineConstants>$(DefineConstants);USE_MACIMAGE;__UNIFIED__</DefineConstants>
         <MacBuildBundle>False</MacBuildBundle>
       </PropertyGroup>
     </When>
