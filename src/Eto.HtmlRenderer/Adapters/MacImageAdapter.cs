@@ -7,10 +7,12 @@ using Eto.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using TheArtOfDev.HtmlRenderer.Adapters;
+using System.Runtime.InteropServices;
 #if __UNIFIED__
 using CoreGraphics;
 using AppKit;
 using Foundation;
+using ObjCRuntime;
 #else
 using MonoMac.CoreGraphics;
 using MonoMac.AppKit;
@@ -39,6 +41,17 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
             Bitmap = null;
         }
     }
+
+#if __UNIFIED__
+    static class Messaging
+    {
+        [DllImport("/usr/lib/libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static extern IntPtr IntPtr_objc_msgSend_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1);
+
+        [DllImport("/usr/lib/libobjc.dylib", EntryPoint = "objc_msgSend")]
+        public static extern void void_objc_msgSend_IntPtr_IntPtr(IntPtr receiver, IntPtr selector, IntPtr arg1, IntPtr arg2);
+    }
+#endif
 
     public class MacImageAdapter : RImage, IImageAdapter
     {
