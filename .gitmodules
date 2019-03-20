@@ -1,0 +1,3 @@
+[submodule "lib/HtmlRenderer"]
+	path = lib/HtmlRenderer
+	url = https://github.com/cwensley/HTML-Renderer.git

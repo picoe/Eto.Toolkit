@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <BasePath>$(MSBuildThisFileDirectory)..\</BasePath>
+    <BaseIntermediateOutputPath Condition="$(BaseIntermediateOutputPath) == ''">$(BasePath)artifacts\obj\$(OS)\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath Condition="$(BaseOutputPath) == ''">$(BasePath)\artifacts\$(OutputArtifactName)\</BaseOutputPath>
+    <RestoreProjectStyle Condition="'$(RestoreProjectStyle)' == ''">PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+  <Import Condition="Exists('$(BasePath)..\Eto.Toolkit.props')" Project="$(BasePath)..\Eto.Toolkit.props" />
+</Project>
