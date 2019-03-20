@@ -10,6 +10,8 @@
     <AssemblyName>Scintilla.XamMac2</AssemblyName>
     <MacResourcePrefix>Resources</MacResourcePrefix>
     <UseXamMacFullFramework>true</UseXamMacFullFramework>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- use these properties to compile an ObjectiveC binding project for XamMac Full.  Remove if/when UseXamMacFullFramework is supported. -->

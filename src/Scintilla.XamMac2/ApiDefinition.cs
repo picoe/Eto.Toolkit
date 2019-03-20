@@ -8,6 +8,16 @@ using ObjCRuntime;
 namespace ScintillaNET
 {
 
+    // @protocol ScintillaNotificationProtocol
+    [Protocol]
+    interface ScintillaNotificationProtocol
+    {
+        // @required -(void)notification:(SCNotification *)notification;
+        [Abstract]
+        [Export("notification:")]
+        void Notification(IntPtr notification);
+    }
+
     // @interface ScintillaView : NSView <InfoBarCommunicator, ScintillaNotificationProtocol>
     [BaseType(typeof(NSView))]
     interface ScintillaView
@@ -69,6 +79,11 @@ namespace ScintillaNET
         // -(NSString *)getStringProperty:(int)property parameter:(long)parameter;
         [Export("getStringProperty:parameter:")]
         string GetStringProperty(int property, nint parameter);
+
+        // -(sptr_t)message:(unsigned int)message wParam:(uptr_t)wParam lParam:(sptr_t)lParam;
+        [Export("message:wParam:lParam:")]
+        IntPtr Message(uint message, IntPtr wParam, IntPtr lParam);
+
     }
 
 }
