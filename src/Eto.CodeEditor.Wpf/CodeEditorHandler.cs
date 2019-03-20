@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Eto;
 using Eto.Forms;
 using Eto.CodeEditor;
 using Eto.CodeEditor.Wpf;
+using ScintillaNET;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
 
@@ -20,6 +22,18 @@ namespace Eto.CodeEditor.Wpf
             SetupTheme();
         }
 
+        public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
+        {
+            Language = language;
+            if(keywordSets!=null)
+            {
+                for( int i=0; i<keywordSets.Length; i++ )
+                {
+                    SetKeywords(i, keywordSets[i]);
+                }
+            }
+        }
+
         public string Text
         {
             get => WinFormsControl.Text;
@@ -31,37 +45,30 @@ namespace Eto.CodeEditor.Wpf
             WinFormsControl.SetKeywords(set, keywords);
         }
 
-        public Lexer Lexer
+        ProgrammingLanguage _language = ProgrammingLanguage.None;
+        public ProgrammingLanguage Language
         {
-            get { return ToCodeEditor(WinFormsControl.Lexer); }
-            set { WinFormsControl.Lexer = ToScintillaNet(value); }
+            get { return _language; }
+            set
+            {
+                _language = value;
+                WinFormsControl.Lexer = ToScintillaNet(value);
+            }
         }
 
-        static ScintillaNET.Lexer ToScintillaNet(Lexer l)
+        static ScintillaNET.Lexer ToScintillaNet(ProgrammingLanguage l)
         {
             switch (l)
             {
-                case Lexer.Cpp:
+                case ProgrammingLanguage.CSharp:
+                case ProgrammingLanguage.GLSL:
                     return ScintillaNET.Lexer.Cpp;
-                case Lexer.VB:
+                case ProgrammingLanguage.VB:
                     return ScintillaNET.Lexer.Vb;
-                case Lexer.Python:
+                case ProgrammingLanguage.Python:
                     return ScintillaNET.Lexer.Python;
             }
             return ScintillaNET.Lexer.Null;
-        }
-        static Lexer ToCodeEditor(ScintillaNET.Lexer l)
-        {
-            switch (l)
-            {
-                case ScintillaNET.Lexer.Cpp:
-                    return Lexer.Cpp;
-                case ScintillaNET.Lexer.Vb:
-                    return Lexer.VB;
-                case ScintillaNET.Lexer.Python:
-                    return Lexer.Python;
-            }
-            return Lexer.Cpp;
         }
 
         public string FontName
@@ -122,6 +129,55 @@ namespace Eto.CodeEditor.Wpf
             }
         }
 
+        private const int ErrorIndex = 20;
+        private const int WarningIndex = 21;
+        private const int TypeNameIndex = 22;
+
+        public void SetupIndicatorStyles()
+        {
+            WinFormsControl.Indicators[ErrorIndex].Style = IndicatorStyle.CompositionThick;
+            WinFormsControl.Indicators[ErrorIndex].ForeColor = Color.Crimson;
+            //WinFormsControl.Indicators[ErrorIndex].Alpha = 255;
+   
+            WinFormsControl.Indicators[WarningIndex].Style = IndicatorStyle.CompositionThick;
+            WinFormsControl.Indicators[WarningIndex].ForeColor = Color.DarkOrange;
+            //WinFormsControl.Indicators[WarningIndex].Alpha = 255;
+
+            WinFormsControl.Indicators[TypeNameIndex].Style = IndicatorStyle.TextFore;
+            WinFormsControl.Indicators[TypeNameIndex].ForeColor = Color.FromArgb(43, 145, 175);
+        }
+        public void ClearAllErrorIndicators()
+        {
+            WinFormsControl.IndicatorCurrent = ErrorIndex;
+            WinFormsControl.IndicatorClearRange(0, WinFormsControl.TextLength);
+        }
+        public void ClearAllWarningIndicators()
+        {
+            WinFormsControl.IndicatorCurrent = WarningIndex;
+            WinFormsControl.IndicatorClearRange(0, WinFormsControl.TextLength);
+        }
+        public void ClearAllTypeNameIndicators()
+        {
+            WinFormsControl.IndicatorCurrent = TypeNameIndex;
+            WinFormsControl.IndicatorClearRange(0, WinFormsControl.TextLength);
+        }
+
+        public void AddErrorIndicator(int position, int length)
+        {
+            WinFormsControl.IndicatorCurrent = ErrorIndex;
+            WinFormsControl.IndicatorFillRange(position, length);
+        }
+        public void AddWarningIndicator(int position, int length)
+        {
+            WinFormsControl.IndicatorCurrent = WarningIndex;
+            WinFormsControl.IndicatorFillRange(position, length);
+        }
+        public void AddTypeNameIndicator(int position, int length)
+        {
+            WinFormsControl.IndicatorCurrent = TypeNameIndex;
+            WinFormsControl.IndicatorFillRange(position, length);
+        }
+
         public int LineNumberColumnWidth
         {
             get
@@ -134,6 +190,18 @@ namespace Eto.CodeEditor.Wpf
             }
         }
 
+        public event EventHandler TextChanged
+        {
+            add
+            {
+                WinFormsControl.TextChanged += value;
+            }
+            remove
+            {
+                WinFormsControl.TextChanged -= value;
+            }
+        }
+
         void SetupTheme()
         {
             // just style things enough that you can tell you're working in a code editor
@@ -141,15 +209,15 @@ namespace Eto.CodeEditor.Wpf
             //WinFormsControl.Lexer = ScintillaNET.Lexer.Cpp;
             //WinFormsControl.SetKeywords(0, "abstract as base break case catch checked continue default delegate do else event explicit extern false finally fixed for foreach goto if implicit in interface internal is lock namespace new null object operator out override params private protected public readonly ref return sealed sizeof stackalloc switch this throw true try typeof unchecked unsafe using virtual while");
             //WinFormsControl.SetKeywords(1, "bool byte char class const decimal double enum float int long sbyte short static string struct uint ulong ushort void");
-            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.Comment].ForeColor = System.Drawing.Color.Gray;
-            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLine].ForeColor = System.Drawing.Color.Gray;
-            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentDoc].ForeColor = System.Drawing.Color.Gray;
+            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.Comment].ForeColor = System.Drawing.Color.Black;
+            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLine].ForeColor = System.Drawing.Color.Black;
+            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentDoc].ForeColor = System.Drawing.Color.Black;
             WinFormsControl.Styles[ScintillaNET.Style.Cpp.Number].ForeColor = System.Drawing.Color.Black;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.String].ForeColor = System.Drawing.Color.Red;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Character].ForeColor = System.Drawing.Color.Black;
+            WinFormsControl.Styles[ScintillaNET.Style.Cpp.String].ForeColor = System.Drawing.Color.Brown;
+            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Character].ForeColor = System.Drawing.Color.Brown;
             WinFormsControl.Styles[ScintillaNET.Style.Cpp.Preprocessor].ForeColor = System.Drawing.Color.Black;
             WinFormsControl.Styles[ScintillaNET.Style.Cpp.Operator].ForeColor = System.Drawing.Color.Black;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Regex].ForeColor = System.Drawing.Color.Black;
+            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Regex].ForeColor = System.Drawing.Color.Crimson;
             WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLineDoc].ForeColor = System.Drawing.Color.Black;
             //WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word].ForeColor = System.Drawing.Color.Blue;
             //WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word2].ForeColor = System.Drawing.Color.CadetBlue;
@@ -162,6 +230,11 @@ namespace Eto.CodeEditor.Wpf
             //WinFormsControl.Styles[ScintillaNET.Style.LineNumber].BackColor = System.Drawing.Color.White;
             //WinFormsControl.Styles[ScintillaNET.Style.LineNumber].ForeColor = System.Drawing.Color.CadetBlue;
 
+            WinFormsControl.AutomaticFold = AutomaticFold.Click;
+
+            FontName = "Consolas";
+            FontSize = 10;
+            LineNumberColumnWidth = 40;
         }
     }
 }

@@ -5,123 +5,123 @@ using ObjCRuntime;
 
 namespace ScintillaNET
 {
-	
-static class CFunctions
-{
-  // extern int Scintilla_LinkLexers ();
-  [DllImport ("__Internal")]
-  //[Verify (PlatformInvoke)]
-  static extern int Scintilla_LinkLexers ();
-}
 
-[StructLayout (LayoutKind.Sequential)]
-public struct Sci_CharacterRange
-{
-  public nint cpMin;
+    static class CFunctions
+    {
+        // extern int Scintilla_LinkLexers ();
+        [DllImport("__Internal")]
+        //[Verify (PlatformInvoke)]
+        static extern int Scintilla_LinkLexers();
+    }
 
-  public nint cpMax;
-}
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Sci_CharacterRange
+    {
+        public nint cpMin;
 
-[StructLayout (LayoutKind.Sequential)]
-public struct Sci_TextRange
-{
-  public Sci_CharacterRange chrg;
+        public nint cpMax;
+    }
 
-  public unsafe sbyte* lpstrText;
-}
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Sci_TextRange
+    {
+        public Sci_CharacterRange chrg;
 
-[StructLayout (LayoutKind.Sequential)]
-public struct Sci_TextToFind
-{
-  public Sci_CharacterRange chrg;
+        public unsafe sbyte* lpstrText;
+    }
 
-  public unsafe sbyte* lpstrText;
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Sci_TextToFind
+    {
+        public Sci_CharacterRange chrg;
 
-  public Sci_CharacterRange chrgText;
-}
+        public unsafe sbyte* lpstrText;
 
-[StructLayout (LayoutKind.Sequential)]
-public struct Sci_Rectangle
-{
-  public int left;
+        public Sci_CharacterRange chrgText;
+    }
 
-  public int top;
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Sci_Rectangle
+    {
+        public int left;
 
-  public int right;
+        public int top;
 
-  public int bottom;
-}
+        public int right;
 
-[StructLayout (LayoutKind.Sequential)]
-public struct Sci_RangeToFormat
-{
-  public unsafe void* hdc;
+        public int bottom;
+    }
 
-  public unsafe void* hdcTarget;
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Sci_RangeToFormat
+    {
+        public unsafe void* hdc;
 
-  public Sci_Rectangle rc;
+        public unsafe void* hdcTarget;
 
-  public Sci_Rectangle rcPage;
+        public Sci_Rectangle rc;
 
-  public Sci_CharacterRange chrg;
-}
+        public Sci_Rectangle rcPage;
 
-[StructLayout (LayoutKind.Sequential)]
-public struct Sci_NotifyHeader
-{
-  public unsafe void* hwndFrom;
+        public Sci_CharacterRange chrg;
+    }
 
-  public UIntPtr idFrom;
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Sci_NotifyHeader
+    {
+        public unsafe void* hwndFrom;
 
-  public uint code;
-}
+        public UIntPtr idFrom;
 
-[StructLayout (LayoutKind.Sequential)]
-public struct SCNotification
-{
-  public Sci_NotifyHeader nmhdr;
+        public uint code;
+    }
 
-  public int position;
+    [StructLayout(LayoutKind.Sequential)]
+    public struct SCNotification
+    {
+        public Sci_NotifyHeader nmhdr;
 
-  public int ch;
+        public int position;
 
-  public int modifiers;
+        public int ch;
 
-  public int modificationType;
+        public int modifiers;
 
-  public unsafe sbyte* text;
+        public int modificationType;
 
-  public int length;
+        public unsafe sbyte* text;
 
-  public int linesAdded;
+        public int length;
 
-  public int message;
+        public int linesAdded;
 
-  public UIntPtr wParam;
+        public int message;
 
-  public IntPtr lParam;
+        public UIntPtr wParam;
 
-  public int line;
+        public IntPtr lParam;
 
-  public int foldLevelNow;
+        public int line;
 
-  public int foldLevelPrev;
+        public int foldLevelNow;
 
-  public int margin;
+        public int foldLevelPrev;
 
-  public int listType;
+        public int margin;
 
-  public int x;
+        public int listType;
 
-  public int y;
+        public int x;
 
-  public int token;
+        public int y;
 
-  public int annotationLinesAdded;
+        public int token;
 
-  public int updated;
+        public int annotationLinesAdded;
 
-  public int listCompletionMethod;
-}
+        public int updated;
+
+        public int listCompletionMethod;
+    }
 
 }
