@@ -23,6 +23,13 @@ namespace Eto.CodeEditor
                         LanguageGlsl.GetKeywords(out k, out f);
                         return new string[] { k, f };
                     }
+                case ProgrammingLanguage.Python:
+                    return new string[]
+                    {
+                        // import keyword
+                        // keyword.kwlist
+                        "and as assert break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return try while with yield"
+                    };
                 default:
                     return new string[0];
             }
