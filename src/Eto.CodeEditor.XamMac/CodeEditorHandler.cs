@@ -26,9 +26,14 @@ namespace Eto.CodeEditor.XamMac2
             Dlfcn.dlopen(path, 4);
         }
 
+        private EtoScintillaNotificationProtocol notificationProtocol;
         public CodeEditorHandler()
         {
-            Control = new ScintillaView();
+            var sv = new ScintillaView();
+            notificationProtocol = new EtoScintillaNotificationProtocol();
+            notificationProtocol.Notify += NotificationProtocol_Notify;
+            sv.WeakDelegate = notificationProtocol;
+            Control = sv;
 
             FontName = "Menlo";
             FontSize = 14;
@@ -259,11 +264,21 @@ namespace Eto.CodeEditor.XamMac2
         public void ClearAllTypeNameIndicators() { }
         public void AddTypeNameIndicator(int position, int length) { }
 
-
-        public event EventHandler TextChanged
+        void NotificationProtocol_Notify(object sender, SCNotifyEventArgs e)
         {
-            add { }
-            remove { }
+            var n = e.Notification;
+            switch (n.nmhdr.code)
+            {
+
+                case NativeMethods.SCN_CHARADDED:
+                    var args = new TextChangedEventArgs(TextChangeType.CharAdded, (char)n.ch);
+                    TextChanged?.Invoke(this, args);
+                    break;
+                default:
+                    break;
+            }
         }
+
+        public event EventHandler<TextChangedEventArgs> TextChanged;
     }
 }

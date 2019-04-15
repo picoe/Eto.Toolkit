@@ -73,6 +73,7 @@ namespace ScintillaNET
 
         public UIntPtr idFrom;
 
+        //public ulong code;
         public uint code;
     }
 
@@ -81,7 +82,7 @@ namespace ScintillaNET
     {
         public Sci_NotifyHeader nmhdr;
 
-        public int position;
+        public long position;
 
         public int ch;
 
@@ -89,11 +90,12 @@ namespace ScintillaNET
 
         public int modificationType;
 
-        public unsafe sbyte* text;
+        //public unsafe sbyte* text;
+        public IntPtr text;
 
-        public int length;
+        public long length;
 
-        public int linesAdded;
+        public long linesAdded;
 
         public int message;
 
@@ -101,7 +103,7 @@ namespace ScintillaNET
 
         public IntPtr lParam;
 
-        public int line;
+        public long line;
 
         public int foldLevelNow;
 
@@ -117,11 +119,55 @@ namespace ScintillaNET
 
         public int token;
 
-        public int annotationLinesAdded;
+        public long annotationLinesAdded;
 
         public int updated;
 
         public int listCompletionMethod;
     }
-
+    //{
+    //    public Sci_NotifyHeader nmhdr;
+    //
+    //    public long position;
+    //
+    //    public long ch;
+    //
+    //    public long modifiers;
+    //
+    //    public long modificationType;
+    //
+    //    public unsafe sbyte* text;
+    //
+    //    public long length;
+    //
+    //    public long linesAdded;
+    //
+    //    public long message;
+    //
+    //    public UIntPtr wParam;
+    //
+    //    public IntPtr lParam;
+    //
+    //    public long line;
+    //
+    //    public long foldLevelNow;
+    //
+    //    public long foldLevelPrev;
+    //
+    //    public long margin;
+    //
+    //    public long listType;
+    //
+    //    public long x;
+    //
+    //    public long y;
+    //
+    //    public long token;
+    //
+    //    public long annotationLinesAdded;
+    //
+    //    public long updated;
+    //
+    //    public long listCompletionMethod;
+    //}
 }

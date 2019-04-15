@@ -9,12 +9,24 @@ namespace ScintillaNET
 {
 
     // @protocol ScintillaNotificationProtocol
+    //[Protocol, BaseType(typeof(NSObject))]
+    //interface ScintillaNotificationProtocol
+    //{
+    //    // @required -(void)notification:(SCNotification *)notification;
+    //    [Abstract]
+    //    [Export("notification:")]
+    //    void Notification(IntPtr notification);
+    //}
+
+    [Model]
     [Protocol]
+    [BaseType(typeof(NSObject))]
     interface ScintillaNotificationProtocol
     {
         // @required -(void)notification:(SCNotification *)notification;
         [Abstract]
         [Export("notification:")]
+        //void Notification(SCNotification notification);
         void Notification(IntPtr notification);
     }
 

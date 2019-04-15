@@ -1833,32 +1833,37 @@ namespace ScintillaNET
             public IntPtr lpstrText;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct SCNotification
-        {
-            public Sci_NotifyHeader nmhdr;
-            public int position;
-            public int ch;
-            public int modifiers;
-            public int modificationType;
-            public IntPtr text;
-            public int length;
-            public int linesAdded;
-            public int message;
-            public IntPtr wParam;
-            public IntPtr lParam;
-            public int line;
-            public int foldLevelNow;
-            public int foldLevelPrev;
-            public int margin;
-            public int listType;
-            public int x;
-            public int y;
-            public int token;
-            public int annotationLinesAdded;
-            public int updated;
-            public int listCompletionMethod;
-        }
+        //[StructLayout(LayoutKind.Sequential)]
+        //public struct SCNotification
+        //{
+        //    public Sci_NotifyHeader nmhdr;
+        //    //public int position;
+        //    public int position;
+        //    public int ch;
+        //    public int modifiers;
+        //    public int modificationType;
+        //    public IntPtr text;
+        //    //public int length;
+        //    //public int linesAdded;
+        //    public long length;
+        //    public long linesAdded;
+        //    public int message;
+        //    public IntPtr wParam;
+        //    public IntPtr lParam;
+        //    //public int line;
+        //    public long line;
+        //    public int foldLevelNow;
+        //    public int foldLevelPrev;
+        //    public int margin;
+        //    public int listType;
+        //    public int x;
+        //    public int y;
+        //    public int token;
+        //    //public int annotationLinesAdded;
+        //    public long annotationLinesAdded;
+        //    public int updated;
+        //    public int listCompletionMethod;
+        //}
 
         #endregion Structures
     }
