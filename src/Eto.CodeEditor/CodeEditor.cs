@@ -111,6 +111,10 @@ namespace Eto.CodeEditor
             Handler.AddTypeNameIndicator(position, length);
         }
 
+        public void ShowWhitespace() => Handler.ShowWhitespace();
+
+        public void ShowWhitespaceWithColor(Eto.Drawing.Color color) => Handler.ShowWhitespaceWithColor(color);
+
         public event EventHandler TextChanged
         {
             add
@@ -139,6 +143,8 @@ namespace Eto.CodeEditor
             void AddErrorIndicator(int position, int length);
             void AddWarningIndicator(int position, int length);
             void AddTypeNameIndicator(int position, int length);
+            void ShowWhitespace();
+            void ShowWhitespaceWithColor(Eto.Drawing.Color color);
 
             event EventHandler TextChanged;
         }
