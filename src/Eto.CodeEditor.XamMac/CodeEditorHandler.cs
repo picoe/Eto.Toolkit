@@ -12,7 +12,6 @@ using ScintillaNET;
 using Foundation;
 using System.IO;
 using ObjCRuntime;
-using AppKit;
 using System.Runtime.InteropServices;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
@@ -81,6 +80,17 @@ namespace Eto.CodeEditor.XamMac2
             }
         }
 
+
+        public void ShowWhitespace()
+        {
+            Control.SetGeneralProperty(NativeMethods.SCI_SETVIEWWS, 1);
+        }
+
+        public void ShowWhitespaceWithColor(Eto.Drawing.Color color)
+        {
+            ShowWhitespace();
+            Control.SetColorProperty(NativeMethods.SCI_SETWHITESPACEBACK, NativeMethods.SCWS_VISIBLEALWAYS, color.ToHex());
+        }
 
         public string FontName
         {
