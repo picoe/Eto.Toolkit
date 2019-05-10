@@ -71,6 +71,12 @@ namespace Eto.CodeEditor
             set => Handler.FontSize = value;
         }
 
+        public int TabWidth
+        {
+            get => Handler.TabWidth;
+            set => Handler.TabWidth = value;
+        }
+
         public int LineNumberColumnWidth
         {
             get => Handler.LineNumberColumnWidth;
@@ -133,6 +139,7 @@ namespace Eto.CodeEditor
             void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets);
             string FontName { get; set; }
             int FontSize { get; set; }
+            int TabWidth { get; set; }
             int LineNumberColumnWidth { get; set; }
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
 
