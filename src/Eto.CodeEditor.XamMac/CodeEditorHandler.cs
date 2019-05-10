@@ -33,6 +33,7 @@ namespace Eto.CodeEditor.XamMac2
             FontName = "Menlo";
             FontSize = 14;
             LineNumberColumnWidth = 40;
+            TabWidth = 4;
         }
 
         public string Text
@@ -113,6 +114,18 @@ namespace Eto.CodeEditor.XamMac2
             set
             {
                 Control.SetGeneralProperty(ScintillaNET.NativeMethods.SCI_STYLESETSIZE, ScintillaNET.NativeMethods.STYLE_DEFAULT, value);
+            }
+        }
+
+        public int TabWidth
+        {
+            get
+            {
+                return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETTABWIDTH);
+            }
+            set
+            {
+                Control.SetGeneralProperty(NativeMethods.SCI_SETTABWIDTH, value);
             }
         }
 
