@@ -34,6 +34,7 @@ namespace Eto.CodeEditor.XamMac2
             FontSize = 14;
             LineNumberColumnWidth = 40;
             TabWidth = 4;
+            ReplaceTabsWithSpaces = true;
         }
 
         public string Text
@@ -81,16 +82,29 @@ namespace Eto.CodeEditor.XamMac2
             }
         }
 
+        public bool IsWhitespaceVisible => Control.GetGeneralProperty(NativeMethods.SCI_GETVIEWWS) == 1;
 
         public void ShowWhitespace()
         {
             Control.SetGeneralProperty(NativeMethods.SCI_SETVIEWWS, 1);
         }
 
+        public void HideWhitespace()
+        {
+            Control.SetGeneralProperty(NativeMethods.SCI_SETVIEWWS, 0);
+        }
+
         public void ShowWhitespaceWithColor(Eto.Drawing.Color color)
         {
             ShowWhitespace();
             Control.SetColorProperty(NativeMethods.SCI_SETWHITESPACEBACK, NativeMethods.SCWS_VISIBLEALWAYS, color.ToHex());
+        }
+
+        public void Rnd()
+        {
+            //Control.SetGeneralProperty(NativeMethods.SCI_SETUSETABS, 0); // don't use tabs
+            int i = (int)Control.GetGeneralProperty(NativeMethods.SCI_GETUSETABS);
+            Console.WriteLine($"usetabs {i == 1}");
         }
 
         public string FontName
@@ -126,6 +140,18 @@ namespace Eto.CodeEditor.XamMac2
             set
             {
                 Control.SetGeneralProperty(NativeMethods.SCI_SETTABWIDTH, value);
+            }
+        }
+
+        public bool ReplaceTabsWithSpaces
+        {
+            get
+            {
+                return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETUSETABS) == 0;
+            }
+            set
+            {
+                Control.SetGeneralProperty(NativeMethods.SCI_SETUSETABS, value ? 0 : 1);
             }
         }
 

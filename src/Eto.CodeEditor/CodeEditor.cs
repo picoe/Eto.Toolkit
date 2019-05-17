@@ -77,6 +77,12 @@ namespace Eto.CodeEditor
             set => Handler.TabWidth = value;
         }
 
+        public bool ReplaceTabsWithSpaces
+        {
+            get => Handler.ReplaceTabsWithSpaces;
+            set => Handler.ReplaceTabsWithSpaces = value;
+        }
+
         public int LineNumberColumnWidth
         {
             get => Handler.LineNumberColumnWidth;
@@ -117,7 +123,9 @@ namespace Eto.CodeEditor
             Handler.AddTypeNameIndicator(position, length);
         }
 
+        public bool IsWhitespaceVisible => Handler.IsWhitespaceVisible;
         public void ShowWhitespace() => Handler.ShowWhitespace();
+        public void HideWhitespace() => Handler.HideWhitespace();
 
         public void ShowWhitespaceWithColor(Eto.Drawing.Color color) => Handler.ShowWhitespaceWithColor(color);
 
@@ -133,6 +141,8 @@ namespace Eto.CodeEditor
             }
         }
 
+        public void Rnd() { Handler.Rnd(); }
+
         public new interface IHandler : Control.IHandler
         {
             string Text { get; set; }
@@ -140,6 +150,7 @@ namespace Eto.CodeEditor
             string FontName { get; set; }
             int FontSize { get; set; }
             int TabWidth { get; set; }
+            bool ReplaceTabsWithSpaces { get; set; }
             int LineNumberColumnWidth { get; set; }
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
 
@@ -150,8 +161,11 @@ namespace Eto.CodeEditor
             void AddErrorIndicator(int position, int length);
             void AddWarningIndicator(int position, int length);
             void AddTypeNameIndicator(int position, int length);
+            bool IsWhitespaceVisible { get; }
             void ShowWhitespace();
+            void HideWhitespace();
             void ShowWhitespaceWithColor(Eto.Drawing.Color color);
+            void Rnd();
 
             event EventHandler TextChanged;
         }
