@@ -126,6 +126,9 @@ namespace Eto.CodeEditor
         public bool IsWhitespaceVisible => Handler.IsWhitespaceVisible;
         public void ShowWhitespace() => Handler.ShowWhitespace();
         public void HideWhitespace() => Handler.HideWhitespace();
+        public bool AreIndentationGuidesVisible => Handler.AreIndentationGuidesVisible;
+        public void ShowIndentationGuides() => Handler.ShowIndentationGuides();
+        public void HideIndentationGuides() => Handler.HideIndentationGuides();
 
         public void ShowWhitespaceWithColor(Eto.Drawing.Color color) => Handler.ShowWhitespaceWithColor(color);
 
@@ -180,6 +183,9 @@ namespace Eto.CodeEditor
             void ShowWhitespace();
             void HideWhitespace();
             void ShowWhitespaceWithColor(Eto.Drawing.Color color);
+            bool AreIndentationGuidesVisible { get; }
+            void ShowIndentationGuides();
+            void HideIndentationGuides();
             void Rnd();
 
             event EventHandler<TextChangedEventArgs> TextChanged;

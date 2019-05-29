@@ -40,6 +40,7 @@ namespace Eto.CodeEditor.XamMac2
             LineNumberColumnWidth = 40;
             TabWidth = 4;
             ReplaceTabsWithSpaces = true;
+            ShowIndentationGuides();
         }
 
         public string Text
@@ -103,6 +104,18 @@ namespace Eto.CodeEditor.XamMac2
         {
             ShowWhitespace();
             Control.SetColorProperty(NativeMethods.SCI_SETWHITESPACEBACK, NativeMethods.SCWS_VISIBLEALWAYS, color.ToHex());
+        }
+
+        public bool AreIndentationGuidesVisible => Control.GetGeneralProperty(NativeMethods.SCI_GETINDENTATIONGUIDES) != NativeMethods.SC_IV_NONE;
+
+        public void ShowIndentationGuides()
+        {
+            Control.SetGeneralProperty(NativeMethods.SCI_SETINDENTATIONGUIDES, NativeMethods.SC_IV_LOOKBOTH);
+        }
+
+        public void HideIndentationGuides()
+        {
+            Control.SetGeneralProperty(NativeMethods.SCI_SETINDENTATIONGUIDES, NativeMethods.SC_IV_NONE);
         }
 
         public void Rnd()
