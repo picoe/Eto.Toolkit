@@ -126,10 +126,13 @@ namespace Eto.CodeEditor
         public bool IsWhitespaceVisible => Handler.IsWhitespaceVisible;
         public void ShowWhitespace() => Handler.ShowWhitespace();
         public void HideWhitespace() => Handler.HideWhitespace();
+        public bool AreIndentationGuidesVisible => Handler.AreIndentationGuidesVisible;
+        public void ShowIndentationGuides() => Handler.ShowIndentationGuides();
+        public void HideIndentationGuides() => Handler.HideIndentationGuides();
 
         public void ShowWhitespaceWithColor(Eto.Drawing.Color color) => Handler.ShowWhitespaceWithColor(color);
 
-        public event EventHandler TextChanged
+        public event EventHandler<TextChangedEventArgs> TextChanged
         {
             add
             {
@@ -142,6 +145,21 @@ namespace Eto.CodeEditor
         }
 
         public void Rnd() { Handler.Rnd(); }
+
+        //protected override object GetCallback() => new Callback();
+		//
+        //public new interface ICallback : Control.ICallback
+        //{
+        //    void OnTextChanged(CodeEditor widget, TextChangedEventArgs e);
+        //}
+		//
+        //protected new class Callback : Control.Callback, ICallback
+        //{
+        //    public void OnTextChanged(CodeEditor widget, TextChangedEventArgs e)
+        //    {
+        //        // do something
+        //    }
+        //}
 
         public new interface IHandler : Control.IHandler
         {
@@ -165,9 +183,12 @@ namespace Eto.CodeEditor
             void ShowWhitespace();
             void HideWhitespace();
             void ShowWhitespaceWithColor(Eto.Drawing.Color color);
+            bool AreIndentationGuidesVisible { get; }
+            void ShowIndentationGuides();
+            void HideIndentationGuides();
             void Rnd();
 
-            event EventHandler TextChanged;
+            event EventHandler<TextChangedEventArgs> TextChanged;
         }
     }
 

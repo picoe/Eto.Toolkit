@@ -26,15 +26,21 @@ namespace Eto.CodeEditor.XamMac2
             Dlfcn.dlopen(path, 4);
         }
 
+        private EtoScintillaNotificationProtocol notificationProtocol;
         public CodeEditorHandler()
         {
-            Control = new ScintillaView();
+            var sv = new ScintillaView();
+            notificationProtocol = new EtoScintillaNotificationProtocol();
+            notificationProtocol.Notify += NotificationProtocol_Notify;
+            sv.WeakDelegate = notificationProtocol;
+            Control = sv;
 
             FontName = "Menlo";
             FontSize = 14;
             LineNumberColumnWidth = 40;
             TabWidth = 4;
             ReplaceTabsWithSpaces = true;
+            ShowIndentationGuides();
         }
 
         public string Text
@@ -98,6 +104,18 @@ namespace Eto.CodeEditor.XamMac2
         {
             ShowWhitespace();
             Control.SetColorProperty(NativeMethods.SCI_SETWHITESPACEBACK, NativeMethods.SCWS_VISIBLEALWAYS, color.ToHex());
+        }
+
+        public bool AreIndentationGuidesVisible => Control.GetGeneralProperty(NativeMethods.SCI_GETINDENTATIONGUIDES) != NativeMethods.SC_IV_NONE;
+
+        public void ShowIndentationGuides()
+        {
+            Control.SetGeneralProperty(NativeMethods.SCI_SETINDENTATIONGUIDES, NativeMethods.SC_IV_LOOKBOTH);
+        }
+
+        public void HideIndentationGuides()
+        {
+            Control.SetGeneralProperty(NativeMethods.SCI_SETINDENTATIONGUIDES, NativeMethods.SC_IV_NONE);
         }
 
         public void Rnd()
@@ -259,11 +277,21 @@ namespace Eto.CodeEditor.XamMac2
         public void ClearAllTypeNameIndicators() { }
         public void AddTypeNameIndicator(int position, int length) { }
 
-
-        public event EventHandler TextChanged
+        void NotificationProtocol_Notify(object sender, SCNotifyEventArgs e)
         {
-            add { }
-            remove { }
+            var n = e.Notification;
+            switch (n.nmhdr.code)
+            {
+
+                case NativeMethods.SCN_CHARADDED:
+                    var args = new TextChangedEventArgs(TextChangeType.CharAdded, (char)n.ch);
+                    TextChanged?.Invoke(this, args);
+                    break;
+                default:
+                    break;
+            }
         }
+
+        public event EventHandler<TextChangedEventArgs> TextChanged;
     }
 }
