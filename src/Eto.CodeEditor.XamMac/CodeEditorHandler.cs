@@ -231,6 +231,36 @@ namespace Eto.CodeEditor.XamMac2
                 }
             }
         }
+
+        public int CurrentPosition
+        {
+            get => (int)Control.GetGeneralProperty(NativeMethods.SCI_GETCURRENTPOS);
+            set => Control.SetGeneralProperty(NativeMethods.SCI_GOTOPOS, value);
+        }
+
+        public int CurrentLineNumber => (int)Control.GetGeneralProperty(NativeMethods.SCI_LINEFROMPOSITION, CurrentPosition);
+
+        public int GetLineIndentation(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_GETLINEINDENTATION, lineNumber);
+
+        public void SetLineIndentation(int lineNumber, int indentation) => Control.SetGeneralProperty(NativeMethods.SCI_SETLINEINDENTATION, lineNumber, indentation);
+
+        public char GetLineLastChar(int lineNumber)
+        {
+            var lineEndPos = Control.GetGeneralProperty(NativeMethods.SCI_GETLINEENDPOSITION, lineNumber);
+            char lineLastChar;
+            do
+            {
+                lineLastChar = (char)Control.GetGeneralProperty(NativeMethods.SCI_GETCHARAT, lineEndPos--);
+            }
+            while (lineLastChar == '\n' || lineLastChar == '\r');
+            return lineLastChar;
+        }
+
+        public string GetLineText(int lineNumber)
+        {
+            return ""; //todo
+        }
+
         private const int ErrorIndex = 20;
         private const int WarningIndex = 21;
         public void SetupIndicatorStyles()
@@ -284,14 +314,15 @@ namespace Eto.CodeEditor.XamMac2
             {
 
                 case NativeMethods.SCN_CHARADDED:
-                    var args = new TextChangedEventArgs(TextChangeType.CharAdded, (char)n.ch);
-                    TextChanged?.Invoke(this, args);
+                    CharAdded?.Invoke(this, new TextChangedEventArgs(TextChangeType.CharAdded, (char)n.ch));
+                    break;
+                case NativeMethods.SCN_MODIFIED:
                     break;
                 default:
                     break;
             }
         }
 
-        public event EventHandler<TextChangedEventArgs> TextChanged;
+        public event EventHandler<TextChangedEventArgs> CharAdded;
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Eto.CodeEditor
 {
-    public enum TextChangeType {CharAdded, CharDeleted }
+    public enum TextChangeType {CharAdded, CharDeleted, Modified }
 
     public class TextChangedEventArgs : EventArgs
     {
@@ -13,6 +15,8 @@ namespace Eto.CodeEditor
             this.textChangeType = textChangeType;
             this.charAddedOrDeleted = charAddedOrDeleted;
         }
+
+        public bool NewLineAdded => charAddedOrDeleted == '\n' || charAddedOrDeleted == '\r';
 
         public TextChangeType TextChangeType => textChangeType;
 
