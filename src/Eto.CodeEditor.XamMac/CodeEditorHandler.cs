@@ -247,12 +247,13 @@ namespace Eto.CodeEditor.XamMac2
         public char GetLineLastChar(int lineNumber)
         {
             var lineEndPos = Control.GetGeneralProperty(NativeMethods.SCI_GETLINEENDPOSITION, lineNumber);
+            var lineStartPos = Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, lineNumber);
             char lineLastChar;
             do
             {
                 lineLastChar = (char)Control.GetGeneralProperty(NativeMethods.SCI_GETCHARAT, lineEndPos--);
             }
-            while (lineLastChar == '\n' || lineLastChar == '\r');
+            while (lineEndPos >= lineStartPos && (lineLastChar == '\n' || lineLastChar == '\r'));
             return lineLastChar;
         }
 
