@@ -44,7 +44,31 @@ namespace Eto.CodeEditor
             SetColor(Section.Comment, Drawing.Colors.DarkGray, Drawing.Colors.White);
             SetColor(Section.Keyword, Drawing.Colors.Blue, Drawing.Colors.White);
             SetColor(Section.LineNumber, Drawing.Colors.Gray, Drawing.Colors.White);
+
+            Handler.CharAdded += CodeEditor_CharAdded;
         }
+
+        void CodeEditor_CharAdded(object sender, TextChangedEventArgs e)
+        {
+            // Python auto indent
+            if (e.NewLineAdded && Language == ProgrammingLanguage.Python)
+            {
+                if (CurrentLineNumber > 0)
+                {
+                    var indentation = GetLineIndentation(CurrentLineNumber - 1);
+                    var lastChar = GetLineLastChar(CurrentLineNumber - 1);
+                    if (lastChar == ':')
+                        indentation = indentation + TabWidth;
+                    if (indentation > 0)
+                    {
+                        SetLineIndentation(CurrentLineNumber, indentation);
+                        CurrentPosition += indentation;
+                    }
+                }
+
+            }
+        }
+
 
         new IHandler Handler => (IHandler)base.Handler;
 
@@ -94,6 +118,21 @@ namespace Eto.CodeEditor
             Handler.SetColor(section, foreground, background);
         }
 
+        public int CurrentPosition
+        {
+            get => Handler.CurrentPosition;
+            set => Handler.CurrentPosition = value;
+        }
+
+        public int CurrentLineNumber => Handler.CurrentLineNumber;
+
+        public int GetLineIndentation(int lineNumber) => Handler.GetLineIndentation(lineNumber);
+        public void SetLineIndentation(int lineNumber, int indentation) => Handler.SetLineIndentation(lineNumber, indentation);
+
+        public char GetLineLastChar(int lineNumber) => Handler.GetLineLastChar(lineNumber);
+
+        public string GetLineText(int lineNumber) => Handler.GetLineText(lineNumber);
+
         public void SetupIndicatorStyles()
         {
             Handler.SetupIndicatorStyles();
@@ -132,34 +171,7 @@ namespace Eto.CodeEditor
 
         public void ShowWhitespaceWithColor(Eto.Drawing.Color color) => Handler.ShowWhitespaceWithColor(color);
 
-        public event EventHandler<TextChangedEventArgs> TextChanged
-        {
-            add
-            {
-                Handler.TextChanged += value;
-            }
-            remove
-            {
-                Handler.TextChanged -= value;
-            }
-        }
-
         public void Rnd() { Handler.Rnd(); }
-
-        //protected override object GetCallback() => new Callback();
-		//
-        //public new interface ICallback : Control.ICallback
-        //{
-        //    void OnTextChanged(CodeEditor widget, TextChangedEventArgs e);
-        //}
-		//
-        //protected new class Callback : Control.Callback, ICallback
-        //{
-        //    public void OnTextChanged(CodeEditor widget, TextChangedEventArgs e)
-        //    {
-        //        // do something
-        //    }
-        //}
 
         public new interface IHandler : Control.IHandler
         {
@@ -171,6 +183,15 @@ namespace Eto.CodeEditor
             bool ReplaceTabsWithSpaces { get; set; }
             int LineNumberColumnWidth { get; set; }
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
+            int CurrentPosition { get; set; }
+            int CurrentLineNumber { get; }
+
+            int GetLineIndentation(int lineNumber);
+            void SetLineIndentation(int lineNumber, int indentation);
+
+            char GetLineLastChar(int lineNumber);
+
+            string GetLineText(int lineNumber);
 
             void SetupIndicatorStyles();
             void ClearAllErrorIndicators();
@@ -188,7 +209,7 @@ namespace Eto.CodeEditor
             void HideIndentationGuides();
             void Rnd();
 
-            event EventHandler<TextChangedEventArgs> TextChanged;
+            event EventHandler<TextChangedEventArgs> CharAdded;
         }
     }
 
