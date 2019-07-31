@@ -9,6 +9,7 @@ using Eto.Forms;
 using Eto.CodeEditor;
 using Eto.CodeEditor.Wpf;
 using ScintillaNET;
+using Eto.Drawing;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
 
@@ -133,18 +134,20 @@ namespace Eto.CodeEditor.Wpf
         private const int WarningIndex = 21;
         private const int TypeNameIndex = 22;
 
+        public event EventHandler<TextChangedEventArgs> CharAdded;
+
         public void SetupIndicatorStyles()
         {
             WinFormsControl.Indicators[ErrorIndex].Style = IndicatorStyle.CompositionThick;
-            WinFormsControl.Indicators[ErrorIndex].ForeColor = Color.Crimson;
+            WinFormsControl.Indicators[ErrorIndex].ForeColor = System.Drawing.Color.Crimson;
             //WinFormsControl.Indicators[ErrorIndex].Alpha = 255;
    
             WinFormsControl.Indicators[WarningIndex].Style = IndicatorStyle.CompositionThick;
-            WinFormsControl.Indicators[WarningIndex].ForeColor = Color.DarkOrange;
+            WinFormsControl.Indicators[WarningIndex].ForeColor = System.Drawing.Color.DarkOrange;
             //WinFormsControl.Indicators[WarningIndex].Alpha = 255;
 
             WinFormsControl.Indicators[TypeNameIndex].Style = IndicatorStyle.TextFore;
-            WinFormsControl.Indicators[TypeNameIndex].ForeColor = Color.FromArgb(43, 145, 175);
+            WinFormsControl.Indicators[TypeNameIndex].ForeColor = System.Drawing.Color.FromArgb(43, 145, 175);
         }
         public void ClearAllErrorIndicators()
         {
@@ -188,6 +191,42 @@ namespace Eto.CodeEditor.Wpf
             {
                 WinFormsControl.Margins[0].Width = value;
             }
+        }
+
+        public int TabWidth { get => WinFormsControl.TabWidth; set => WinFormsControl.TabWidth = value; }
+        public bool ReplaceTabsWithSpaces { get => !WinFormsControl.UseTabs; set => WinFormsControl.UseTabs = !value; }
+        public int CurrentPosition { get => WinFormsControl.CurrentPosition; set => WinFormsControl.CurrentPosition = value; }
+
+        public int CurrentLineNumber => WinFormsControl.CurrentLine;
+
+        public bool IsWhitespaceVisible => WinFormsControl.ViewWhitespace != WhitespaceMode.Invisible;
+
+        public void ShowWhitespace()
+        {
+            WinFormsControl.ViewWhitespace = WhitespaceMode.VisibleAlways;
+        }
+
+        public void HideWhitespace()
+        {
+            WinFormsControl.ViewWhitespace = WhitespaceMode.Invisible;
+        }
+
+        public void ShowWhitespaceWithColor(Eto.Drawing.Color color)
+        {
+            ShowWhitespace();
+            WinFormsControl.SetWhitespaceBackColor(true, System.Drawing.Color.FromArgb(color.ToArgb()));
+        }
+
+        public bool AreIndentationGuidesVisible => WinFormsControl.IndentationGuides != IndentView.None;
+
+        public void ShowIndentationGuides()
+        {
+            WinFormsControl.IndentationGuides = IndentView.LookBoth;
+        }
+
+        public void HideIndentationGuides()
+        {
+            WinFormsControl.IndentationGuides = IndentView.None;
         }
 
         public event EventHandler TextChanged
@@ -235,6 +274,36 @@ namespace Eto.CodeEditor.Wpf
             FontName = "Consolas";
             FontSize = 10;
             LineNumberColumnWidth = 40;
+        }
+
+        public int GetLineIndentation(int lineNumber)
+        {
+            var line = new Line(WinFormsControl, lineNumber);
+            return line?.Indentation ?? 0;
+        }
+
+        public void SetLineIndentation(int lineNumber, int indentation)
+        {
+            var line = new Line(WinFormsControl, lineNumber);
+            if (line != null)
+                line.Indentation = indentation;
+        }
+
+        public char GetLineLastChar(int lineNumber)
+        {
+            var line = new Line(WinFormsControl, lineNumber);
+            return line?.Text.Reverse().SkipWhile(c => c == '\n' || c == '\r').FirstOrDefault() ?? '\0';
+        }
+
+        public string GetLineText(int lineNumber)
+        {
+            var line = new Line(WinFormsControl, lineNumber);
+            return line?.Text ?? "";
+        }
+
+        public void Rnd()
+        {
+            throw new NotImplementedException();
         }
     }
 }
