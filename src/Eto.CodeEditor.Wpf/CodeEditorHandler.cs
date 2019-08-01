@@ -21,6 +21,12 @@ namespace Eto.CodeEditor.Wpf
         {
             WinFormsControl = new ScintillaNET.Scintilla();
             SetupTheme();
+            WinFormsControl.CharAdded += WinFormsControl_CharAdded;
+        }
+
+        private void WinFormsControl_CharAdded(object sender, CharAddedEventArgs e)
+        {
+            CharAdded?.Invoke(this, new TextChangedEventArgs(TextChangeType.CharAdded, (char)e.Char));
         }
 
         public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
@@ -286,7 +292,10 @@ namespace Eto.CodeEditor.Wpf
         {
             var line = new Line(WinFormsControl, lineNumber);
             if (line != null)
+            {
                 line.Indentation = indentation;
+                WinFormsControl.GotoPosition(line.Position + indentation);
+            }
         }
 
         public char GetLineLastChar(int lineNumber)
