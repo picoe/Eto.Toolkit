@@ -25,7 +25,4 @@
     <PackageReference Include="Eto.Forms" Version="2.4.1" />
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.0" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Eto\src\Eto\Eto.csproj" />
-  </ItemGroup>
 </Project>
