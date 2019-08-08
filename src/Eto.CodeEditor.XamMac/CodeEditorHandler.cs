@@ -308,6 +308,64 @@ namespace Eto.CodeEditor.XamMac2
         public void ClearAllTypeNameIndicators() { }
         public void AddTypeNameIndicator(int position, int length) { }
 
+        public bool AutoCompleteActive
+        {
+            get
+            {
+                return Control.Message(NativeMethods.SCI_AUTOCACTIVE, IntPtr.Zero, IntPtr.Zero) != IntPtr.Zero;
+            }
+        }
+
+        public unsafe void InsertText(int position, string text)
+        {
+            if (position < -1)
+                throw new ArgumentOutOfRangeException(nameof(position), "Position must be greater or equal to -1");
+            if (position != -1)
+            {
+                int textLength = Control.Message(NativeMethods.SCI_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+                if (position > textLength)
+                    throw new ArgumentOutOfRangeException(nameof(position), "Position cannot exceed document length");
+            }
+
+            fixed (byte* bp = Eto.CodeEditor.Mac.Helpers.GetBytes(text ?? string.Empty, Encoding, zeroTerminated: true))
+                Control.Message(NativeMethods.SCI_INSERTTEXT, new IntPtr(position), new IntPtr(bp));
+        }
+
+        public int WordStartPosition(int position, bool onlyWordCharacters)
+        {
+            var onlyWordChars = (onlyWordCharacters ? new IntPtr(1) : IntPtr.Zero);
+            int textLength = Control.Message(NativeMethods.SCI_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+            position = Eto.CodeEditor.Mac.Helpers.Clamp(position, 0, textLength);
+            position = Control.Message(NativeMethods.SCI_WORDSTARTPOSITION, new IntPtr(position), onlyWordChars).ToInt32();
+            return position;
+        }
+
+        public string GetTextRange(int position, int length)
+        {
+            string txt = Text;
+            return txt.Substring(position, length);
+        }
+
+        public unsafe void AutoCompleteShow(int lenEntered, string list)
+        {
+            if (string.IsNullOrEmpty(list))
+                return;
+            lenEntered = Eto.CodeEditor.Mac.Helpers.ClampMin(lenEntered, 0);
+            if( lenEntered > 0 )
+            {
+                int endPos = Control.Message(NativeMethods.SCI_GETCURRENTPOS, IntPtr.Zero, IntPtr.Zero).ToInt32();
+                int startPos = endPos;
+                for (int i = 0; i < lenEntered; i++)
+                    startPos = Control.Message(NativeMethods.SCI_POSITIONRELATIVE, new IntPtr(startPos), new IntPtr(-1)).ToInt32();
+                lenEntered = (endPos - startPos);
+            }
+
+            var bytes = Eto.CodeEditor.Mac.Helpers.GetBytes(list, Encoding, zeroTerminated: true);
+            fixed (byte* bp = bytes)
+                Control.Message(NativeMethods.SCI_AUTOCSHOW, new IntPtr(lenEntered), new IntPtr(bp));
+        }
+
+
         void NotificationProtocol_Notify(object sender, SCNotifyEventArgs e)
         {
             var n = e.Notification;
@@ -315,15 +373,30 @@ namespace Eto.CodeEditor.XamMac2
             {
 
                 case NativeMethods.SCN_CHARADDED:
-                    CharAdded?.Invoke(this, new TextChangedEventArgs(TextChangeType.CharAdded, (char)n.ch));
+                    CharAdded?.Invoke(this, new CharAddedEventArgs((char)n.ch));
                     break;
                 case NativeMethods.SCN_MODIFIED:
+                    TextChanged?.Invoke(this, new TextChangedEventArgs());
                     break;
                 default:
                     break;
             }
         }
 
-        public event EventHandler<TextChangedEventArgs> CharAdded;
+        public event EventHandler<CharAddedEventArgs> CharAdded;
+        public event EventHandler<TextChangedEventArgs> TextChanged;
+
+
+
+
+        Encoding Encoding
+        {
+            get
+            {
+                int codePage = (int)Control.Message(NativeMethods.SCI_GETCODEPAGE, IntPtr.Zero, IntPtr.Zero);
+                return (codePage == 0) ? Encoding.Default : Encoding.GetEncoding(codePage);
+            }
+        }
+
     }
 }
