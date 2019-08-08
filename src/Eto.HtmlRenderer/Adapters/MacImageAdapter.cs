@@ -1,7 +1,6 @@
 ﻿#if USE_MACIMAGE
 using System;
 using sd = System.Drawing;
-using sdi = System.Drawing.Imaging;
 using System.IO;
 using Eto.Drawing;
 using System.Collections.Generic;
