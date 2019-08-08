@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="ScintillaNotificationProtocol.cs" />
     <Compile Include="SCNotifyEventArgs.cs" />
+    <Compile Include="Helpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Eto.CodeEditor\Eto.CodeEditor.csproj">

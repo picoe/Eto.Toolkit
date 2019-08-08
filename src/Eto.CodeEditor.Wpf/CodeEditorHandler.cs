@@ -22,11 +22,18 @@ namespace Eto.CodeEditor.Wpf
             WinFormsControl = new ScintillaNET.Scintilla();
             SetupTheme();
             WinFormsControl.CharAdded += WinFormsControl_CharAdded;
+            WinFormsControl.TextChanged += WinFormsControl_TextChanged;
         }
 
-        private void WinFormsControl_CharAdded(object sender, CharAddedEventArgs e)
+        private void WinFormsControl_CharAdded(object sender, ScintillaNET.CharAddedEventArgs e)
         {
-            CharAdded?.Invoke(this, new TextChangedEventArgs(TextChangeType.CharAdded, (char)e.Char));
+            CharAdded?.Invoke(this, new Eto.CodeEditor.CharAddedEventArgs((char)e.Char));
+        }
+
+        private void WinFormsControl_TextChanged(object sender, EventArgs e)
+        {
+            TextChanged?.Invoke(this, new Eto.CodeEditor.TextChangedEventArgs());
+
         }
 
         public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
@@ -140,7 +147,8 @@ namespace Eto.CodeEditor.Wpf
         private const int WarningIndex = 21;
         private const int TypeNameIndex = 22;
 
-        public event EventHandler<TextChangedEventArgs> CharAdded;
+        public event EventHandler<Eto.CodeEditor.CharAddedEventArgs> CharAdded;
+        public event EventHandler<Eto.CodeEditor.TextChangedEventArgs> TextChanged;
 
         public void SetupIndicatorStyles()
         {
@@ -235,18 +243,6 @@ namespace Eto.CodeEditor.Wpf
             WinFormsControl.IndentationGuides = IndentView.None;
         }
 
-        public event EventHandler TextChanged
-        {
-            add
-            {
-                WinFormsControl.TextChanged += value;
-            }
-            remove
-            {
-                WinFormsControl.TextChanged -= value;
-            }
-        }
-
         void SetupTheme()
         {
             // just style things enough that you can tell you're working in a code editor
@@ -310,9 +306,20 @@ namespace Eto.CodeEditor.Wpf
             return line?.Text ?? "";
         }
 
-        public void Rnd()
+        public bool AutoCompleteActive { get { return WinFormsControl.AutoCActive; } }
+        public void InsertText(int position, string text) { WinFormsControl.InsertText(position, text); }
+        public int WordStartPosition(int position, bool onlyWordCharacters)
         {
-            throw new NotImplementedException();
+            return WinFormsControl.WordStartPosition(position, onlyWordCharacters);
         }
+        public string GetTextRange(int position, int length)
+        {
+            return WinFormsControl.GetTextRange(position, length);
+        }
+        public void AutoCompleteShow(int lenEntered, string list)
+        {
+            WinFormsControl.AutoCShow(lenEntered, list);
+        }
+
     }
 }

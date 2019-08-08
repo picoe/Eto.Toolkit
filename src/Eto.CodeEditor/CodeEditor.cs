@@ -48,10 +48,10 @@ namespace Eto.CodeEditor
             Handler.CharAdded += CodeEditor_CharAdded;
         }
 
-        void CodeEditor_CharAdded(object sender, TextChangedEventArgs e)
+        void CodeEditor_CharAdded(object sender, CharAddedEventArgs e)
         {
             // Python auto indent
-            if (e.NewLineAdded && Language == ProgrammingLanguage.Python)
+            if (Language == ProgrammingLanguage.Python && (e.Char == '\n' || e.Char == '\r'))
             {
                 if (CurrentLineNumber > 0)
                 {
@@ -171,7 +171,26 @@ namespace Eto.CodeEditor
 
         public void ShowWhitespaceWithColor(Eto.Drawing.Color color) => Handler.ShowWhitespaceWithColor(color);
 
-        public void Rnd() { Handler.Rnd(); }
+        public bool AutoCompleteActive { get => Handler.AutoCompleteActive; }
+        public void InsertText(int position, string text) { Handler.InsertText(position, text); }
+        public int WordStartPosition(int position, bool onlyWordCharacters) { return Handler.WordStartPosition(position, onlyWordCharacters); }
+        public string GetTextRange(int position, int length) { return Handler.GetTextRange(position, length); }
+        public void AutoCompleteShow(int lenEntered, string list) { Handler.AutoCompleteShow(lenEntered, list); }
+
+
+        public event EventHandler<CharAddedEventArgs> CharAdded
+        {
+            add { Handler.CharAdded += value; }
+            remove { Handler.CharAdded -= value; }
+        }
+
+        public event EventHandler<TextChangedEventArgs> TextChanged
+        {
+            add { Handler.TextChanged += value; }
+            remove { Handler.TextChanged -= value; }
+        }
+
+
 
         public new interface IHandler : Control.IHandler
         {
@@ -207,9 +226,16 @@ namespace Eto.CodeEditor
             bool AreIndentationGuidesVisible { get; }
             void ShowIndentationGuides();
             void HideIndentationGuides();
-            void Rnd();
 
-            event EventHandler<TextChangedEventArgs> CharAdded;
+            bool AutoCompleteActive { get; }
+            void InsertText(int position, string text);
+            int WordStartPosition(int position, bool onlyWordCharacters);
+            string GetTextRange(int position, int length);
+            void AutoCompleteShow(int lenEntered, string list);
+
+
+            event EventHandler<CharAddedEventArgs> CharAdded;
+            event EventHandler<TextChangedEventArgs> TextChanged;
         }
     }
 
