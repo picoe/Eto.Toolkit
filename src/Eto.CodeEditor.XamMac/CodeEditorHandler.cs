@@ -41,6 +41,7 @@ namespace Eto.CodeEditor.XamMac2
             TabWidth = 4;
             ReplaceTabsWithSpaces = true;
             ShowIndentationGuides();
+            Control.Message(NativeMethods.SCI_AUTOCSETMAXHEIGHT, new IntPtr(10), IntPtr.Zero);
         }
 
         public string Text
@@ -257,9 +258,16 @@ namespace Eto.CodeEditor.XamMac2
             return lineLastChar;
         }
 
-        public string GetLineText(int lineNumber)
+        public unsafe string GetLineText(int lineNumber)
         {
-            return ""; //todo
+            IntPtr start = Control.Message(NativeMethods.SCI_POSITIONFROMLINE, new IntPtr(lineNumber), IntPtr.Zero);
+            IntPtr length = Control.Message(NativeMethods.SCI_LINELENGTH, new IntPtr(lineNumber), IntPtr.Zero);
+            IntPtr ptr = Control.Message(NativeMethods.SCI_GETRANGEPOINTER, start, length);
+            if (ptr == IntPtr.Zero)
+                return string.Empty;
+
+            var text = new string((sbyte*)ptr, 0, length.ToInt32(), Encoding);
+            return text;
         }
 
         private const int ErrorIndex = 20;
