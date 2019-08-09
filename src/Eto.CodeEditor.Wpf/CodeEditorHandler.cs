@@ -23,6 +23,7 @@ namespace Eto.CodeEditor.Wpf
             SetupTheme();
             WinFormsControl.CharAdded += WinFormsControl_CharAdded;
             WinFormsControl.TextChanged += WinFormsControl_TextChanged;
+            WinFormsControl.AutoCMaxHeight = 10;
         }
 
         private void WinFormsControl_CharAdded(object sender, ScintillaNET.CharAddedEventArgs e)
