@@ -212,6 +212,8 @@ namespace Eto.CodeEditor.Wpf
         public bool ReplaceTabsWithSpaces { get => !WinFormsControl.UseTabs; set => WinFormsControl.UseTabs = !value; }
         public int CurrentPosition { get => WinFormsControl.CurrentPosition; set => WinFormsControl.CurrentPosition = value; }
 
+        public int CurrentPositionInLine => CurrentPosition - WinFormsControl.Lines[CurrentLineNumber].Position;
+
         public int CurrentLineNumber => WinFormsControl.CurrentLine;
 
         public bool IsWhitespaceVisible => WinFormsControl.ViewWhitespace != WhitespaceMode.Invisible;
