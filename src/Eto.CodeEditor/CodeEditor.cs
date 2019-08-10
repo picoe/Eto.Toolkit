@@ -124,6 +124,8 @@ namespace Eto.CodeEditor
             set => Handler.CurrentPosition = value;
         }
 
+        public int CurrentPositionInLine => Handler.CurrentPositionInLine;
+
         public int CurrentLineNumber => Handler.CurrentLineNumber;
 
         public int GetLineIndentation(int lineNumber) => Handler.GetLineIndentation(lineNumber);
@@ -203,6 +205,7 @@ namespace Eto.CodeEditor
             int LineNumberColumnWidth { get; set; }
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
             int CurrentPosition { get; set; }
+            int CurrentPositionInLine { get; }
             int CurrentLineNumber { get; }
 
             int GetLineIndentation(int lineNumber);

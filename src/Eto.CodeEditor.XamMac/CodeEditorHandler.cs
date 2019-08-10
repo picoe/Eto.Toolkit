@@ -239,6 +239,9 @@ namespace Eto.CodeEditor.XamMac2
             set => Control.SetGeneralProperty(NativeMethods.SCI_GOTOPOS, value);
         }
 
+        public int CurrentPositionInLine =>
+            CurrentPosition - (int)Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, CurrentLineNumber);
+
         public int CurrentLineNumber => (int)Control.GetGeneralProperty(NativeMethods.SCI_LINEFROMPOSITION, CurrentPosition);
 
         public int GetLineIndentation(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_GETLINEINDENTATION, lineNumber);
