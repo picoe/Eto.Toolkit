@@ -374,6 +374,10 @@ namespace Eto.CodeEditor.XamMac2
             var bytes = Eto.CodeEditor.Mac.Helpers.GetBytes(list, Encoding, zeroTerminated: true);
             fixed (byte* bp = bytes)
                 Control.Message(NativeMethods.SCI_AUTOCSHOW, new IntPtr(lenEntered), new IntPtr(bp));
+            // if the following property is not set, items after 'import' that start with an uppercase
+            // closes the completion window. Ex: 'import R' closes the window even though 'Rhino' is
+            // in the list.
+            Control.Message(NativeMethods.SCI_AUTOCSETIGNORECASE, new IntPtr(1), IntPtr.Zero);
         }
 
 
