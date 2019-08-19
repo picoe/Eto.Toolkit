@@ -93,7 +93,7 @@ namespace Eto.CodeEditor.XamMac2
 
         public void ShowWhitespace()
         {
-            Control.SetGeneralProperty(NativeMethods.SCI_SETVIEWWS, 1);
+            Control.SetGeneralProperty(NativeMethods.SCI_SETVIEWWS, NativeMethods.SCWS_VISIBLEALWAYS);
         }
 
         public void HideWhitespace()
@@ -117,13 +117,6 @@ namespace Eto.CodeEditor.XamMac2
         public void HideIndentationGuides()
         {
             Control.SetGeneralProperty(NativeMethods.SCI_SETINDENTATIONGUIDES, NativeMethods.SC_IV_NONE);
-        }
-
-        public void Rnd()
-        {
-            //Control.SetGeneralProperty(NativeMethods.SCI_SETUSETABS, 0); // don't use tabs
-            int i = (int)Control.GetGeneralProperty(NativeMethods.SCI_GETUSETABS);
-            Console.WriteLine($"usetabs {i == 1}");
         }
 
         public string FontName
@@ -261,17 +254,24 @@ namespace Eto.CodeEditor.XamMac2
             return lineLastChar;
         }
 
-        public unsafe string GetLineText(int lineNumber)
+        public string GetLineText(int lineNumber)
         {
-            IntPtr start = Control.Message(NativeMethods.SCI_POSITIONFROMLINE, new IntPtr(lineNumber), IntPtr.Zero);
-            IntPtr length = Control.Message(NativeMethods.SCI_LINELENGTH, new IntPtr(lineNumber), IntPtr.Zero);
-            IntPtr ptr = Control.Message(NativeMethods.SCI_GETRANGEPOINTER, start, length);
-            if (ptr == IntPtr.Zero)
+            var start = Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, lineNumber);
+            var length = Control.GetGeneralProperty(NativeMethods.SCI_LINELENGTH, lineNumber);
+            var ptr = Control.GetGeneralProperty(NativeMethods.SCI_GETRANGEPOINTER, start, length);
+            if (ptr == 0)
                 return string.Empty;
-
-            var text = new string((sbyte*)ptr, 0, length.ToInt32(), Encoding);
+            var text = Mac.Helpers.GetString(new IntPtr(ptr), (int)length, Encoding); // new string((sbyte*)ptr, 0, length.ToInt32(), scintilla.Encoding);
             return text;
         }
+        // private because it's a test. To see if it works like GetLineText
+        private string GetLineText2(int lineNumber)
+        {
+            // look at SCI_GETLINE
+            return "not implemented";
+        }
+
+        public int GetLineLength(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_LINELENGTH, lineNumber);
 
         private const int ErrorIndex = 20;
         private const int WarningIndex = 21;
@@ -333,7 +333,7 @@ namespace Eto.CodeEditor.XamMac2
                 throw new ArgumentOutOfRangeException(nameof(position), "Position must be greater or equal to -1");
             if (position != -1)
             {
-                int textLength = Control.Message(NativeMethods.SCI_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+                int textLength = Control.Message(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
                 if (position > textLength)
                     throw new ArgumentOutOfRangeException(nameof(position), "Position cannot exceed document length");
             }
@@ -342,10 +342,69 @@ namespace Eto.CodeEditor.XamMac2
                 Control.Message(NativeMethods.SCI_INSERTTEXT, new IntPtr(position), new IntPtr(bp));
         }
 
+        public void DeleteRange(int position, int length)
+        {
+            var textLength = (int)Control.GetGeneralProperty(NativeMethods.SCI_GETLENGTH);
+            position = Mac.Helpers.Clamp(position, 0, textLength);
+            length = Mac.Helpers.Clamp(length, 0, textLength - position);
+
+            // Convert to byte position/length
+            //var byteStartPos = Lines.CharToBytePosition(position);
+            //var byteEndPos = Lines.CharToBytePosition(position + length);
+
+            Control.Message(NativeMethods.SCI_DELETERANGE, new IntPtr(position), new IntPtr(length));
+        }
+
+        public void SetTargetRange(int start, int end)
+        {
+            var textLength = Control.Message(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+            start = Mac.Helpers.Clamp(start, 0, textLength);
+            end = Mac.Helpers.Clamp(end, 0, textLength);
+
+            //start = Lines.CharToBytePosition(start);
+            //end = Lines.CharToBytePosition(end);
+
+            Control.Message(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(start), new IntPtr(end));
+        }
+
+        public unsafe int ReplaceTarget(string text, int start, int end)
+        {
+            SetTargetRange(start, end);
+            if (text == null)
+                text = string.Empty;
+
+            var bytes = Mac.Helpers.GetBytes(text, Encoding, false);
+            fixed (byte* bp = bytes)
+                Control.Message(NativeMethods.SCI_REPLACETARGET, new IntPtr(bytes.Length), new IntPtr(bp));
+
+            return text.Length;
+        }
+
+        public unsafe void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNember)
+        {
+            var lineStartPos = Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, CurrentLineNumber);
+            var lineEndPos = Control.GetGeneralProperty(NativeMethods.SCI_GETLINEENDPOSITION, CurrentLineNumber);
+            Control.Message(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(lineStartPos), new IntPtr(lineEndPos));
+
+            int bytePos = 0;
+            var bytes = Mac.Helpers.GetBytes(oldText ?? string.Empty, Encoding, zeroTerminated: false);
+            fixed (byte* bp = bytes)
+                bytePos = Control.Message(NativeMethods.SCI_SEARCHINTARGET, new IntPtr(bytes.Length), new IntPtr(bp)).ToInt32();
+
+            if (bytePos == -1)
+                return;
+
+            Control.Message(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(bytePos), new IntPtr(bytePos + bytes.Length));
+
+            bytes = Mac.Helpers.GetBytes(newText ?? string.Empty, Encoding, zeroTerminated:false);
+            fixed (byte* bp = bytes)
+                Control.Message(NativeMethods.SCI_REPLACETARGET, new IntPtr(bytes.Length), new IntPtr(bp));
+        }
+
         public int WordStartPosition(int position, bool onlyWordCharacters)
         {
             var onlyWordChars = (onlyWordCharacters ? new IntPtr(1) : IntPtr.Zero);
-            int textLength = Control.Message(NativeMethods.SCI_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+            int textLength = Control.Message(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
             position = Eto.CodeEditor.Mac.Helpers.Clamp(position, 0, textLength);
             position = Control.Message(NativeMethods.SCI_WORDSTARTPOSITION, new IntPtr(position), onlyWordChars).ToInt32();
             return position;
@@ -381,7 +440,7 @@ namespace Eto.CodeEditor.XamMac2
         }
 
 
-        void NotificationProtocol_Notify(object sender, SCNotifyEventArgs e)
+        unsafe void NotificationProtocol_Notify(object sender, SCNotifyEventArgs e)
         {
             var n = e.Notification;
             switch (n.nmhdr.code)
@@ -391,6 +450,11 @@ namespace Eto.CodeEditor.XamMac2
                     CharAdded?.Invoke(this, new CharAddedEventArgs((char)n.ch));
                     break;
                 case NativeMethods.SCN_MODIFIED:
+                    if ((n.modificationType & NativeMethods.SC_MOD_INSERTCHECK) > 0)
+                    {
+                        var text = Mac.Helpers.GetString(n.text, (int)n.length, Encoding);
+                        InsertCheck?.Invoke(this, new InsertCheckEventArgs(text));
+                    }
                     TextChanged?.Invoke(this, new TextChangedEventArgs());
                     break;
                 default:
@@ -400,8 +464,14 @@ namespace Eto.CodeEditor.XamMac2
 
         public event EventHandler<CharAddedEventArgs> CharAdded;
         public event EventHandler<TextChangedEventArgs> TextChanged;
+        public event EventHandler<InsertCheckEventArgs> InsertCheck;
 
-
+        public unsafe void ChangeInsertion(string text)
+        {
+            var bytes = Mac.Helpers.GetBytes(text ?? string.Empty, Encoding, zeroTerminated: false);
+            fixed (byte* bp = bytes)
+            Control.Message(NativeMethods.SCI_CHANGEINSERTION, new IntPtr(bytes.Length), new IntPtr(bp));
+        }
 
 
         Encoding Encoding

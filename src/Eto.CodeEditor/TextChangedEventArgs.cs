@@ -16,4 +16,14 @@ namespace Eto.CodeEditor
     public class TextChangedEventArgs : EventArgs
     {
     }
+
+    public class InsertCheckEventArgs : EventArgs
+    {
+        public InsertCheckEventArgs(string text)
+        {
+            Text = text;
+        }
+
+        public string Text { get; }
+    }
 }
