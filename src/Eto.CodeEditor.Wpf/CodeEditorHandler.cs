@@ -23,7 +23,20 @@ namespace Eto.CodeEditor.Wpf
             SetupTheme();
             WinFormsControl.CharAdded += WinFormsControl_CharAdded;
             WinFormsControl.TextChanged += WinFormsControl_TextChanged;
+            WinFormsControl.InsertCheck += WinFormsControl_InsertCheck;
             WinFormsControl.AutoCMaxHeight = 10;
+        }
+
+        private void WinFormsControl_InsertCheck(object sender, ScintillaNET.InsertCheckEventArgs e)
+        {
+            InsertCheck?.Invoke(this, new Eto.CodeEditor.InsertCheckEventArgs(e.Text));
+        }
+
+        public void ChangeInsertion(string text)
+        {
+            // this method shouldn't be part of the handler interface as it's not needed on windows.
+            // on windows the handler set `e.Text = "some text"` and the setter calls the native ChangeInsertion
+            throw new NotImplementedException("InsertCheck handler needs to be reworked.");
         }
 
         private void WinFormsControl_CharAdded(object sender, ScintillaNET.CharAddedEventArgs e)
@@ -150,6 +163,7 @@ namespace Eto.CodeEditor.Wpf
 
         public event EventHandler<Eto.CodeEditor.CharAddedEventArgs> CharAdded;
         public event EventHandler<Eto.CodeEditor.TextChangedEventArgs> TextChanged;
+        public event EventHandler<Eto.CodeEditor.InsertCheckEventArgs> InsertCheck;
 
         public void SetupIndicatorStyles()
         {
@@ -309,8 +323,36 @@ namespace Eto.CodeEditor.Wpf
             return line?.Text ?? "";
         }
 
+        public int GetLineLength(int lineNumber)
+        {
+            var line = new Line(WinFormsControl, lineNumber);
+            return line?.Length ?? 0;
+        }
+
         public bool AutoCompleteActive { get { return WinFormsControl.AutoCActive; } }
         public void InsertText(int position, string text) { WinFormsControl.InsertText(position, text); }
+        public void DeleteRange(int position, int length) { WinFormsControl.DeleteRange(position, length); }
+
+        public int ReplaceTarget(string text, int start, int end)
+        {
+            WinFormsControl.SetTargetRange(start, end);
+            return WinFormsControl.ReplaceTarget(text);
+        }
+
+        public void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber)
+        {
+            var line = WinFormsControl.Lines[lineNumber];
+            WinFormsControl.SetTargetRange(line.Position, line.EndPosition);
+
+            var pos = WinFormsControl.SearchInTarget(oldText);
+            if (pos == -1)
+              return;
+
+            WinFormsControl.SetTargetRange(pos, pos + oldText.Length);
+
+            WinFormsControl.ReplaceTarget(newText);
+        }
+
         public int WordStartPosition(int position, bool onlyWordCharacters)
         {
             return WinFormsControl.WordStartPosition(position, onlyWordCharacters);
