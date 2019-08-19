@@ -941,7 +941,7 @@ namespace Eto.CodeEditor.Mac
                 return GetString(ms.Pointer, (int)ms.Length, Encoding.UTF8);
             }
         }
-
+        */
         public static unsafe string GetString(IntPtr bytes, int length, Encoding encoding)
         {
             var ptr = (sbyte*)bytes;
@@ -949,7 +949,7 @@ namespace Eto.CodeEditor.Mac
 
             return str;
         }
-
+        /*
         private static unsafe List<ArraySegment<byte>> GetStyledSegments(Scintilla scintilla, bool currentSelection, bool currentLine, int startBytePos, int endBytePos, out StyleData[] styles)
         {
             var segments = new List<ArraySegment<byte>>();

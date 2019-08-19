@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using Eto.Forms;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Eto.CodeEditor
 {
@@ -38,6 +40,7 @@ namespace Eto.CodeEditor
         readonly ProgrammingLanguage _language;
         public CodeEditor(ProgrammingLanguage language)
         {
+            AutoIndentEnabled = true;
             _language = language;
             Handler.SetProgrammingLanguage( language, GetKeywords(language) );
 
@@ -50,27 +53,13 @@ namespace Eto.CodeEditor
 
         void CodeEditor_CharAdded(object sender, CharAddedEventArgs e)
         {
-            // Python auto indent
-            if (Language == ProgrammingLanguage.Python && (e.Char == '\n' || e.Char == '\r'))
-            {
-                if (CurrentLineNumber > 0)
-                {
-                    var indentation = GetLineIndentation(CurrentLineNumber - 1);
-                    var lastChar = GetLineLastChar(CurrentLineNumber - 1);
-                    if (lastChar == ':')
-                        indentation = indentation + TabWidth;
-                    if (indentation > 0)
-                    {
-                        SetLineIndentation(CurrentLineNumber, indentation);
-                        CurrentPosition += indentation;
-                    }
-                }
-
-            }
+            if (AutoIndentEnabled)
+                AutoIndent.IndentationCheck(e.Char, this);
         }
 
-
         new IHandler Handler => (IHandler)base.Handler;
+
+        public bool AutoIndentEnabled { get; set; }
 
         public string Text
         {
@@ -135,6 +124,8 @@ namespace Eto.CodeEditor
 
         public string GetLineText(int lineNumber) => Handler.GetLineText(lineNumber);
 
+        public int GetLineLength(int lineNumber) => Handler.GetLineLength(lineNumber);
+
         public void SetupIndicatorStyles()
         {
             Handler.SetupIndicatorStyles();
@@ -175,6 +166,12 @@ namespace Eto.CodeEditor
 
         public bool AutoCompleteActive { get => Handler.AutoCompleteActive; }
         public void InsertText(int position, string text) { Handler.InsertText(position, text); }
+        public void DeleteRange(int position, int length) { Handler.DeleteRange(position, length); }
+
+        public void ReplaceTarget(string text, int start, int end) => Handler.ReplaceTarget(text, start, end);
+        public void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber) =>
+            Handler.ReplaceFirstOccuranceInLine(oldText, newText, lineNumber);
+
         public int WordStartPosition(int position, bool onlyWordCharacters) { return Handler.WordStartPosition(position, onlyWordCharacters); }
         public string GetTextRange(int position, int length) { return Handler.GetTextRange(position, length); }
         public void AutoCompleteShow(int lenEntered, string list) { Handler.AutoCompleteShow(lenEntered, list); }
@@ -190,6 +187,12 @@ namespace Eto.CodeEditor
         {
             add { Handler.TextChanged += value; }
             remove { Handler.TextChanged -= value; }
+        }
+
+        // only call from InsertCheck handler
+        public void ChangeInsertion(string text)
+        {
+            Handler.ChangeInsertion(text);
         }
 
 
@@ -214,6 +217,7 @@ namespace Eto.CodeEditor
             char GetLineLastChar(int lineNumber);
 
             string GetLineText(int lineNumber);
+            int GetLineLength(int lineNumber);
 
             void SetupIndicatorStyles();
             void ClearAllErrorIndicators();
@@ -232,6 +236,9 @@ namespace Eto.CodeEditor
 
             bool AutoCompleteActive { get; }
             void InsertText(int position, string text);
+            int ReplaceTarget(string text, int start, int end);
+            void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber);
+            void DeleteRange(int position, int length);
             int WordStartPosition(int position, bool onlyWordCharacters);
             string GetTextRange(int position, int length);
             void AutoCompleteShow(int lenEntered, string list);
@@ -239,6 +246,8 @@ namespace Eto.CodeEditor
 
             event EventHandler<CharAddedEventArgs> CharAdded;
             event EventHandler<TextChangedEventArgs> TextChanged;
+            event EventHandler<InsertCheckEventArgs> InsertCheck;
+            void ChangeInsertion(string text); // only call from InsertCheck handler
         }
     }
 
