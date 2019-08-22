@@ -8,6 +8,14 @@ namespace Eto.CodeEditor
     {
         public static void IndentationCheck(char trigger, CodeEditor editor)
         {
+            // CRLF line endings generate 2 char_added events. Ignore the 2nd one
+            if (previousCharWasCR && trigger == '\n')
+            {
+                previousCharWasCR = false;
+                return;
+            }
+            previousCharWasCR = trigger == '\r';
+
             if (!(IsTriggerNewLineChar(trigger) || (IsCLikeLanguage(editor.Language) && trigger == '}')))
                 return;
             if (IsTriggerNewLineChar(trigger))
@@ -20,8 +28,11 @@ namespace Eto.CodeEditor
                 var newIndent = GetNewLineIndentation(language, previousLineIndentation, previousLineLastChar, oneIndentSize);
                 if (newIndent != 0)
                 {
+                    var pos = editor.CurrentPosition;
                     editor.SetLineIndentation(editor.CurrentLineNumber, newIndent);
-                    editor.CurrentPosition += newIndent;
+                    // on macOS SetLineIndentation doesn't move the cursor
+                    if (editor.CurrentPosition == pos)
+                        editor.CurrentPosition += newIndent;
                 }
             }
             else if (editor.CurrentLineNumber > 0
@@ -47,5 +58,7 @@ namespace Eto.CodeEditor
         private static bool IsCLikeLanguage(ProgrammingLanguage language) => language == ProgrammingLanguage.CSharp || language == ProgrammingLanguage.GLSL;
 
         private static bool IsTriggerNewLineChar(char trigger) => trigger == '\r' || trigger == '\n';
+
+        private static bool previousCharWasCR;
     }
 }
