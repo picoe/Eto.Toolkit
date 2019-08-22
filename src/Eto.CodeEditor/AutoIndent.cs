@@ -33,8 +33,9 @@ namespace Eto.CodeEditor
             {
                 // a good start but matching the indent of the open brace line is better
                 Func<string, string> ws = s => Regex.Match(s ?? "", @"^\s*").Value;
-                var prevLineLeadingWhitespace = ws(editor.GetLineText(editor.CurrentLineNumber - 1));
-                var newLeadingWhitespace = prevLineLeadingWhitespace.Length < editor.TabWidth
+                var prevLineText = editor.GetLineText(editor.CurrentLineNumber - 1);
+                var prevLineLeadingWhitespace = ws(prevLineText);
+                var newLeadingWhitespace = prevLineLeadingWhitespace.Length < editor.TabWidth || prevLineText.Trim().EndsWith("{", StringComparison.Ordinal)
                     ? prevLineLeadingWhitespace
                     : prevLineLeadingWhitespace.Substring(0, prevLineLeadingWhitespace.Length - editor.TabWidth);
                 var lineLeadingWhitespace = ws(editor.GetLineText(editor.CurrentLineNumber));
