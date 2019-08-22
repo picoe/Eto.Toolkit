@@ -8,17 +8,9 @@ namespace Eto.CodeEditor
     {
         public static void IndentationCheck(char trigger, CodeEditor editor)
         {
-            // CRLF line endings generate 2 char_added events. Ignore the 2nd one
-            if (previousCharWasCR && trigger == '\n')
-            {
-                previousCharWasCR = false;
+            if (!(trigger == '\n' || (IsCLikeLanguage(editor.Language) && trigger == '}')))
                 return;
-            }
-            previousCharWasCR = trigger == '\r';
-
-            if (!(IsTriggerNewLineChar(trigger) || (IsCLikeLanguage(editor.Language) && trigger == '}')))
-                return;
-            if (IsTriggerNewLineChar(trigger))
+            if (trigger == '\n')
             {
                 var language = editor.Language;
                 var previousLineNumber = editor.CurrentLineNumber - 1;
@@ -41,8 +33,9 @@ namespace Eto.CodeEditor
             {
                 // a good start but matching the indent of the open brace line is better
                 Func<string, string> ws = s => Regex.Match(s ?? "", @"^\s*").Value;
-                var prevLineLeadingWhitespace = ws(editor.GetLineText(editor.CurrentLineNumber - 1));
-                var newLeadingWhitespace = prevLineLeadingWhitespace.Length < editor.TabWidth
+                var prevLineText = editor.GetLineText(editor.CurrentLineNumber - 1);
+                var prevLineLeadingWhitespace = ws(prevLineText);
+                var newLeadingWhitespace = prevLineLeadingWhitespace.Length < editor.TabWidth || prevLineText.Trim().EndsWith("{", StringComparison.Ordinal)
                     ? prevLineLeadingWhitespace
                     : prevLineLeadingWhitespace.Substring(0, prevLineLeadingWhitespace.Length - editor.TabWidth);
                 var lineLeadingWhitespace = ws(editor.GetLineText(editor.CurrentLineNumber));
@@ -56,9 +49,5 @@ namespace Eto.CodeEditor
                     : previousLineIndentation;
 
         private static bool IsCLikeLanguage(ProgrammingLanguage language) => language == ProgrammingLanguage.CSharp || language == ProgrammingLanguage.GLSL;
-
-        private static bool IsTriggerNewLineChar(char trigger) => trigger == '\r' || trigger == '\n';
-
-        private static bool previousCharWasCR;
     }
 }
