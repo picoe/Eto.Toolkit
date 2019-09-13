@@ -10,6 +10,7 @@ using Eto.CodeEditor;
 using Eto.CodeEditor.Wpf;
 using ScintillaNET;
 using Eto.Drawing;
+using System.Windows.Forms;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
 
@@ -19,12 +20,19 @@ namespace Eto.CodeEditor.Wpf
     {
         public CodeEditorHandler()
         {
+            string path = ScintillaControl.UnpackNativeScintilla();
+            ScintillaNET.Scintilla.SetModulePath(path);
             WinFormsControl = new ScintillaNET.Scintilla();
-            SetupTheme();
+
             WinFormsControl.CharAdded += WinFormsControl_CharAdded;
             WinFormsControl.TextChanged += WinFormsControl_TextChanged;
             WinFormsControl.InsertCheck += WinFormsControl_InsertCheck;
             WinFormsControl.AutoCMaxHeight = 10;
+            WinFormsControl.AutomaticFold = AutomaticFold.Click;
+
+            FontName = "Consolas";
+            FontSize = 11;
+            LineNumberColumnWidth = 40;
         }
 
         private void WinFormsControl_InsertCheck(object sender, ScintillaNET.InsertCheckEventArgs e)
@@ -115,46 +123,122 @@ namespace Eto.CodeEditor.Wpf
         {
             var fg = System.Drawing.Color.FromArgb(forecolor.Rb, forecolor.Gb, forecolor.Bb);
             var bg = System.Drawing.Color.FromArgb(backcolor.Rb, backcolor.Gb, backcolor.Bb);
+
+            if ( section == Section.Default)
+            {
+                WinFormsControl.Styles[ScintillaNET.Style.Default].ForeColor = fg;
+                WinFormsControl.CaretForeColor = fg;
+                WinFormsControl.Styles[ScintillaNET.Style.Default].BackColor = bg;
+                WinFormsControl.StyleClearAll();
+            }
             if (section == Section.Comment)
             {
-                if (forecolor != Eto.Drawing.Colors.Transparent)
+                foreach (var id in CommentStyleIds(Language))
                 {
-                    WinFormsControl.Styles[ScintillaNET.Style.Cpp.Comment].ForeColor = fg;
-                    WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLine].ForeColor = fg;
-                    WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentDoc].ForeColor = fg;
-                }
-                if (backcolor != Eto.Drawing.Colors.Transparent)
-                {
-                    WinFormsControl.Styles[ScintillaNET.Style.Cpp.Comment].BackColor = bg;
-                    WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLine].BackColor = bg;
-                    WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentDoc].BackColor = bg;
+                    WinFormsControl.Styles[id].ForeColor = fg;
+                    WinFormsControl.Styles[id].BackColor = bg;
                 }
             }
-            if (section == Section.Keyword)
+            if (section == Section.Keyword1)
             {
-                if (forecolor != Eto.Drawing.Colors.Transparent)
+                foreach (var id in Keyword1Ids(Language))
                 {
-                    WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word].ForeColor = fg;
-                    WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word2].ForeColor = fg;
+                    WinFormsControl.Styles[id].ForeColor = fg;
+                    WinFormsControl.Styles[id].BackColor = bg;
                 }
-                if (backcolor != Eto.Drawing.Colors.Transparent)
+            }
+            if (section == Section.Keyword2)
+            {
+                foreach (var id in Keyword2Ids(Language))
                 {
-                    WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word].BackColor = bg;
-                    WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word2].BackColor = bg;
+                    WinFormsControl.Styles[id].ForeColor = fg;
+                    WinFormsControl.Styles[id].BackColor = bg;
+                }
+            }
+            if (section == Section.Strings)
+            {
+                foreach (var id in StringStyleIds(Language))
+                {
+                    WinFormsControl.Styles[id].ForeColor = fg;
+                    WinFormsControl.Styles[id].BackColor = bg;
                 }
             }
             if (section == Section.LineNumber)
             {
-                if (forecolor != Eto.Drawing.Colors.Transparent)
+                WinFormsControl.Styles[ScintillaNET.Style.LineNumber].ForeColor = fg;
+                WinFormsControl.Styles[ScintillaNET.Style.LineNumber].BackColor = bg;
+            }
+            if( section == Section.DefName && Language == ProgrammingLanguage.Python)
+            {
+                WinFormsControl.Styles[ScintillaNET.Style.Python.DefName].ForeColor = fg;
+                WinFormsControl.Styles[ScintillaNET.Style.Python.DefName].BackColor = bg;
+            }
+            if(section == Section.Preprocessor)
+            {
+                foreach (var id in PreprocessorIds(Language))
                 {
-                    WinFormsControl.Styles[ScintillaNET.Style.LineNumber].ForeColor = fg;
-                }
-                if (backcolor != Eto.Drawing.Colors.Transparent)
-                {
-                    WinFormsControl.Styles[ScintillaNET.Style.LineNumber].BackColor = bg;
+                    WinFormsControl.Styles[id].ForeColor = fg;
+                    WinFormsControl.Styles[id].BackColor = bg;
                 }
 
             }
+        }
+
+        static int[] CommentStyleIds(ProgrammingLanguage language)
+        {
+            if (language == ProgrammingLanguage.Python)
+                return new int[] { ScintillaNET.Style.Python.CommentBlock, ScintillaNET.Style.Python.CommentLine};
+
+            if (language == ProgrammingLanguage.VB)
+                return new int[] { ScintillaNET.Style.Vb.Comment, ScintillaNET.Style.Vb.CommentBlock,
+                    ScintillaNET.Style.Vb.DocBlock, ScintillaNET.Style.Vb.Preprocessor};
+
+            return new int[] {ScintillaNET.Style.Cpp.Comment, ScintillaNET.Style.Cpp.CommentLine,
+                ScintillaNET.Style.Cpp.CommentDoc, ScintillaNET.Style.Cpp.CommentLineDoc};
+        }
+
+        static int[] StringStyleIds(ProgrammingLanguage language)
+        {
+            if (language == ProgrammingLanguage.Python)
+                return new int[] { ScintillaNET.Style.Python.Character, ScintillaNET.Style.Python.String,
+                    ScintillaNET.Style.Python.Triple, ScintillaNET.Style.Python.TripleDouble };
+
+            if (language == ProgrammingLanguage.VB)
+                return new int[] { ScintillaNET.Style.Vb.String };
+            return new int[] {ScintillaNET.Style.Cpp.String, ScintillaNET.Style.Cpp.Character};
+        }
+
+        static int[] Keyword1Ids(ProgrammingLanguage language)
+        {
+            if (language == ProgrammingLanguage.Python)
+                return new int[] { ScintillaNET.Style.Python.Word };
+
+            if (language == ProgrammingLanguage.VB)
+                return new int[] { ScintillaNET.Style.Vb.Keyword };
+
+            return new int[] { ScintillaNET.Style.Cpp.Word };
+        }
+
+        static int[] Keyword2Ids(ProgrammingLanguage language)
+        {
+            if (language == ProgrammingLanguage.Python)
+                return new int[] { ScintillaNET.Style.Python.Word2 };
+
+            if (language == ProgrammingLanguage.VB)
+                return new int[] { ScintillaNET.Style.Vb.Keyword2, ScintillaNET.Style.Vb.Keyword3, ScintillaNET.Style.Vb.Keyword4 };
+
+            return new int[] { ScintillaNET.Style.Cpp.Word2 };
+        }
+
+        static int[] PreprocessorIds(ProgrammingLanguage language)
+        {
+            if (language == ProgrammingLanguage.Python)
+                return new int[] { };
+
+            if (language == ProgrammingLanguage.VB)
+                return new int[] { ScintillaNET.Style.Vb.Preprocessor };
+
+            return new int[] { ScintillaNET.Style.Cpp.Preprocessor };
         }
 
         private const int ErrorIndex = 20;
@@ -260,41 +344,6 @@ namespace Eto.CodeEditor.Wpf
             WinFormsControl.IndentationGuides = IndentView.None;
         }
 
-        void SetupTheme()
-        {
-            // just style things enough that you can tell you're working in a code editor
-
-            //WinFormsControl.Lexer = ScintillaNET.Lexer.Cpp;
-            //WinFormsControl.SetKeywords(0, "abstract as base break case catch checked continue default delegate do else event explicit extern false finally fixed for foreach goto if implicit in interface internal is lock namespace new null object operator out override params private protected public readonly ref return sealed sizeof stackalloc switch this throw true try typeof unchecked unsafe using virtual while");
-            //WinFormsControl.SetKeywords(1, "bool byte char class const decimal double enum float int long sbyte short static string struct uint ulong ushort void");
-            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.Comment].ForeColor = System.Drawing.Color.Black;
-            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLine].ForeColor = System.Drawing.Color.Black;
-            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentDoc].ForeColor = System.Drawing.Color.Black;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Number].ForeColor = System.Drawing.Color.Black;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.String].ForeColor = System.Drawing.Color.Brown;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Character].ForeColor = System.Drawing.Color.Brown;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Preprocessor].ForeColor = System.Drawing.Color.Black;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Operator].ForeColor = System.Drawing.Color.Black;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.Regex].ForeColor = System.Drawing.Color.Crimson;
-            WinFormsControl.Styles[ScintillaNET.Style.Cpp.CommentLineDoc].ForeColor = System.Drawing.Color.Black;
-            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word].ForeColor = System.Drawing.Color.Blue;
-            //WinFormsControl.Styles[ScintillaNET.Style.Cpp.Word2].ForeColor = System.Drawing.Color.CadetBlue;
-
-            //WinFormsControl.Styles[ScintillaNET.Style.Default].Font = "Consolas";
-            //WinFormsControl.Styles[ScintillaNET.Style.Default].Size = 10;
-            // Show line numbers
-            //WinFormsControl.Margins[0].Width = 60;
-
-            //WinFormsControl.Styles[ScintillaNET.Style.LineNumber].BackColor = System.Drawing.Color.White;
-            //WinFormsControl.Styles[ScintillaNET.Style.LineNumber].ForeColor = System.Drawing.Color.CadetBlue;
-
-            WinFormsControl.AutomaticFold = AutomaticFold.Click;
-
-            FontName = "Consolas";
-            FontSize = 10;
-            LineNumberColumnWidth = 40;
-        }
-
         public int GetLineIndentation(int lineNumber)
         {
             var line = new Line(WinFormsControl, lineNumber);
@@ -367,4 +416,6 @@ namespace Eto.CodeEditor.Wpf
         }
 
     }
+
+
 }

@@ -55,6 +55,9 @@
     <Compile Include="CodeEditorHandler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ScintillaControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -92,6 +95,10 @@
     <PackageReference Include="jacobslusser.ScintillaNET.Signed">
       <Version>3.6.3</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="scintilla\x64\SciLexer.dll" />
+    <EmbeddedResource Include="scintilla\x86\SciLexer.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
