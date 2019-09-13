@@ -199,7 +199,7 @@ namespace Eto.CodeEditor.XamMac2
                 }
             }
 
-            if (section == Section.Keyword)
+            if (section == Section.Keyword1)
             {
                 if (foreground != Eto.Drawing.Colors.Transparent)
                 {
