@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Reflection;
 using Eto.Forms;
-using System.Text.RegularExpressions;
-using System.Linq;
 
 namespace Eto.CodeEditor
 {
@@ -41,7 +38,7 @@ namespace Eto.CodeEditor
         }
 
         readonly ProgrammingLanguage _language;
-        public CodeEditor(ProgrammingLanguage language, bool darkMode=false)
+        public CodeEditor(ProgrammingLanguage language, bool darkMode=true)
         {
             AutoIndentEnabled = true;
             _language = language;
@@ -50,13 +47,13 @@ namespace Eto.CodeEditor
             Handler.CharAdded += CodeEditor_CharAdded;
             var backgroundColor = darkMode ? Eto.Drawing.Color.FromArgb(30,30,30) : Eto.Drawing.Colors.White;
             SetColor(Section.Default, darkMode ? Drawing.Color.FromArgb(212,212,212) : Drawing.Colors.Black, backgroundColor);
-            SetColor(Section.Comment, darkMode ? Drawing.Color.FromArgb(106, 153, 85) : Drawing.Colors.DarkGray, backgroundColor);
+            SetColor(Section.Comment, darkMode ? Drawing.Color.FromArgb(106, 153, 85) : Drawing.Colors.DimGray, backgroundColor);
             SetColor(Section.Keyword1, darkMode ? Drawing.Color.FromArgb(197, 134, 192) : Drawing.Colors.Blue, backgroundColor);
             SetColor(Section.Keyword2, darkMode ? Drawing.Color.FromArgb(197, 134, 192) : Drawing.Colors.Blue, backgroundColor);
             SetColor(Section.Strings, darkMode ? Drawing.Color.FromArgb(206, 145, 120) : Drawing.Color.FromArgb(163, 21, 21), backgroundColor);
             SetColor(Section.LineNumber, darkMode ? Drawing.Color.FromArgb(160, 160, 160) : Drawing.Colors.Gray, backgroundColor);
             SetColor(Section.DefName, darkMode ? Drawing.Color.FromArgb(220, 220, 170) : Drawing.Color.FromArgb(64, 174, 215), backgroundColor);
-            SetColor(Section.Preprocessor, darkMode ? Drawing.Colors.DarkGray : Drawing.Colors.DarkGray, backgroundColor);
+            SetColor(Section.Preprocessor, darkMode ? Drawing.Colors.DarkGray : Drawing.Colors.DimGray, backgroundColor);
         }
 
         void CodeEditor_CharAdded(object sender, CharAddedEventArgs e)
