@@ -38,7 +38,7 @@ namespace Eto.CodeEditor
         }
 
         readonly ProgrammingLanguage _language;
-        public CodeEditor(ProgrammingLanguage language, bool darkMode=true)
+        public CodeEditor(ProgrammingLanguage language, bool darkMode=false)
         {
             AutoIndentEnabled = true;
             _language = language;
