@@ -21,34 +21,42 @@ namespace Eto.CodeEditor
                     };
                 case ProgrammingLanguage.GLSL:
                     {
-                        string k, f;
-                        LanguageGlsl.GetKeywords(out k, out f);
+                        LanguageGlsl.GetKeywords(out string k, out string f);
                         return new string[] { k, f };
                     }
                 case ProgrammingLanguage.Python:
                     return new string[]
                     {
-                        // import keyword
-                        // keyword.kwlist
-                        "and as assert break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return try while with yield"
+                        "and as assert break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return try while with yield",
+                        "None is not def"
                     };
+                case ProgrammingLanguage.VB:
+                    {
+                        LanguageVbNet.GetKeywords(out string k, out string f);
+                        return new string[] { k, f };
+                    }
                 default:
                     return new string[0];
             }
         }
 
         readonly ProgrammingLanguage _language;
-        public CodeEditor(ProgrammingLanguage language)
+        public CodeEditor(ProgrammingLanguage language, bool darkMode=false)
         {
             AutoIndentEnabled = true;
             _language = language;
             Handler.SetProgrammingLanguage( language, GetKeywords(language) );
 
-            SetColor(Section.Comment, Drawing.Colors.DarkGray, Drawing.Colors.White);
-            SetColor(Section.Keyword, Drawing.Colors.Blue, Drawing.Colors.White);
-            SetColor(Section.LineNumber, Drawing.Colors.Gray, Drawing.Colors.White);
-
             Handler.CharAdded += CodeEditor_CharAdded;
+            var backgroundColor = darkMode ? Eto.Drawing.Color.FromArgb(30,30,30) : Eto.Drawing.Colors.White;
+            SetColor(Section.Default, darkMode ? Drawing.Color.FromArgb(212,212,212) : Drawing.Colors.Black, backgroundColor);
+            SetColor(Section.Comment, darkMode ? Drawing.Color.FromArgb(106, 153, 85) : Drawing.Colors.DarkGray, backgroundColor);
+            SetColor(Section.Keyword1, darkMode ? Drawing.Color.FromArgb(197, 134, 192) : Drawing.Colors.Blue, backgroundColor);
+            SetColor(Section.Keyword2, darkMode ? Drawing.Color.FromArgb(197, 134, 192) : Drawing.Colors.Blue, backgroundColor);
+            SetColor(Section.Strings, darkMode ? Drawing.Color.FromArgb(206, 145, 120) : Drawing.Color.FromArgb(163, 21, 21), backgroundColor);
+            SetColor(Section.LineNumber, darkMode ? Drawing.Color.FromArgb(160, 160, 160) : Drawing.Colors.Gray, backgroundColor);
+            SetColor(Section.DefName, darkMode ? Drawing.Color.FromArgb(220, 220, 170) : Drawing.Color.FromArgb(64, 174, 215), backgroundColor);
+            SetColor(Section.Preprocessor, darkMode ? Drawing.Colors.DarkGray : Drawing.Colors.DarkGray, backgroundColor);
         }
 
         void CodeEditor_CharAdded(object sender, CharAddedEventArgs e)
@@ -253,9 +261,14 @@ namespace Eto.CodeEditor
 
     public enum Section
     {
+        Default,
         Comment,
-        Keyword,
-        LineNumber
+        Keyword1,
+        Keyword2,
+        Strings,
+        LineNumber,
+        DefName,
+        Preprocessor
     }
 
     public enum ProgrammingLanguage
@@ -469,4 +482,201 @@ memoryBarrierImage
 groupMemoryBarrier
 ";
     }
+
+
+    class LanguageVbNet
+    {
+        public static void GetKeywords(out string keywords, out string functions)
+        {
+            keywords = _keywords.Replace("\r", " ").Replace("\n", " ").Replace("  ", " ");
+            functions = _functions.Replace('\r', ' ').Replace('\n', ' ').Replace("  ", " ");
+        }
+        const string _keywords = @"debug
+release
+addhandler
+addressof
+aggregate
+alias
+and
+andalso
+ansi
+as
+assembly
+auto
+binary
+boolean
+byref
+byte
+byval
+call
+case
+catch
+cbool
+cbyte
+cchar
+cdate
+cdbl
+cdec
+char
+cint
+class
+clng
+cobj
+compare
+const
+continue
+csbyte
+cshort
+csng
+cstr
+ctype
+cuint
+culng
+cushort
+custom
+date
+decimal
+declare
+default
+delegate
+dim
+directcast
+distinct
+do
+double
+each
+else
+elseif
+end
+endif
+enum
+equals
+erase
+error
+event
+exit
+explicit
+false
+finally
+for
+friend
+from
+function
+get
+gettype
+getxmlnamespace
+global
+gosub
+goto
+group
+handles
+if
+implements
+imports
+in
+inherits
+integer
+interface
+into
+is
+isfalse
+isnot
+istrue
+join
+key
+let
+lib
+like
+long
+loop
+me
+mid
+mod
+module
+mustinherit
+mustoverride
+my
+mybase
+myclass
+namespace
+narrowing
+new
+next
+not
+nothing
+notinheritable
+notoverridable
+object
+of
+off
+on
+operator
+option
+optional
+or
+order
+orelse
+overloads
+overridable
+overrides
+paramarray
+partial
+preserve
+private
+property
+protected
+public
+raiseevent
+readonly
+redim
+rem
+removehandler
+resume
+return
+sbyte
+select
+set
+shadows
+shared
+short
+single
+skip
+static
+step
+stop
+strict
+string
+structure
+sub
+synclock
+take
+text
+then
+throw
+to
+true
+try
+trycast
+typeof
+uinteger
+ulong
+unicode
+until
+ushort
+using
+variant
+wend
+when
+where
+while
+widening
+with
+withevents
+writeonly
+xor";
+
+        const string _functions = @"
+";
+    }
+
 }
