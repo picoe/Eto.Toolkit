@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Eto.Forms;
 using Eto;
 using Eto.CodeEditor;
 using Eto.CodeEditor.XamMac2;
@@ -12,7 +8,6 @@ using ScintillaNET;
 using Foundation;
 using System.IO;
 using ObjCRuntime;
-using System.Runtime.InteropServices;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
 
@@ -62,24 +57,34 @@ namespace Eto.CodeEditor.XamMac2
             Control.SetKeywords(set, keywords);
         }
 
+        ProgrammingLanguage _language = ProgrammingLanguage.None;
+        public ProgrammingLanguage Language
+        {
+            get { return _language; }
+            set
+            {
+                _language = value;
+                int which = ScintillaNET.NativeMethods.SCLEX_CPP;
+                switch (_language)
+                {
+                    case ProgrammingLanguage.CSharp:
+                    case ProgrammingLanguage.GLSL:
+                        which = ScintillaNET.NativeMethods.SCLEX_CPP;
+                        break;
+                    case ProgrammingLanguage.VB:
+                        which = ScintillaNET.NativeMethods.SCLEX_VB;
+                        break;
+                    case ProgrammingLanguage.Python:
+                        which = ScintillaNET.NativeMethods.SCLEX_PYTHON;
+                        break;
+                }
+                Control.SetGeneralProperty(ScintillaNET.NativeMethods.SCI_SETLEXER, which, 0);
+            }
+        }
+
         public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
         {
-            int which = ScintillaNET.NativeMethods.SCLEX_CPP;
-            switch (language)
-            {
-                case ProgrammingLanguage.CSharp:
-                case ProgrammingLanguage.GLSL:
-                    which = ScintillaNET.NativeMethods.SCLEX_CPP;
-                    break;
-                case ProgrammingLanguage.VB:
-                    which = ScintillaNET.NativeMethods.SCLEX_VB;
-                    break;
-                case ProgrammingLanguage.Python:
-                    which = ScintillaNET.NativeMethods.SCLEX_PYTHON;
-                    break;
-            }
-            Control.SetGeneralProperty(ScintillaNET.NativeMethods.SCI_SETLEXER, which, 0);
-
+            Language = language;
             if (keywordSets != null)
             {
                 for (int i = 0; i < keywordSets.Length; i++)
@@ -183,47 +188,67 @@ namespace Eto.CodeEditor.XamMac2
         {
             string fg = foreground.ToHex(false);
             string bg = background.ToHex(false);
-            //NSColor fg = NSColor.FromRgba(foreground.R, foreground.G, foreground.B, foreground.A);
-            //NSColor bg = NSColor.FromRgba(background.R, background.G, background.B, background.A);
+
+            if (section == Section.Default)
+            {
+                Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.STYLE_DEFAULT, fg);
+                int argb = foreground.ToArgb();
+                Control.Message(NativeMethods.SCI_SETCARETFORE, new IntPtr(argb), new IntPtr(0));
+                Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_DEFAULT, bg);
+                Control.Message(NativeMethods.SCI_STYLECLEARALL, new IntPtr(0), new IntPtr(0));
+            }
             if (section == Section.Comment)
             {
-                if (foreground != Eto.Drawing.Colors.Transparent)
+                foreach (var id in CommentStyleIds(Language))
                 {
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.SCE_PROPS_COMMENT, fg);
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.SCE_C_COMMENTLINE, fg);
-                }
-                if (background != Eto.Drawing.Colors.Transparent)
-                {
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_PROPS_COMMENT, bg);
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_C_COMMENTLINE, bg);
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
                 }
             }
-
             if (section == Section.Keyword1)
             {
-                if (foreground != Eto.Drawing.Colors.Transparent)
+                foreach (var id in Keyword1Ids(Language))
                 {
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.SCE_C_WORD, fg);
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.SCE_C_WORD2, fg);
-                }
-                if (background != Eto.Drawing.Colors.Transparent)
-                {
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_C_WORD, bg);
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_C_WORD2, bg);
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
                 }
             }
-
+            if (section == Section.Keyword2)
+            {
+                foreach (var id in Keyword2Ids(Language))
+                {
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
+                }
+            }
+            if (section == Section.Strings)
+            {
+                foreach (var id in StringStyleIds(Language))
+                {
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
+                }
+            }
             if (section == Section.LineNumber)
             {
-                if (foreground != Eto.Drawing.Colors.Transparent)
-                {
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.STYLE_LINENUMBER, fg);
-                }
-                if (background != Eto.Drawing.Colors.Transparent)
-                {
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_LINENUMBER, bg);
-                }
+                Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.STYLE_LINENUMBER, fg);
+                Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_LINENUMBER, bg);
             }
+            if (section == Section.DefName && Language == ProgrammingLanguage.Python)
+            {
+                Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.SCE_P_DEFNAME, fg);
+                Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_P_DEFNAME, bg);
+            }
+            if (section == Section.Preprocessor)
+            {
+                foreach (var id in PreprocessorIds(Language))
+                {
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
+                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
+                }
+
+            }
+
         }
 
         public int CurrentPosition
@@ -481,6 +506,64 @@ namespace Eto.CodeEditor.XamMac2
                 int codePage = (int)Control.Message(NativeMethods.SCI_GETCODEPAGE, IntPtr.Zero, IntPtr.Zero);
                 return (codePage == 0) ? Encoding.Default : Encoding.GetEncoding(codePage);
             }
+        }
+
+
+        static int[] CommentStyleIds(ProgrammingLanguage language)
+        {
+            if (language == ProgrammingLanguage.Python)
+                return new int[] { NativeMethods.SCE_P_COMMENTBLOCK, NativeMethods.SCE_P_COMMENTLINE };
+
+            if (language == ProgrammingLanguage.VB)
+                return new int[] { NativeMethods.SCE_B_COMMENT, NativeMethods.SCE_B_COMMENTBLOCK,
+                    NativeMethods.SCE_B_DOCBLOCK};
+
+            return new int[] { NativeMethods.SCE_C_COMMENT, NativeMethods.SCE_C_COMMENTLINE,
+                NativeMethods.SCE_C_COMMENTDOC, NativeMethods.SCE_C_COMMENTLINEDOC };
+        }
+
+        static int[] StringStyleIds(ProgrammingLanguage language)
+        {
+            if (language == ProgrammingLanguage.Python)
+                return new int[] { NativeMethods.SCE_P_CHARACTER, NativeMethods.SCE_P_STRING,
+                    NativeMethods.SCE_P_TRIPLE, NativeMethods.SCE_P_TRIPLEDOUBLE };
+
+            if (language == ProgrammingLanguage.VB)
+                return new int[] { NativeMethods.SCE_B_STRING };
+            return new int[] { NativeMethods.SCE_C_STRING, NativeMethods.SCE_C_CHARACTER };
+        }
+
+        static int[] Keyword1Ids(ProgrammingLanguage language)
+        {
+            if (language == ProgrammingLanguage.Python)
+                return new int[] { NativeMethods.SCE_P_WORD };
+
+            if (language == ProgrammingLanguage.VB)
+                return new int[] { NativeMethods.SCE_B_KEYWORD };
+
+            return new int[] { NativeMethods.SCE_C_WORD };
+        }
+
+        static int[] Keyword2Ids(ProgrammingLanguage language)
+        {
+            if (language == ProgrammingLanguage.Python)
+                return new int[] { NativeMethods.SCE_P_WORD2 };
+
+            if (language == ProgrammingLanguage.VB)
+                return new int[] { NativeMethods.SCE_B_KEYWORD2, NativeMethods.SCE_B_KEYWORD3, NativeMethods.SCE_B_KEYWORD4 };
+
+            return new int[] { NativeMethods.SCE_C_WORD2 };
+        }
+
+        static int[] PreprocessorIds(ProgrammingLanguage language)
+        {
+            if (language == ProgrammingLanguage.Python)
+                return new int[] { };
+
+            if (language == ProgrammingLanguage.VB)
+                return new int[] { NativeMethods.SCE_B_PREPROCESSOR };
+
+            return new int[] { NativeMethods.SCE_C_PREPROCESSOR };
         }
 
     }
