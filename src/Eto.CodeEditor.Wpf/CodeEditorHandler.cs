@@ -21,7 +21,7 @@ namespace Eto.CodeEditor.Wpf
         public CodeEditorHandler()
         {
             string path = ScintillaControl.UnpackNativeScintilla();
-            ScintillaNET.Scintilla.SetModulePath(path);
+            //ScintillaNET.Scintilla.SetModulePath(path);
             WinFormsControl = new ScintillaNET.Scintilla();
 
             WinFormsControl.CharAdded += WinFormsControl_CharAdded;
