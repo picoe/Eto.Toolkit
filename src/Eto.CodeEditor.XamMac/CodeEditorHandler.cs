@@ -480,7 +480,7 @@ namespace Eto.CodeEditor.XamMac2
                         var text = Mac.Helpers.GetString(n.text, (int)n.length, Encoding);
                         InsertCheck?.Invoke(this, new InsertCheckEventArgs(text));
                     }
-                    TextChanged?.Invoke(this, new TextChangedEventArgs());
+                    TextChanged?.Invoke(this, EventArgs.Empty);
                     break;
                 default:
                     break;
@@ -488,7 +488,7 @@ namespace Eto.CodeEditor.XamMac2
         }
 
         public event EventHandler<CharAddedEventArgs> CharAdded;
-        public event EventHandler<TextChangedEventArgs> TextChanged;
+        public event EventHandler<EventArgs> TextChanged;
         public event EventHandler<InsertCheckEventArgs> InsertCheck;
 
         public unsafe void ChangeInsertion(string text)

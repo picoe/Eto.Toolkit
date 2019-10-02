@@ -188,7 +188,7 @@ namespace Eto.CodeEditor
             remove { Handler.CharAdded -= value; }
         }
 
-        public event EventHandler<TextChangedEventArgs> TextChanged
+        public event EventHandler<EventArgs> TextChanged
         {
             add { Handler.TextChanged += value; }
             remove { Handler.TextChanged -= value; }
@@ -250,7 +250,7 @@ namespace Eto.CodeEditor
 
 
             event EventHandler<CharAddedEventArgs> CharAdded;
-            event EventHandler<TextChangedEventArgs> TextChanged;
+            event EventHandler<EventArgs> TextChanged;
             event EventHandler<InsertCheckEventArgs> InsertCheck;
             void ChangeInsertion(string text); // only call from InsertCheck handler
         }
