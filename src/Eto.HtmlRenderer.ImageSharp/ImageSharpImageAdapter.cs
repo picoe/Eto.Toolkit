@@ -9,7 +9,6 @@
 // 
 // - Sun Tsu,
 // "The Art of War"
-#if USE_IMAGESHARP
 using Eto.Drawing;
 using TheArtOfDev.HtmlRenderer.Adapters;
 using System.Collections.Generic;
@@ -19,6 +18,11 @@ using SixLabors.ImageSharp.PixelFormats;
 using System.IO;
 using SixLabors.ImageSharp.Formats.Png;
 using System.Diagnostics;
+using TheArtOfDev.HtmlRenderer.Eto.Adapters;
+using SixLabors.ImageSharp.Metadata;
+using SixLabors.ImageSharp.Formats.Gif;
+
+[assembly: Eto.ExportHandler(typeof(IImageAdapter), typeof(ImageSharpImageAdapter))]
 
 namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
 {
@@ -29,32 +33,10 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
         Dictionary<int, Bitmap> _images = new Dictionary<int, Bitmap>();
 
 
-        public static ImageSharpImageAdapter TryGet(Stream stream)
-        {
-            var img = SixLabors.ImageSharp.Image.Load(stream, out var format);
-            if (img.Frames.Count > 1 && img.Frames.Any(r => r.MetaData.FrameDelay > 0))
-            {
-                return new ImageSharpImageAdapter(img);
-            }
-            img.Dispose();
-            return null;
-        }
-
-        public ImageSharpImageAdapter(SixLabors.ImageSharp.Image<Rgba32> image, bool preloadFrames = true)
-        {
-            Image = image;
-            if (preloadFrames)
-            {
-                for (int i = 0; i < Frames.Count; i++)
-                {
-                    GetFrame(i);
-                }
-            }
-        }
 
         public bool Preload { get; set; }
 
-        public SixLabors.ImageSharp.Image<Rgba32> Image { get; }
+        public SixLabors.ImageSharp.Image Image { get; private set; }
 
         private Bitmap GetFrame(int currentFrame)
         {
@@ -85,7 +67,7 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
         {
             return Image
                 .Frames
-                .Select(r => (RImageFrame)new ImageFrameAdapter(TimeSpan.FromMilliseconds(r.MetaData.FrameDelay * 10)))
+                .Select(r => (RImageFrame)new ImageFrameAdapter(TimeSpan.FromMilliseconds(GetDelay(r) * 10)))
                 .ToList();
         }
 
@@ -94,9 +76,31 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
             _currentFrame = frame;
         }
 
+        int GetDelay(SixLabors.ImageSharp.ImageFrame frame)
+        {
+            var gifMetaData = frame.Metadata.GetFormatMetadata(GifFormat.Instance);
+            return gifMetaData?.FrameDelay ?? 0;
+        }
+
         Image IImageAdapter.Image => GetFrame(_currentFrame);
 
         public override void Dispose() => Image.Dispose();
+
+        public bool Load(Stream stream)
+        {
+            var img = SixLabors.ImageSharp.Image.Load(stream, out var format);
+            if (img.Frames.Count > 1 && img.Frames.Any(r => GetDelay(r) > 0))
+            {
+                Image = img;
+                for (int i = 0; i < Frames.Count; i++)
+                {
+                    GetFrame(i);
+                }
+                return true;
+            }
+            img.Dispose();
+            return false;
+
+        }
     }
 }
-#endif

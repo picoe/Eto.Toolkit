@@ -3,8 +3,11 @@
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
     <HtmlRendererPath>..\..\lib\HtmlRenderer\</HtmlRendererPath>
-    <UseImageSharp Condition="$(UseImageSharp) == '' AND $(TargetFramework) == 'netstandard2.0'">True</UseImageSharp>
-    <UseSystemDrawing Condition="$(UseSystemDrawing) == '' AND $(TargetFramework) == 'net45'">True</UseSystemDrawing>
+    
+    <Title>HtmlRenderer control for Eto.Forms</Title>
+    <Description>Provides a control to use in Eto.Forms that displays HTML content. 
+Use one of the platform-specific nuget packages, or Eto.HtmlRenderer.ImageSharp to enable animated GIF support.
+</Description>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(HtmlRendererPath)Source\HtmlRenderer\Core\Utils\ImageError.png">
@@ -24,46 +27,4 @@
   <ItemGroup>
     <PackageReference Include="Eto.Forms" Version="2.4.1" />
   </ItemGroup>
-  <Choose>
-    <When Condition="$(UseImageSharp) == 'True'">
-      <ItemGroup>
-        <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
-      </ItemGroup>
-      <PropertyGroup>
-        <DefineConstants>$(DefineConstants);USE_IMAGESHARP</DefineConstants>
-      </PropertyGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(UseSystemDrawing) == 'True'">
-      <ItemGroup>
-        <Reference Include="System.Drawing" />
-      </ItemGroup>
-      <PropertyGroup>
-        <DefineConstants>$(DefineConstants);USE_SDIMAGE</DefineConstants>
-      </PropertyGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(UseMac64) == 'True'">
-      <ItemGroup>
-        <PackageReference Include="Eto.Platform.Mac64" Version="2.4.1" />
-      </ItemGroup>
-      <PropertyGroup>
-        <DefineConstants>$(DefineConstants);USE_MACIMAGE</DefineConstants>
-        <MacBuildBundle>False</MacBuildBundle>
-      </PropertyGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(UseXamMac) == 'True'">
-      <ItemGroup>
-        <PackageReference Include="Eto.Platform.XamMac2" Version="2.4.1" />
-      </ItemGroup>
-      <PropertyGroup>
-        <DefineConstants>$(DefineConstants);USE_MACIMAGE;__UNIFIED__</DefineConstants>
-        <MacBuildBundle>False</MacBuildBundle>
-      </PropertyGroup>
-    </When>
-  </Choose>
 </Project>

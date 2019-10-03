@@ -10,6 +10,8 @@
 // - Sun Tsu,
 // "The Art of War"
 
+using System.Collections.Generic;
+using System.IO;
 using Eto.Drawing;
 using TheArtOfDev.HtmlRenderer.Adapters;
 
@@ -30,15 +32,26 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
             Image = image;
         }
 
+        public ImageAdapter()
+        {
+        }
+
         /// <summary>
         /// the underline Eto image.
         /// </summary>
-        public Image Image { get; }
+        public Image Image { get; private set; }
 
         public override double Width => Image.Width;
 
         public override double Height => Image.Height;
 
         public override void Dispose() => Image.Dispose();
+
+        public bool Load(Stream stream)
+        {
+            Image?.Dispose();
+            Image = new Bitmap(stream);
+            return true;
+        }
     }
 }

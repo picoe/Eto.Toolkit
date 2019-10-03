@@ -14,6 +14,7 @@
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkProfile />
     <BaseIntermediateOutputPath>..\..\artifacts\obj\Eto.CodeEditor.Wpf</BaseIntermediateOutputPath>
+    <IsPackable>False</IsPackable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

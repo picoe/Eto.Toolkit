@@ -3,15 +3,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{160DE3A8-EDD5-4256-9433-87DAEC4CF259}</ProjectGuid>
+    <ProjectGuid>{B5D415B5-22D9-44C9-888A-26301E76AE99}</ProjectGuid>
     <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>Eto.CodeEditor.Mac</RootNamespace>
-    <AssemblyName>Eto.CodeEditor.XamMac2</AssemblyName>
-    <MacResourcePrefix>Resources</MacResourcePrefix>
+    <RootNamespace>Eto.HtmlRenderer.Mac</RootNamespace>
+    <AssemblyName>Eto.HtmlRenderer.XamMac2</AssemblyName>
+    <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
     <UseXamMacFullFramework>true</UseXamMacFullFramework>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,15 +21,14 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoStdLib>false</NoStdLib>
     <EnableCodeSigning>false</EnableCodeSigning>
     <CreatePackage>false</CreatePackage>
     <EnablePackageSigning>false</EnablePackageSigning>
     <IncludeMonoRuntime>false</IncludeMonoRuntime>
     <UseSGen>false</UseSGen>
-    <HttpClientHandler>HttpClientHandler</HttpClientHandler>
-    <LinkMode>None</LinkMode>
+    <HttpClientHandler></HttpClientHandler>
+    <LinkMode></LinkMode>
+    <XamMacArch></XamMacArch>
     <AOTMode>None</AOTMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -38,41 +37,33 @@
     <DefineConstants></DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoStdLib>false</NoStdLib>
     <EnableCodeSigning>false</EnableCodeSigning>
     <CreatePackage>false</CreatePackage>
     <EnablePackageSigning>false</EnablePackageSigning>
     <IncludeMonoRuntime>false</IncludeMonoRuntime>
     <UseSGen>false</UseSGen>
-    <HttpClientHandler>HttpClientHandler</HttpClientHandler>
-    <LinkMode>None</LinkMode>
+    <HttpClientHandler></HttpClientHandler>
+    <LinkMode></LinkMode>
+    <XamMacArch></XamMacArch>
     <AOTMode>None</AOTMode>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
     <Reference Include="Xamarin.Mac" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CodeEditorHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ScintillaNotificationProtocol.cs" />
-    <Compile Include="SCNotifyEventArgs.cs" />
+    <Compile Include="MacImageAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Eto.CodeEditor\Eto.CodeEditor.csproj">
-      <Project>{9AC91936-41E2-4481-980E-80FF089FEB8A}</Project>
-      <Name>Eto.CodeEditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Scintilla.XamMac2\Scintilla.XamMac2.csproj">
-      <Project>{810B1BCD-8E09-4F69-8726-B6ED91E243E7}</Project>
-      <Name>Scintilla.XamMac2</Name>
+    <ProjectReference Include="..\Eto.HtmlRenderer\Eto.HtmlRenderer.csproj">
+      <Project>{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2}</Project>
+      <Name>Eto.HtmlRenderer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Eto.Platform.XamMac2">
-      <Version>2.4.1</Version>
+      <Version>2.5.0-rc.4</Version>
     </PackageReference>
     <PackageReference Include="NuGet.Build.Tasks.Pack">
       <Version>5.1.0</Version>
@@ -81,5 +72,4 @@
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
-
 </Project>

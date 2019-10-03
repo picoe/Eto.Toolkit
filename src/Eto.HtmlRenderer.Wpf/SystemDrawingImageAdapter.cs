@@ -1,5 +1,4 @@
-﻿#if USE_SDIMAGE
-using System;
+﻿using System;
 using sd = System.Drawing;
 using sdi = System.Drawing.Imaging;
 using System.IO;
@@ -7,6 +6,9 @@ using Eto.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using TheArtOfDev.HtmlRenderer.Adapters;
+using TheArtOfDev.HtmlRenderer.Eto.Adapters;
+
+[assembly: Eto.ExportHandler(typeof(IImageAdapter), typeof(SystemDrawingImageAdapter))]
 
 namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
 {
@@ -33,7 +35,7 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
                     _sdimage.Save(stream, sdi.ImageFormat.Png);
                     stream.Position = 0;
                     _bitmap = new Bitmap(stream);
-                };
+                }
 
                 return _bitmap;
             }
@@ -56,32 +58,45 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
         int _currentFrame;
         Size _size;
 
-        SystemDrawingImageAdapter(Size size, IEnumerable<RImageFrame> frames)
-        {
-            _size = size;
-            _frames = frames.ToList();
-        }
-
         public Image Image => ((SystemDrawingImageFrame)_frames[_currentFrame]).Bitmap;
 
         public override double Width => _size.Width;
 
         public override double Height => _size.Height;
 
-        public static SystemDrawingImageAdapter TryGet(Stream stream)
+        public override IList<RImageFrame> Frames => _frames;
+
+        public override void SetActiveFrame(int frame)
+        {
+            _currentFrame = frame;
+        }
+
+        public override void Dispose()
+        {
+            if (_frames != null)
+            {
+                foreach (var frame in _frames)
+                {
+                    (frame as SystemDrawingImageFrame)?.Dispose();
+                }
+                _frames = null;
+            }
+        }
+
+        public bool Load(Stream stream)
         {
             using (var img = sd.Image.FromStream(stream))
             {
                 if (img.FrameDimensionsList.Length == 0)
-                    return null;
+                    return false;
                 var dimension = new sdi.FrameDimension(img.FrameDimensionsList[0]);
                 int frames = img.GetFrameCount(dimension);
                 if (frames <= 1)
-                    return null;
+                    return false;
 
                 byte[] delayBytes = img.PropertyItems.FirstOrDefault(r => r.Id == 0x5100)?.Value;
                 if (delayBytes == null || delayBytes.Length < 4)
-                    return null;
+                    return false;
 
                 // In mono we have to get the delay for each frame, unlike windows which returns the entire block
                 var useFrameDelay = delayBytes.Length != frames * 4;
@@ -100,7 +115,7 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
                     {
                         delayBytes = img.GetPropertyItem(0x5100).Value;
                         if (delayBytes.Length < 4)
-                            return null;
+                            return false;
                         delayIndex = 0;
                     }
                     else
@@ -122,28 +137,10 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
                     }
                     images.Add(new SystemDrawingImageFrame(TimeSpan.FromMilliseconds(delayInMilliseconds), frameImage));
                 }
-                return new SystemDrawingImageAdapter(new Size(img.Width, img.Height), images);
-            }
-        }
-
-        public override IList<RImageFrame> Frames => _frames;
-
-        public override void SetActiveFrame(int frame)
-        {
-            _currentFrame = frame;
-        }
-
-        public override void Dispose()
-        {
-            if (_frames != null)
-            {
-                foreach (var frame in _frames)
-                {
-                    (frame as SystemDrawingImageFrame)?.Dispose();
-                }
-                _frames = null;
+                _size = new Size(img.Width, img.Height);
+                _frames = images.ToList<RImageFrame>();
+                return true;
             }
         }
     }
 }
-#endif
