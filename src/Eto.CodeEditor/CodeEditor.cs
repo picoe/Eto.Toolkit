@@ -107,6 +107,12 @@ namespace Eto.CodeEditor
             set => Handler.LineNumberColumnWidth = value;
         }
 
+        public bool IsBreakpointsMarginVisible
+        {
+            get => Handler.IsBreakpointsMarginVisible;
+            set => Handler.IsBreakpointsMarginVisible = value;
+        }
+
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
             Handler.SetColor(section, foreground, background);
@@ -194,6 +200,12 @@ namespace Eto.CodeEditor
             remove { Handler.TextChanged -= value; }
         }
 
+        public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged
+        {
+            add { Handler.BreakpointsChanged += value; }
+            remove { Handler.BreakpointsChanged -= value; }
+        }
+
         // only call from InsertCheck handler
         public void ChangeInsertion(string text)
         {
@@ -211,6 +223,7 @@ namespace Eto.CodeEditor
             int TabWidth { get; set; }
             bool ReplaceTabsWithSpaces { get; set; }
             int LineNumberColumnWidth { get; set; }
+            bool IsBreakpointsMarginVisible { get; set; }
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
             int CurrentPosition { get; set; }
             int CurrentPositionInLine { get; }
@@ -251,6 +264,7 @@ namespace Eto.CodeEditor
 
             event EventHandler<CharAddedEventArgs> CharAdded;
             event EventHandler<EventArgs> TextChanged;
+            event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
             event EventHandler<InsertCheckEventArgs> InsertCheck;
             void ChangeInsertion(string text); // only call from InsertCheck handler
         }
