@@ -311,12 +311,6 @@ namespace Eto.CodeEditor.XamMac2
             var text = Mac.Helpers.GetString(new IntPtr(ptr), (int)length, Encoding); // new string((sbyte*)ptr, 0, length.ToInt32(), scintilla.Encoding);
             return text;
         }
-        // private because it's a test. To see if it works like GetLineText
-        private string GetLineText2(int lineNumber)
-        {
-            // look at SCI_GETLINE
-            return "not implemented";
-        }
 
         public int GetLineLength(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_LINELENGTH, lineNumber);
 
@@ -509,6 +503,8 @@ namespace Eto.CodeEditor.XamMac2
                     var mask = (int)(Control.GetGeneralProperty(NativeMethods.SCI_MARKERGET, lineNumber));
                     var uimask = unchecked((uint)mask);
                     var addOrRemove = ((uimask & bmmask) > 0) ? BreakpointChangeType.Remove : BreakpointChangeType.Add;
+                    if (addOrRemove == BreakpointChangeType.Add && string.IsNullOrWhiteSpace(GetLineText((int)lineNumber)))
+                        return;
                     Control.SetGeneralProperty(addOrRemove == BreakpointChangeType.Add ? NativeMethods.SCI_MARKERADD : NativeMethods.SCI_MARKERDELETE, lineNumber, BREAKPOINT_MARKER);
                     BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs((int)lineNumber, addOrRemove));
                     break;
