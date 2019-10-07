@@ -4,10 +4,6 @@ variables:
   build.configuration: 'Release'
   build.arguments: /restore /t:Build;Pack /p:BuildVersion=$(build.version) /p:BuildBranch=$(Build.SourceBranch)
 
-steps:
-- checkout: self
-  submodules: true
-
 trigger:
   - master
   - refs/tags/*
@@ -19,6 +15,8 @@ jobs:
   variables:
     build.platform: 'Mac'
   steps:
+  - checkout: self
+    submodules: true
   - script: sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh 5_18_1
     displayName: 'Select Xamarin SDK version'
   - task: MSBuild@1
@@ -41,6 +39,8 @@ jobs:
   variables:
     build.platform: 'Windows'
   steps:
+  - checkout: self
+    submodules: true
   - task: MSBuild@1
     displayName: Restore, Build and Package
     inputs:
