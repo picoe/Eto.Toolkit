@@ -1,17 +1,17 @@
 ﻿using System;
 namespace Eto.CodeEditor
 {
-    public enum BreakpointChangeType {Add, Remove};
+    public enum BreakpointChangeType {Add, Remove, Clear};
 
     public class BreakpointsChangedEventArgs : EventArgs
     {
-        public BreakpointsChangedEventArgs(int lineNumber, BreakpointChangeType addOrRemove)
+        public BreakpointsChangedEventArgs(BreakpointChangeType addOrRemoveOrClear, int lineNumber = -1)
         {
             LineNumber = lineNumber;
-            AddOrRemove = addOrRemove;
+            ChangeType = addOrRemoveOrClear;
         }
 
         public int LineNumber { get; private set; }
-        public BreakpointChangeType AddOrRemove { get; private set; }
+        public BreakpointChangeType ChangeType { get; private set; }
     }
 }

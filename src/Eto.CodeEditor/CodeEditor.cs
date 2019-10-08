@@ -113,6 +113,12 @@ namespace Eto.CodeEditor
             set => Handler.IsBreakpointsMarginVisible = value;
         }
 
+        public void BreakOnLine(int lineNumber) => Handler.BreakOnLine(lineNumber-1);
+
+        public void ClearBreak() => Handler.ClearBreak();
+
+        public void ClearBreakpoints() => Handler.ClearBreakpoints();
+
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
             Handler.SetColor(section, foreground, background);
@@ -224,6 +230,9 @@ namespace Eto.CodeEditor
             bool ReplaceTabsWithSpaces { get; set; }
             int LineNumberColumnWidth { get; set; }
             bool IsBreakpointsMarginVisible { get; set; }
+            void BreakOnLine(int lineNumber);
+            void ClearBreak();
+            void ClearBreakpoints();
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
             int CurrentPosition { get; set; }
             int CurrentPositionInLine { get; }
