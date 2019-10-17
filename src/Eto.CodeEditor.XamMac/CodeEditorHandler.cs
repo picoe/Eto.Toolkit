@@ -15,6 +15,11 @@ namespace Eto.CodeEditor.XamMac2
 {
     public class CodeEditorHandler : Eto.Mac.Forms.MacView<ScintillaView, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
     {
+        private const int BREAKPOINT_MARKER = 3; // arbitrary number
+        private const int BREAK_MARKER = 4; // arbitrary number
+
+        private const int BREAKPOINTS_MARGIN = 1;
+        private const int LINENUMBERS_MARGIN = 2;
         static CodeEditorHandler()
         {
             var path = Path.Combine(NSBundle.MainBundle.PrivateFrameworksPath, "Scintilla.framework", "Scintilla");
@@ -37,6 +42,30 @@ namespace Eto.CodeEditor.XamMac2
             ReplaceTabsWithSpaces = true;
             ShowIndentationGuides();
             Control.Message(NativeMethods.SCI_AUTOCSETMAXHEIGHT, new IntPtr(10), IntPtr.Zero);
+
+            // breakpoints margin
+            Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINSENSITIVEN, BREAKPOINTS_MARGIN, 1);
+            Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINTYPEN, BREAKPOINTS_MARGIN, NativeMethods.SC_MARGIN_SYMBOL);
+            Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, (nint)uint.MaxValue); // ScintillaNet -> public const uint MaskAll = unchecked((uint)-1);
+            Control.SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAKPOINTS_MARGIN, NativeMethods.SC_MARK_FULLRECT);
+            IsBreakpointsMarginVisible = false;
+
+            // line numbers margin
+            Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINSENSITIVEN, LINENUMBERS_MARGIN, 0);
+            Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINTYPEN, LINENUMBERS_MARGIN, NativeMethods.SC_MARGIN_NUMBER);
+            //Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, (nint)uint.MaxValue);
+
+            // breakpoint marker
+            Control.SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAKPOINT_MARKER, NativeMethods.SC_MARK_CIRCLE); // default
+            var red = 255; // 0xFF0000; // */ 16711680;
+            Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETFORE, BREAKPOINT_MARKER, red);
+            Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETBACK, BREAKPOINT_MARKER, red);
+
+            // break marker
+            Control.SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAK_MARKER, NativeMethods.SC_MARK_ARROW);
+            var yellow = 0x00FFFF; // */ 16776960;
+            Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETFORE, BREAK_MARKER, 0xFFFFFF); //black
+            Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETBACK, BREAK_MARKER, yellow);
         }
 
         public string Text
@@ -176,12 +205,18 @@ namespace Eto.CodeEditor.XamMac2
         {
             get
             {
-                return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETMARGINWIDTHN);
+                return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETMARGINWIDTHN, LINENUMBERS_MARGIN);
             }
             set
             {
-                Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINWIDTHN, 0, value);
+                Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINWIDTHN, LINENUMBERS_MARGIN, value);
             }
+        }
+
+        public bool IsBreakpointsMarginVisible
+        {
+            get => Control.GetGeneralProperty(NativeMethods.SCI_GETMARGINWIDTHN, BREAKPOINTS_MARGIN) != 0;
+            set => Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINWIDTHN, BREAKPOINTS_MARGIN, value ? 16 : 0);
         }
 
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
@@ -288,12 +323,6 @@ namespace Eto.CodeEditor.XamMac2
                 return string.Empty;
             var text = Mac.Helpers.GetString(new IntPtr(ptr), (int)length, Encoding); // new string((sbyte*)ptr, 0, length.ToInt32(), scintilla.Encoding);
             return text;
-        }
-        // private because it's a test. To see if it works like GetLineText
-        private string GetLineText2(int lineNumber)
-        {
-            // look at SCI_GETLINE
-            return "not implemented";
         }
 
         public int GetLineLength(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_LINELENGTH, lineNumber);
@@ -464,7 +493,6 @@ namespace Eto.CodeEditor.XamMac2
             Control.Message(NativeMethods.SCI_AUTOCSETIGNORECASE, new IntPtr(1), IntPtr.Zero);
         }
 
-
         unsafe void NotificationProtocol_Notify(object sender, SCNotifyEventArgs e)
         {
             var n = e.Notification;
@@ -480,15 +508,41 @@ namespace Eto.CodeEditor.XamMac2
                         var text = Mac.Helpers.GetString(n.text, (int)n.length, Encoding);
                         InsertCheck?.Invoke(this, new InsertCheckEventArgs(text));
                     }
-                    TextChanged?.Invoke(this, new TextChangedEventArgs());
+                    TextChanged?.Invoke(this, EventArgs.Empty);
+                    break;
+                case NativeMethods.SCN_MARGINCLICK:
+                    const uint bmmask = (1 << BREAKPOINT_MARKER);
+                    var lineNumber = Control.GetGeneralProperty(NativeMethods.SCI_LINEFROMPOSITION, (nint)n.position);
+                    var mask = (int)(Control.GetGeneralProperty(NativeMethods.SCI_MARKERGET, lineNumber));
+                    var uimask = unchecked((uint)mask);
+                    var addOrRemove = ((uimask & bmmask) > 0) ? BreakpointChangeType.Remove : BreakpointChangeType.Add;
+                    if (addOrRemove == BreakpointChangeType.Add && string.IsNullOrWhiteSpace(GetLineText((int)lineNumber)))
+                        return;
+                    Control.SetGeneralProperty(addOrRemove == BreakpointChangeType.Add ? NativeMethods.SCI_MARKERADD : NativeMethods.SCI_MARKERDELETE, lineNumber, BREAKPOINT_MARKER);
+                    BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(addOrRemove, (int)lineNumber));
                     break;
                 default:
                     break;
             }
         }
 
+        public void ClearBreakpoints()
+        {
+            Control.SetGeneralProperty(NativeMethods.SCI_MARKERDELETEALL, BREAKPOINT_MARKER);
+            BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(BreakpointChangeType.Clear));
+        }
+
+        public void BreakOnLine(int lineNumber)
+        {
+            ClearBreak();
+            Control.SetGeneralProperty(NativeMethods.SCI_MARKERADD, lineNumber, BREAK_MARKER);
+        }
+
+        public void ClearBreak() => Control.SetGeneralProperty(NativeMethods.SCI_MARKERDELETEALL, BREAK_MARKER);
+
         public event EventHandler<CharAddedEventArgs> CharAdded;
-        public event EventHandler<TextChangedEventArgs> TextChanged;
+        public event EventHandler<EventArgs> TextChanged;
+        public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
         public event EventHandler<InsertCheckEventArgs> InsertCheck;
 
         public unsafe void ChangeInsertion(string text)
