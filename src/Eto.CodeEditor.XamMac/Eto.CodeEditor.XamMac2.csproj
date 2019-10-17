@@ -12,6 +12,8 @@
     <UseXamMacFullFramework>true</UseXamMacFullFramework>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <Title>Eto.CodeEditor adapter for Eto.XamMac2</Title>
+    <Description>This is the Xamarin.Mac implementation of Eto.CodeEditor.</Description>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
