@@ -246,7 +246,8 @@ namespace Eto.CodeEditor.Wpf
         private const int TypeNameIndex = 22;
 
         public event EventHandler<Eto.CodeEditor.CharAddedEventArgs> CharAdded;
-        public event EventHandler<Eto.CodeEditor.TextChangedEventArgs> TextChanged;
+        //public event EventHandler<Eto.CodeEditor.TextChangedEventArgs> TextChanged;
+        public event EventHandler<EventArgs> TextChanged;
         public event EventHandler<Eto.CodeEditor.InsertCheckEventArgs> InsertCheck;
 
         public void SetupIndicatorStyles()
@@ -415,6 +416,15 @@ namespace Eto.CodeEditor.Wpf
             WinFormsControl.AutoCShow(lenEntered, list);
         }
 
+        public void BreakOnLine(int lineNumber) => throw new NotImplementedException();
+        public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
+        public void ClearBreak() => throw new NotImplementedException();
+        public void ClearBreakpoints() => throw new NotImplementedException();
+        public bool IsBreakpointsMarginVisible
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
     }
 
 
