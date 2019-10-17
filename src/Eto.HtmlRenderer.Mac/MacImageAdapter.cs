@@ -1,5 +1,4 @@
-﻿#if USE_MACIMAGE
-using System;
+﻿using System;
 using sd = System.Drawing;
 using System.IO;
 using Eto.Drawing;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TheArtOfDev.HtmlRenderer.Adapters;
 using System.Runtime.InteropServices;
+using TheArtOfDev.HtmlRenderer.Eto.Adapters;
 #if __UNIFIED__
 using CoreGraphics;
 using AppKit;
@@ -18,6 +18,8 @@ using MonoMac.AppKit;
 using MonoMac.Foundation;
 using MonoMac.ObjCRuntime;
 #endif
+
+[assembly: Eto.ExportHandler(typeof(IImageAdapter), typeof(MacImageAdapter))]
 
 namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
 {
@@ -59,13 +61,6 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
         NSBitmapImageRep _rep;
         NSImage _img;
 
-        MacImageAdapter(NSImage img, NSBitmapImageRep rep, List<RImageFrame> frames)
-        {
-            _img = img;
-            _rep = rep;
-            _frames = frames;
-        }
-
         public Image Image => GetBitmap();
 
         public override double Width => _img.Size.Width;
@@ -85,26 +80,6 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
         static void SetValueForProperty(NSBitmapImageRep rep, NSString property, NSObject value)
         {
             Messaging.void_objc_msgSend_IntPtr_IntPtr(rep.Handle, selSetPropertyWithValueHandle, property.Handle, value.Handle);
-        }
-
-        public static MacImageAdapter TryGet(Stream stream)
-        {
-            var img = NSImage.FromStream(stream);
-            var bitmapRep = img.Representations()[0] as NSBitmapImageRep;
-            if (bitmapRep == null)
-                return null;
-
-            var frames = GetValueForProperty(bitmapRep, NSImageFrameCount) as NSNumber;
-            if (frames == null || frames.Int32Value <= 1)
-                return null;
-            var images = new List<RImageFrame>();
-            for (var i = 0; i < frames.Int32Value; i++)
-            {
-                SetValueForProperty(bitmapRep, NSBitmapImageRep.CurrentFrame, new NSNumber(i));
-                var delay = GetValueForProperty(bitmapRep, NSBitmapImageRep.CurrentFrameDuration) as NSNumber;
-                images.Add(new MacImageFrame(TimeSpan.FromSeconds(delay.DoubleValue)));
-            }
-            return new MacImageAdapter(img, bitmapRep, images);
         }
 
         Bitmap GetBitmap()
@@ -139,6 +114,28 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
                 _frames = null;
             }
         }
+
+        public bool Load(Stream stream)
+        {
+            var img = NSImage.FromStream(stream);
+            var bitmapRep = img.Representations()[0] as NSBitmapImageRep;
+            if (bitmapRep == null)
+                return false;
+
+            var frames = GetValueForProperty(bitmapRep, NSImageFrameCount) as NSNumber;
+            if (frames == null || frames.Int32Value <= 1)
+                return false;
+            var images = new List<RImageFrame>();
+            for (var i = 0; i < frames.Int32Value; i++)
+            {
+                SetValueForProperty(bitmapRep, NSBitmapImageRep.CurrentFrame, new NSNumber(i));
+                var delay = GetValueForProperty(bitmapRep, NSBitmapImageRep.CurrentFrameDuration) as NSNumber;
+                images.Add(new MacImageFrame(TimeSpan.FromSeconds(delay.DoubleValue)));
+            }
+            _img = img;
+            _rep = bitmapRep;
+            _frames = images;
+            return true;
+        }
     }
 }
-#endif

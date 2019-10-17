@@ -1,8 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor", "Eto.CodeEditor\Eto.CodeEditor.csproj", "{9AC91936-41E2-4481-980E-80FF089FEB8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eto.CodeEditor", "Eto.CodeEditor\Eto.CodeEditor.csproj", "{9AC91936-41E2-4481-980E-80FF089FEB8A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.XamMac2", "Eto.CodeEditor.XamMac\Eto.CodeEditor.XamMac2.csproj", "{160DE3A8-EDD5-4256-9433-87DAEC4CF259}"
 EndProject
@@ -10,19 +10,37 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.Wpf", "Eto.C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeEditor", "CodeEditor", "{646F64B2-57A5-4096-854F-F83D981AF1E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.TestAppWin", "..\test\Eto.CodeEditor.TestAppWin\Eto.CodeEditor.TestAppWin.csproj", "{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eto.CodeEditor.TestAppWin", "..\test\Eto.CodeEditor.TestAppWin\Eto.CodeEditor.TestAppWin.csproj", "{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scintilla.XamMac2", "Scintilla.XamMac2\Scintilla.XamMac2.csproj", "{810B1BCD-8E09-4F69-8726-B6ED91E243E7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.TestAppMac", "..\test\Eto.CodeEditor.TestAppMac\Eto.CodeEditor.TestAppMac.csproj", "{DD626F6E-2487-41A7-8D97-B3F673EC117B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.CodeEditor.TestApp", "..\test\Eto.CodeEditor.TestApp\Eto.CodeEditor.TestApp.csproj", "{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eto.CodeEditor.TestApp", "..\test\Eto.CodeEditor.TestApp\Eto.CodeEditor.TestApp.csproj", "{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HtmlRenderer", "HtmlRenderer", "{C5C9E1F4-B112-4BDE-A589-722E87D63962}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.HtmlRenderer", "Eto.HtmlRenderer\Eto.HtmlRenderer.csproj", "{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.HtmlRenderer.TestApp", "..\test\Eto.HtmlRenderer.TestApp\Eto.HtmlRenderer.TestApp.csproj", "{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eto.HtmlRenderer.Wpf", "Eto.HtmlRenderer.Wpf\Eto.HtmlRenderer.Wpf.csproj", "{CBC22717-A7E5-428A-97E0-30D5C71737DC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eto.HtmlRenderer.ImageSharp", "Eto.HtmlRenderer.ImageSharp\Eto.HtmlRenderer.ImageSharp.csproj", "{364EDFB1-8C1A-46B1-A9F7-B9D7F9417E55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.HtmlRenderer.Mac64", "Eto.HtmlRenderer.Mac\Eto.HtmlRenderer.Mac64.csproj", "{F9D593CA-8448-466D-BC47-A1753E3949FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{23803176-E117-455E-9B80-15AA3C0D8BD2}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\Common.Build.props = ..\build\Common.Build.props
+		..\build\Common.Build.targets = ..\build\Common.Build.targets
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		NuGet.Config = NuGet.Config
+		..\azure-pipelines.yml = ..\azure-pipelines.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eto.HtmlRenderer.XamMac2", "Eto.HtmlRenderer.Mac\Eto.HtmlRenderer.XamMac2.csproj", "{B5D415B5-22D9-44C9-888A-26301E76AE99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,7 +68,6 @@ Global
 		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Debug|Windows.ActiveCfg = Debug|Any CPU
 		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Debug|Windows.Build.0 = Debug|Any CPU
 		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Release|Mac.ActiveCfg = Release|Any CPU
-		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Release|Mac.Build.0 = Release|Any CPU
 		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Release|Windows.ActiveCfg = Release|Any CPU
 		{835EF387-1702-49FF-B1B1-41C3D0CDF8B9}.Release|Windows.Build.0 = Release|Any CPU
 		{2BF83FDA-9BFF-4A1E-8C58-1EAC435DEED6}.Debug|Mac.ActiveCfg = Debug|Any CPU
@@ -95,6 +112,34 @@ Global
 		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}.Release|Mac.Build.0 = Release|Any CPU
 		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}.Release|Windows.ActiveCfg = Release|Any CPU
 		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB}.Release|Windows.Build.0 = Release|Any CPU
+		{CBC22717-A7E5-428A-97E0-30D5C71737DC}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{CBC22717-A7E5-428A-97E0-30D5C71737DC}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{CBC22717-A7E5-428A-97E0-30D5C71737DC}.Debug|Windows.Build.0 = Debug|Any CPU
+		{CBC22717-A7E5-428A-97E0-30D5C71737DC}.Release|Mac.ActiveCfg = Release|Any CPU
+		{CBC22717-A7E5-428A-97E0-30D5C71737DC}.Release|Windows.ActiveCfg = Release|Any CPU
+		{CBC22717-A7E5-428A-97E0-30D5C71737DC}.Release|Windows.Build.0 = Release|Any CPU
+		{364EDFB1-8C1A-46B1-A9F7-B9D7F9417E55}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{364EDFB1-8C1A-46B1-A9F7-B9D7F9417E55}.Debug|Mac.Build.0 = Debug|Any CPU
+		{364EDFB1-8C1A-46B1-A9F7-B9D7F9417E55}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{364EDFB1-8C1A-46B1-A9F7-B9D7F9417E55}.Debug|Windows.Build.0 = Debug|Any CPU
+		{364EDFB1-8C1A-46B1-A9F7-B9D7F9417E55}.Release|Mac.ActiveCfg = Release|Any CPU
+		{364EDFB1-8C1A-46B1-A9F7-B9D7F9417E55}.Release|Mac.Build.0 = Release|Any CPU
+		{364EDFB1-8C1A-46B1-A9F7-B9D7F9417E55}.Release|Windows.ActiveCfg = Release|Any CPU
+		{364EDFB1-8C1A-46B1-A9F7-B9D7F9417E55}.Release|Windows.Build.0 = Release|Any CPU
+		{F9D593CA-8448-466D-BC47-A1753E3949FD}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{F9D593CA-8448-466D-BC47-A1753E3949FD}.Debug|Mac.Build.0 = Debug|Any CPU
+		{F9D593CA-8448-466D-BC47-A1753E3949FD}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{F9D593CA-8448-466D-BC47-A1753E3949FD}.Debug|Windows.Build.0 = Debug|Any CPU
+		{F9D593CA-8448-466D-BC47-A1753E3949FD}.Release|Mac.ActiveCfg = Release|Any CPU
+		{F9D593CA-8448-466D-BC47-A1753E3949FD}.Release|Mac.Build.0 = Release|Any CPU
+		{F9D593CA-8448-466D-BC47-A1753E3949FD}.Release|Windows.ActiveCfg = Release|Any CPU
+		{F9D593CA-8448-466D-BC47-A1753E3949FD}.Release|Windows.Build.0 = Release|Any CPU
+		{B5D415B5-22D9-44C9-888A-26301E76AE99}.Debug|Mac.ActiveCfg = Debug|Any CPU
+		{B5D415B5-22D9-44C9-888A-26301E76AE99}.Debug|Mac.Build.0 = Debug|Any CPU
+		{B5D415B5-22D9-44C9-888A-26301E76AE99}.Debug|Windows.ActiveCfg = Debug|Any CPU
+		{B5D415B5-22D9-44C9-888A-26301E76AE99}.Release|Mac.ActiveCfg = Release|Any CPU
+		{B5D415B5-22D9-44C9-888A-26301E76AE99}.Release|Mac.Build.0 = Release|Any CPU
+		{B5D415B5-22D9-44C9-888A-26301E76AE99}.Release|Windows.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +154,10 @@ Global
 		{FD97E2D4-5D8E-46F8-B952-1A2B2E07BA1B} = {646F64B2-57A5-4096-854F-F83D981AF1E8}
 		{D9C153E4-6D38-4B4F-8BEE-6C9938D99CE2} = {C5C9E1F4-B112-4BDE-A589-722E87D63962}
 		{9AEA3FBB-2199-46CC-BD67-FE5A9D4681BB} = {C5C9E1F4-B112-4BDE-A589-722E87D63962}
+		{CBC22717-A7E5-428A-97E0-30D5C71737DC} = {C5C9E1F4-B112-4BDE-A589-722E87D63962}
+		{364EDFB1-8C1A-46B1-A9F7-B9D7F9417E55} = {C5C9E1F4-B112-4BDE-A589-722E87D63962}
+		{F9D593CA-8448-466D-BC47-A1753E3949FD} = {C5C9E1F4-B112-4BDE-A589-722E87D63962}
+		{B5D415B5-22D9-44C9-888A-26301E76AE99} = {C5C9E1F4-B112-4BDE-A589-722E87D63962}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B290EE1E-3782-4C57-A127-FD078514CD8C}

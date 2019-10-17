@@ -9,7 +9,12 @@ namespace Eto.HtmlRenderer.TestApp.Desktop
 		[STAThread]
 		static void Main(string[] args)
 		{
-            new Application(Eto.Platform.Detect).Run(new MainForm());
+            var platform = Eto.Platform.Detect;
+
+            // test using ImageSharp
+            //platform.LoadAssembly("Eto.HtmlRenderer.ImageSharp");
+
+            new Application(platform).Run(new MainForm());
 		}
 	}
 }

@@ -139,18 +139,15 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
                     RImage adapter = null;
 
                     // todo: remove when Eto supports extracting frames from GIF files directly.
-#if USE_SDIMAGE
-                    if (adapter == null)
-                        adapter = SystemDrawingImageAdapter.TryGet(stream);
-#endif
-#if USE_MACIMAGE
-                    if (adapter == null)
-                        adapter = MacImageAdapter.TryGet(stream);
-#endif
-#if USE_IMAGESHARP
-                    if (adapter == null)
-                        adapter = ImageSharpImageAdapter.TryGet(stream);
-#endif
+
+                    // use platform-specific adapters to support image animation
+                    if (global::Eto.Platform.Instance.Supports<IImageAdapter>())
+                    {
+                        var imageAdapter = global::Eto.Platform.Instance.Create<IImageAdapter>();
+                        if (imageAdapter.Load(stream))
+                            adapter = (RImage)imageAdapter;
+                    }
+
                     if (adapter != null)
                         return adapter;
 
