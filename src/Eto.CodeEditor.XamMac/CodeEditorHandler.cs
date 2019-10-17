@@ -19,7 +19,7 @@ namespace Eto.CodeEditor.XamMac2
         private const int BREAK_MARKER = 4; // arbitrary number
 
         private const int BREAKPOINTS_MARGIN = 1;
-        private const int LINENUMBERS_MARGIN = 0;
+        private const int LINENUMBERS_MARGIN = 2;
         static CodeEditorHandler()
         {
             var path = Path.Combine(NSBundle.MainBundle.PrivateFrameworksPath, "Scintilla.framework", "Scintilla");
