@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Title>Eto.HtmlRenderer adapter for ImageSharp</Title>
+    <Description>This can be optionally used to extract animated image frames using ImageSharp.
+    
+To load the adapter, do this before creating the HtmlRenderer control:
+
+  Platform.Instance.LoadAssembly("Eto.HtmlRenderer.ImageSharp");
+  
+</Description>
   </PropertyGroup>
 
   <ItemGroup>
