@@ -12,6 +12,9 @@
     <UseXamMacFullFramework>true</UseXamMacFullFramework>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <Title>Eto.CodeEditor adapter for Eto.XamMac2</Title>
+    <Description>This is the Xamarin.Mac implementation of Eto.CodeEditor.</Description>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -68,6 +71,7 @@
     <ProjectReference Include="..\Scintilla.XamMac2\Scintilla.XamMac2.csproj">
       <Project>{810B1BCD-8E09-4F69-8726-B6ED91E243E7}</Project>
       <Name>Scintilla.XamMac2</Name>
+      <Pack>True</Pack>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +84,11 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+  <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('Pack', 'True'))"/>
+    </ItemGroup>
+  </Target>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 
 </Project>

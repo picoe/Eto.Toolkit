@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net45</TargetFramework>
+    <Title>Eto.HtmlRenderer adapter for Eto.Wpf</Title>
+    <Description>This can be optionally used to extract animated image frames when using the Eto.Wpf platform.</Description>
   </PropertyGroup>
 
   <ItemGroup>

@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
+    <Title>Code Editor control for Eto.Forms</Title>
+    <Description>This gives you a code editor control in Eto.Forms.  Currently only supports Eto.Wpf and Eto.XamMac2, please add the platform-specific nuget package to your project.</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Eto.Forms" Version="2.4.1" />

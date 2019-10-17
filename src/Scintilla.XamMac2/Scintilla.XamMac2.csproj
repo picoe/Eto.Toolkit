@@ -12,6 +12,7 @@
     <UseXamMacFullFramework>true</UseXamMacFullFramework>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <IsPackable>False</IsPackable>
   </PropertyGroup>
   <PropertyGroup>
     <!-- use these properties to compile an ObjectiveC binding project for XamMac Full.  Remove if/when UseXamMacFullFramework is supported. -->
@@ -63,8 +64,12 @@
       <SmartLink>False</SmartLink>
     </NativeReference>
   </ItemGroup>
-  <Target Name="Pack">
-    <!-- do nothing -->
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="NuGet.Build.Tasks.Pack">
+      <Version>5.3.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.ObjcBinding.CSharp.targets" />
 </Project>

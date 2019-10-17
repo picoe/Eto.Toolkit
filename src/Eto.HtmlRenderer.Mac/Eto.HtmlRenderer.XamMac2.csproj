@@ -10,8 +10,8 @@
     <AssemblyName>Eto.HtmlRenderer.XamMac2</AssemblyName>
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
     <UseXamMacFullFramework>true</UseXamMacFullFramework>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
+    <Title>Eto.HtmlRenderer adapter for Eto.XamMac2</Title>
+    <Description>This can be optionally used to extract animated image frames when using the Eto.XamMac2 platform.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
