@@ -203,6 +203,18 @@ namespace Eto.CodeEditor.XamMac2
             }
         }
 
+        public bool BackspaceUnindents
+        {
+            get
+            {
+                return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETBACKSPACEUNINDENTS) == 1;
+            }
+            set
+            {
+                Control.SetGeneralProperty(NativeMethods.SCI_SETBACKSPACEUNINDENTS, value ? 1 : 0);
+            }
+        }
+
         public int LineNumberColumnWidth
         {
             get
