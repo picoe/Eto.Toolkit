@@ -309,6 +309,7 @@ namespace Eto.CodeEditor.Wpf
 
         public int TabWidth { get => WinFormsControl.TabWidth; set => WinFormsControl.TabWidth = value; }
         public bool ReplaceTabsWithSpaces { get => !WinFormsControl.UseTabs; set => WinFormsControl.UseTabs = !value; }
+        public bool BackspaceUnindents { get => WinFormsControl.BackspaceUnindents; set => WinFormsControl.BackspaceUnindents = value;}}
         public int CurrentPosition { get => WinFormsControl.CurrentPosition; set => WinFormsControl.CurrentPosition = value; }
 
         public int CurrentPositionInLine => CurrentPosition - WinFormsControl.Lines[CurrentLineNumber].Position;

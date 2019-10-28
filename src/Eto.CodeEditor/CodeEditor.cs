@@ -102,6 +102,12 @@ namespace Eto.CodeEditor
             set => Handler.ReplaceTabsWithSpaces = value;
         }
 
+        public bool BackspaceUnindents
+        {
+            get => Handler.BackspaceUnindents;
+            set => Handler.BackspaceUnindents = value;
+        }
+
         public int LineNumberColumnWidth
         {
             get => Handler.LineNumberColumnWidth;
@@ -231,6 +237,7 @@ namespace Eto.CodeEditor
             int FontSize { get; set; }
             int TabWidth { get; set; }
             bool ReplaceTabsWithSpaces { get; set; }
+            bool BackspaceUnindents { get; set; }
             int LineNumberColumnWidth { get; set; }
             IEnumerable<int> Breakpoints { get; }
             bool IsBreakpointsMarginVisible { get; set; }
