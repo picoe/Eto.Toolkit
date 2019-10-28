@@ -47,6 +47,8 @@ namespace Eto.CodeEditor.Wpf
             throw new NotImplementedException("InsertCheck handler needs to be reworked.");
         }
 
+        public IEnumerable<int> Breakpoints => throw new NotImplementedException();
+
         private void WinFormsControl_CharAdded(object sender, ScintillaNET.CharAddedEventArgs e)
         {
             CharAdded?.Invoke(this, new Eto.CodeEditor.CharAddedEventArgs((char)e.Char));
