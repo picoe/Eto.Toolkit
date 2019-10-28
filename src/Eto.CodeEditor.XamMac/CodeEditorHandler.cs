@@ -8,6 +8,8 @@ using ScintillaNET;
 using Foundation;
 using System.IO;
 using ObjCRuntime;
+using System.Collections.Generic;
+using System.Linq;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
 
@@ -552,6 +554,22 @@ namespace Eto.CodeEditor.XamMac2
             Control.Message(NativeMethods.SCI_CHANGEINSERTION, new IntPtr(bytes.Length), new IntPtr(bp));
         }
 
+        private int MarkerNext(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_MARKERNEXT, lineNumber, 1 << BREAKPOINT_MARKER); // NativeMethods.SC_MARK_CIRCLE);
+        public IEnumerable<int> Breakpoints
+        {
+            get
+            {
+                int lineIndex = MarkerNext(0);
+                while (lineIndex != -1)
+                {
+                    // increment lineIndex before returning it because line numbers start at 1 on the client
+                    lineIndex++;
+                    yield return lineIndex;
+                    // start searching on the next (incremented) index
+                    lineIndex = MarkerNext(lineIndex);
+                }
+            }
+        }
 
         Encoding Encoding
         {

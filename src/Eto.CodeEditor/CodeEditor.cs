@@ -1,5 +1,6 @@
 ﻿using System;
 using Eto.Forms;
+using System.Collections.Generic;
 
 namespace Eto.CodeEditor
 {
@@ -107,13 +108,15 @@ namespace Eto.CodeEditor
             set => Handler.LineNumberColumnWidth = value;
         }
 
+        public IEnumerable<int> Breakpoints => Handler.Breakpoints;
+
         public bool IsBreakpointsMarginVisible
         {
             get => Handler.IsBreakpointsMarginVisible;
             set => Handler.IsBreakpointsMarginVisible = value;
         }
 
-        public void BreakOnLine(int lineNumber) => Handler.BreakOnLine(lineNumber-1);
+        public void BreakOnLine(int lineNumber) => Handler.BreakOnLine(lineNumber - 1);
 
         public void ClearBreak() => Handler.ClearBreak();
 
@@ -229,6 +232,7 @@ namespace Eto.CodeEditor
             int TabWidth { get; set; }
             bool ReplaceTabsWithSpaces { get; set; }
             int LineNumberColumnWidth { get; set; }
+            IEnumerable<int> Breakpoints { get; }
             bool IsBreakpointsMarginVisible { get; set; }
             void BreakOnLine(int lineNumber);
             void ClearBreak();
