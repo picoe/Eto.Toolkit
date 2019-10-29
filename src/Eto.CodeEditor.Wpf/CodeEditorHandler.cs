@@ -430,5 +430,3 @@ namespace Eto.CodeEditor.Wpf
         }
     }
 
-
-}
