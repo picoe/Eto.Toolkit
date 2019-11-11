@@ -24,7 +24,9 @@ namespace Eto.CodeEditor
                     editor.SetLineIndentation(editor.CurrentLineNumber, newIndent);
                     // on macOS SetLineIndentation doesn't move the cursor
                     if (editor.CurrentPosition == pos)
-                        editor.CurrentPosition += newIndent;
+                        editor.CurrentPosition += editor.ReplaceTabsWithSpaces
+                            ? newIndent
+                            : newIndent / editor.TabWidth;
                 }
             }
             else if (editor.CurrentLineNumber > 0
