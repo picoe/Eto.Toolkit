@@ -429,7 +429,12 @@ namespace Eto.CodeEditor.Wpf
         public void BreakOnLine(int lineNumber) => throw new NotImplementedException();
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
         public void ClearBreak() => throw new NotImplementedException();
-        public void ClearBreakpoints() => throw new NotImplementedException();
+        public void ClearBreakpoints()
+        {
+            // implementation not complete
+            //Control.SetGeneralProperty(NativeMethods.SCI_MARKERDELETEALL, BREAKPOINT_MARKER);
+            BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(BreakpointChangeType.Clear));// throw new NotImplementedException();
+        }
         public bool IsBreakpointsMarginVisible
         {
             get => throw new NotImplementedException();
