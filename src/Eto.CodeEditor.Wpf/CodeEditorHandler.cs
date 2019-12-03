@@ -21,7 +21,7 @@ namespace Eto.CodeEditor.Wpf
         public CodeEditorHandler()
         {
             string path = ScintillaControl.UnpackNativeScintilla();
-            ScintillaNET.Scintilla.SetModulePath(path);
+            //ScintillaNET.Scintilla.SetModulePath(path);
             WinFormsControl = new ScintillaNET.Scintilla();
 
             WinFormsControl.CharAdded += WinFormsControl_CharAdded;
@@ -46,6 +46,8 @@ namespace Eto.CodeEditor.Wpf
             // on windows the handler set `e.Text = "some text"` and the setter calls the native ChangeInsertion
             throw new NotImplementedException("InsertCheck handler needs to be reworked.");
         }
+
+        public IEnumerable<int> Breakpoints => throw new NotImplementedException();
 
         private void WinFormsControl_CharAdded(object sender, ScintillaNET.CharAddedEventArgs e)
         {
@@ -309,7 +311,14 @@ namespace Eto.CodeEditor.Wpf
 
         public int TabWidth { get => WinFormsControl.TabWidth; set => WinFormsControl.TabWidth = value; }
         public bool ReplaceTabsWithSpaces { get => !WinFormsControl.UseTabs; set => WinFormsControl.UseTabs = !value; }
-        public bool BackspaceUnindents { get => WinFormsControl.BackspaceUnindents; set => WinFormsControl.BackspaceUnindents = value;}}
+        public bool BackspaceUnindents
+        {
+          get => false;
+          set
+            {
+                //pass
+            }
+        }
         public int CurrentPosition { get => WinFormsControl.CurrentPosition; set => WinFormsControl.CurrentPosition = value; }
 
         public int CurrentPositionInLine => CurrentPosition - WinFormsControl.Lines[CurrentLineNumber].Position;
@@ -420,7 +429,12 @@ namespace Eto.CodeEditor.Wpf
         public void BreakOnLine(int lineNumber) => throw new NotImplementedException();
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
         public void ClearBreak() => throw new NotImplementedException();
-        public void ClearBreakpoints() => throw new NotImplementedException();
+        public void ClearBreakpoints()
+        {
+            // implementation not complete
+            //Control.SetGeneralProperty(NativeMethods.SCI_MARKERDELETEALL, BREAKPOINT_MARKER);
+            BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(BreakpointChangeType.Clear));// throw new NotImplementedException();
+        }
         public bool IsBreakpointsMarginVisible
         {
             get => throw new NotImplementedException();
