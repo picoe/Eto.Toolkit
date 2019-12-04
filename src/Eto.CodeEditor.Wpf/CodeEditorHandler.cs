@@ -47,7 +47,13 @@ namespace Eto.CodeEditor.Wpf
             throw new NotImplementedException("InsertCheck handler needs to be reworked.");
         }
 
-        public IEnumerable<int> Breakpoints => throw new NotImplementedException();
+        public IEnumerable<int> Breakpoints //=> throw new NotImplementedException();
+        {
+            get
+            {
+                yield return 0;
+            }
+        }
 
         private void WinFormsControl_CharAdded(object sender, ScintillaNET.CharAddedEventArgs e)
         {
@@ -426,9 +432,17 @@ namespace Eto.CodeEditor.Wpf
             WinFormsControl.AutoCShow(lenEntered, list);
         }
 
-        public void BreakOnLine(int lineNumber) => throw new NotImplementedException();
+        public void BreakOnLine(int lineNumber) //=> throw new NotImplementedException();
+        {
+            //pass;
+        }
+
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
-        public void ClearBreak() => throw new NotImplementedException();
+        public void ClearBreak() //=> throw new NotImplementedException();
+        {
+            //pass;
+        }
+
         public void ClearBreakpoints()
         {
             // implementation not complete
@@ -437,8 +451,11 @@ namespace Eto.CodeEditor.Wpf
         }
         public bool IsBreakpointsMarginVisible
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get => false; //throw new NotImplementedException();
+            set //=> throw new NotImplementedException();
+            {
+                //pass;
+            }
         }
     }
 
