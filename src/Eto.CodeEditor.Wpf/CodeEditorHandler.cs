@@ -18,6 +18,12 @@ namespace Eto.CodeEditor.Wpf
 {
     public class CodeEditorHandler : Eto.Wpf.Forms.WindowsFormsHostHandler<ScintillaNET.Scintilla, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
     {
+        private const int BREAKPOINT_MARKER = 3; // arbitrary number
+        private const int BREAK_MARKER = 4; // arbitrary number
+
+        private const int BREAKPOINTS_MARGIN = 1;
+        private const int LINENUMBERS_MARGIN = 2;
+
         public CodeEditorHandler()
         {
             string path = ScintillaControl.UnpackNativeScintilla();
@@ -33,6 +39,31 @@ namespace Eto.CodeEditor.Wpf
             FontName = "Consolas";
             FontSize = 11;
             LineNumberColumnWidth = 40;
+
+            Action<int, int, int> SetGeneralProperty = (c, i, j) => WinFormsControl.DirectMessage(c, new IntPtr(i), new IntPtr(j));
+            // breakpoints margin
+            SetGeneralProperty(/*SCI_SETMARGINSENSITIVEN*/2246, BREAKPOINTS_MARGIN, 1);
+            SetGeneralProperty(/*NativeMethods.SCI_SETMARGINTYPEN*/2240, BREAKPOINTS_MARGIN, /*NativeMethods.SC_MARGIN_SYMBOL*/0);
+            SetGeneralProperty(/*NativeMethods.SCI_SETMARGINMASKN*/2244, BREAKPOINTS_MARGIN, int.MaxValue); // ScintillaNet -> public const uint MaskAll = unchecked((uint)-1);
+            SetGeneralProperty(/*NativeMethods.SCI_MARKERDEFINE*/2040, BREAKPOINTS_MARGIN, /*NativeMethods.SC_MARK_FULLRECT*/26);
+            IsBreakpointsMarginVisible = false;
+
+            // line numbers margin
+            SetGeneralProperty(/*NativeMethods.SCI_SETMARGINSENSITIVEN*/2246, LINENUMBERS_MARGIN, 0);
+            SetGeneralProperty(/*NativeMethods.SCI_SETMARGINTYPEN*/2240, LINENUMBERS_MARGIN, /*NativeMethods.SC_MARGIN_NUMBER*/1);
+
+            // breakpoint marker
+            SetGeneralProperty(/*NativeMethods.SCI_MARKERDEFINE*/2040, BREAKPOINT_MARKER, /*NativeMethods.SC_MARK_CIRCLE*/0); // default
+            var red = 255; // 0xFF0000; // */ 16711680;
+            SetGeneralProperty(/*NativeMethods.SCI_MARKERSETFORE*/2041, BREAKPOINT_MARKER, red);
+            SetGeneralProperty(/*NativeMethods.SCI_MARKERSETBACK*/2042, BREAKPOINT_MARKER, red);
+
+            // break marker
+            SetGeneralProperty(/*NativeMethods.SCI_MARKERDEFINE*/2040, BREAK_MARKER, /*NativeMethods.SC_MARK_ARROW*/2);
+            var yellow = 0x00FFFF; // */ 16776960;
+            SetGeneralProperty(/*NativeMethods.SCI_MARKERSETFORE*/2041, BREAK_MARKER, 0xFFFFFF); //black
+            SetGeneralProperty(/*NativeMethods.SCI_MARKERSETBACK*/2042, BREAK_MARKER, yellow);
+
         }
 
         private void WinFormsControl_InsertCheck(object sender, ScintillaNET.InsertCheckEventArgs e)
@@ -47,7 +78,23 @@ namespace Eto.CodeEditor.Wpf
             throw new NotImplementedException("InsertCheck handler needs to be reworked.");
         }
 
-        public IEnumerable<int> Breakpoints => throw new NotImplementedException();
+        private int MarkerNext(int lineNumber) => 
+            WinFormsControl.DirectMessage(/*NativeMethods.SCI_MARKERNEXT*/2047, new IntPtr(lineNumber), new IntPtr(1 << BREAKPOINT_MARKER)).ToInt32();
+        public IEnumerable<int> Breakpoints
+        {
+            get
+            {
+                int lineIndex = MarkerNext(0);
+                while (lineIndex != -1)
+                {
+                    // increment lineIndex before returning it because line numbers start at 1 on the client
+                    lineIndex++;
+                    yield return lineIndex;
+                    // start searching on the next (incremented) index
+                    lineIndex = MarkerNext(lineIndex);
+                }
+            }
+        }
 
         private void WinFormsControl_CharAdded(object sender, ScintillaNET.CharAddedEventArgs e)
         {
@@ -301,11 +348,13 @@ namespace Eto.CodeEditor.Wpf
         {
             get
             {
-                return WinFormsControl.Margins[0].Width;
+                //return WinFormsControl.Margins[0].Width;
+                return WinFormsControl.DirectMessage(/*NativeMethods.SCI_GETMARGINWIDTHN*/2243, new IntPtr(LINENUMBERS_MARGIN), IntPtr.Zero).ToInt32();
             }
             set
             {
-                WinFormsControl.Margins[0].Width = value;
+                //WinFormsControl.Margins[0].Width = value;
+                WinFormsControl.DirectMessage(/*NativeMethods.SCI_SETMARGINWIDTHN*/2242, new IntPtr(LINENUMBERS_MARGIN), new IntPtr(value));
             }
         }
 
@@ -426,19 +475,33 @@ namespace Eto.CodeEditor.Wpf
             WinFormsControl.AutoCShow(lenEntered, list);
         }
 
-        public void BreakOnLine(int lineNumber) => throw new NotImplementedException();
+        public void BreakOnLine(int lineNumber)
+        {
+            ClearBreak();
+            WinFormsControl.DirectMessage(/*SCI_MARKERADD*/2043, new IntPtr(lineNumber), new IntPtr(BREAK_MARKER));
+        }
+
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
-        public void ClearBreak() => throw new NotImplementedException();
+
+        public void ClearBreak() => WinFormsControl.DirectMessage(2045, new IntPtr(BREAK_MARKER), IntPtr.Zero);
+
         public void ClearBreakpoints()
         {
-            // implementation not complete
             //Control.SetGeneralProperty(NativeMethods.SCI_MARKERDELETEALL, BREAKPOINT_MARKER);
-            BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(BreakpointChangeType.Clear));// throw new NotImplementedException();
+            WinFormsControl.DirectMessage(2045, new IntPtr(BREAKPOINT_MARKER), IntPtr.Zero);
+            BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(BreakpointChangeType.Clear));
         }
         public bool IsBreakpointsMarginVisible
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get
+            {
+                var i = (WinFormsControl.DirectMessage(/*NativeMethods.SCI_GETMARGINWIDTHN*/2243, new IntPtr(BREAKPOINTS_MARGIN), IntPtr.Zero)).ToInt32();
+                return i != 0;
+            }
+            set
+            {
+                WinFormsControl.DirectMessage(2242, new IntPtr(BREAKPOINTS_MARGIN), value ? new IntPtr(16) : IntPtr.Zero);
+            }
         }
     }
 
