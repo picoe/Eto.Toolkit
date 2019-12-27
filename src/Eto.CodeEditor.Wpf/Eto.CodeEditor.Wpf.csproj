@@ -22,6 +22,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -54,9 +57,12 @@
     <Compile Include="CodeEditorHandler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Helpers.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="ScintillaControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="SciX.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -91,13 +97,12 @@
     <PackageReference Include="Eto.Platform.Wpf">
       <Version>2.4.1</Version>
     </PackageReference>
-    <PackageReference Include="jacobslusser.ScintillaNET.Signed">
-      <Version>3.6.3</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="scintilla\x64\SciLexer.dll" />
-    <EmbeddedResource Include="scintilla\x86\SciLexer.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
