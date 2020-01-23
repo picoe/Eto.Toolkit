@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Title>Unit testing UI and utilities for Eto.Forms</Title>
+    <Description>Provides a control to use in Eto.Forms applications that can be used to display, filter, and run unit tests.</Description>
+    <PackageTags>unit test;test;testing;tdd</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="$(EtoBasePath) == ''">
+    <PackageReference Include="Eto.Forms" Version="2.5.0-rc.4" />
+  </ItemGroup>
+  <ItemGroup Condition="$(EtoBasePath) != ''">
+    <ProjectReference Include="$(EtoBasePath)src\Eto\Eto.csproj" />
+  </ItemGroup>
+
+</Project>
