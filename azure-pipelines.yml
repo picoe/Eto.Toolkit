@@ -2,7 +2,10 @@ variables:
   solution: 'src/Eto.Toolkit.sln'
   build.version: '0.1.0-ci-$(Build.BuildNumber)'
   build.configuration: 'Release'
-  build.arguments: /restore /t:Build;Pack /p:BuildVersion=$(build.version) /p:BuildBranch=$(Build.SourceBranch)
+  build.basearguments: '/v:minimal /p:BuildVersion=$(build.version) /p:BuildBranch=$(Build.SourceBranch)'
+  build.arguments: '/restore /t:Build;Pack $(build.basearguments)'
+  build.dotnetversion: 3.1.100
+  build.xamarinversion: 6_6_0
 
 trigger:
   - master
@@ -17,8 +20,16 @@ jobs:
   steps:
   - checkout: self
     submodules: true
-  - script: sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh 5_18_1
+
+  - script: sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh $(build.xamarinversion)
     displayName: 'Select Xamarin SDK version'
+
+  - task: UseDotNet@2
+    displayName: Install .NET Core SDK
+    inputs:
+      packageType:  sdk
+      version:      $(build.dotnetversion)
+
   - task: MSBuild@1
     displayName: Restore, Build and Package
     inputs:
@@ -26,11 +37,29 @@ jobs:
       platform: '$(build.platform)'
       configuration: '$(build.configuration)'
       msbuildArguments: '$(build.arguments)'
+
   - task: PublishBuildArtifacts@1
     displayName: Publish nupkg
     inputs:
       pathtoPublish: artifacts/nuget/$(build.configuration)
       artifactName: nuget
+      publishLocation: container
+
+  - task: CopyFiles@2
+    displayName: Copy Eto.UnitTest.Desktop.app
+    inputs:
+      sourceFolder: artifacts/core/$(build.configuration)/net461
+      contents: Eto.UnitTest.Desktop.app/**
+      targetFolder: $(Build.ArtifactStagingDirectory)/dmg
+
+  - script: hdiutil create -fs HFS+ -srcfolder "$(Build.ArtifactStagingDirectory)/dmg" -volname "Eto.UnitTest.Desktop" "$(Build.ArtifactStagingDirectory)/Eto.UnitTest.Desktop.dmg"
+    displayName: 'Create Eto.UnitTest.Desktop.dmg'
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Eto.UnitTest.Desktop for Mac
+    inputs:
+      pathtoPublish: $(Build.ArtifactStagingDirectory)/Eto.UnitTest.Desktop.dmg
+      artifactName: Eto.UnitTest
       publishLocation: container
 
 - job: Windows
@@ -41,16 +70,45 @@ jobs:
   steps:
   - checkout: self
     submodules: true
+
+  - task: UseDotNet@2
+    displayName: Install .NET Core SDK
+    inputs:
+      packageType:  sdk
+      version:      $(build.dotnetversion)
+
   - task: MSBuild@1
     displayName: Restore, Build and Package
     inputs:
       solution: '$(solution)'
       platform: '$(build.platform)'
       configuration: '$(build.configuration)'
-      msbuildArguments: '$(build.arguments)'
+      msbuildArguments: '/t:Build;Pack $(build.arguments)'
+
+  - task: MSBuild@1
+    displayName: Publish Eto.UnitTest.Desktop
+    inputs:
+      solution: 'src/Eto.UnitTest.Desktop/Eto.UnitTest.Desktop.csproj'
+      platform: '$(build.platform)'
+      configuration: '$(build.configuration)'
+      msbuildArguments: '/t:Publish $(build.basearguments)'
+
   - task: PublishBuildArtifacts@1
     displayName: Publish nupkg
     inputs:
       pathtoPublish: artifacts/nuget/$(build.configuration)
       artifactName: nuget
+      publishLocation: container
+
+  - task: CopyFiles@2
+    displayName: Copy Eto.UnitTest.Desktop
+    inputs:
+      sourceFolder: artifacts/core/Windows/$(build.configuration)/net461/publish
+      targetFolder: $(Build.ArtifactStagingDirectory)/Eto.UnitTest.Desktop/
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Eto.UnitTest.Desktop
+    inputs:
+      pathtoPublish: $(Build.ArtifactStagingDirectory)
+      artifactName: Eto.UnitTest
       publishLocation: container
