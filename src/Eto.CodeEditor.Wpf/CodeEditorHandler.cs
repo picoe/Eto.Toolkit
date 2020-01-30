@@ -33,6 +33,7 @@ namespace Eto.CodeEditor.Wpf
             //string path = ScintillaControl.UnpackNativeScintilla();
             //ScintillaNET.Scintilla.SetModulePath(path);
             scintilla = new ScintillaControl(); // new ScintillaNET.Scintilla();
+            WinFormsControl = scintilla;
 
             /*scintilla*/this.CharAdded += WinFormsControl_CharAdded;
             scintilla.TextChanged += WinFormsControl_TextChanged;
