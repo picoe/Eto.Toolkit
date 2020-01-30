@@ -54,15 +54,19 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\common\Helpers.cs">
+      <Link>common\Helpers.cs</Link>
+    </Compile>
+    <Compile Include="..\common\SciX.cs">
+      <Link>common\SciX.cs</Link>
+    </Compile>
     <Compile Include="CodeEditorHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Helpers.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="ScintillaControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SciX.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -101,8 +105,6 @@
   <ItemGroup>
     <EmbeddedResource Include="scintilla\x64\SciLexer.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NewFolder1\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 //using System.Windows.Forms;
 
-namespace Eto.CodeEditor.Mac
+namespace Scintilla
 {
     internal static class Helpers
     {

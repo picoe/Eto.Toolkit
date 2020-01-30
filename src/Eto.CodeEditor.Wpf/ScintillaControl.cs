@@ -6,10 +6,11 @@ using System.Globalization;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Scintilla;
+using Eto.CodeEditor;
 
 namespace Eto.CodeEditor.Wpf
 {
-    public class ScintillaControl : Control
+    public class ScintillaControl : Control//, CodeEditor.IHandler
     {
         private SciX scix;
         private static IntPtr moduleHandle;
@@ -46,11 +47,74 @@ namespace Eto.CodeEditor.Wpf
             scix = new SciX { DirectFunction = directFunction, ScintillaHandle = SciPointer };
         }
 
+        #region IHandler impl
         public unsafe override string Text
         {
             get => scix.Text;
             set => scix.Text = value;
         }
+
+        public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
+        {
+            scix.SetProgrammingLanguage(language, keywordSets);
+        }
+
+        public string FontName
+        {
+            get => scix.FontName;
+            set => scix.FontName = value;
+        }
+        
+        public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
+        {
+            scix.SetColor(section, foreground, background);
+        }
+
+        public int CurrentPosition
+        {
+            get => scix.CurrentPosition;
+            set => scix.CurrentPosition = value;
+        }
+
+        public int CurrentPositionInLine => scix.CurrentPositionInLine;
+
+        public int CurrentLineNumber => scix.CurrentLineNumber;
+
+        public string GetLineText(int lineNumber)
+        {
+            return scix.GetLineText(lineNumber);
+        }
+
+        public unsafe void InsertText(int position, string text)
+        {
+            scix.InsertText(position, text);
+        }
+
+        public unsafe int ReplaceTarget(string text, int start, int end)
+        {
+            return scix.ReplaceTarget(text, start, end);
+        }
+
+        public unsafe void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber)
+        {
+            scix.ReplaceFirstOccuranceInLine(oldText, newText, lineNumber);
+        }
+
+        public void DeleteRange(int position, int length)
+        {
+            scix.DeleteRange(position, length);
+        }
+
+        public int WordStartPosition(int position, bool onlyWordCharacters)
+        {
+            return scix.WordStartPosition(position, onlyWordCharacters);
+        }
+
+        public unsafe void AutoCompleteShow(int lenEntered, string list)
+        {
+            scix.AutoCompleteShow(lenEntered, list);
+        }
+        #endregion
 
         internal IntPtr DirectMessage(int msg)
         {

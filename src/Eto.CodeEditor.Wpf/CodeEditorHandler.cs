@@ -12,7 +12,6 @@ using ScintillaNET;
 using Eto.Drawing;
 using System.Windows.Forms;
 using Eto.Wpf.Forms;
-using Eto.CodeEditor.Mac;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
 
@@ -114,90 +113,70 @@ namespace Eto.CodeEditor.Wpf
 
         }
 
-        public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
-        {
-            Language = language;
-            if(keywordSets!=null)
-            {
-                for( int i=0; i<keywordSets.Length; i++ )
-                {
-                    SetKeywords(i, keywordSets[i]);
-                }
-            }
-        }
 
+        #region IHandler impl
         public string Text
         {
             get => scintilla.Text;
             set => scintilla.Text = value;
         }
 
-        public unsafe void SetKeywords(int set, string keywords)
+        public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
         {
-            //scintilla.SetKeywords(set, keywords);
-            set = Helpers.Clamp(set, 0, NativeMethods.KEYWORDSET_MAX);
-            var bytes = Helpers.GetBytes(keywords ?? string.Empty, Encoding.ASCII, zeroTerminated: true);
-
-            fixed (byte* bp = bytes)
-                scintilla.DirectMessage(NativeMethods.SCI_SETKEYWORDS, new IntPtr(set), new IntPtr(bp));
-        }
-
-        ProgrammingLanguage _language = ProgrammingLanguage.None;
-        public ProgrammingLanguage Language
-        {
-            get { return _language; }
-            set
-            {
-                _language = value;
-                int which = ScintillaNET.NativeMethods.SCLEX_CPP;
-                switch (_language)
-                {
-                    case ProgrammingLanguage.CSharp:
-                    case ProgrammingLanguage.GLSL:
-                        which = ScintillaNET.NativeMethods.SCLEX_CPP;
-                        break;
-                    case ProgrammingLanguage.VB:
-                        which = ScintillaNET.NativeMethods.SCLEX_VB;
-                        break;
-                    case ProgrammingLanguage.Python:
-                        which = ScintillaNET.NativeMethods.SCLEX_PYTHON;
-                        break;
-                }
-                scintilla.DirectMessage(ScintillaNET.NativeMethods.SCI_SETLEXER, new IntPtr(which));
-            }
+            scintilla.SetProgrammingLanguage(language, keywordSets);
         }
 
         public string FontName
         {
-            //get { return scintilla.Styles[ScintillaNET.Style.Default].Font; }
-            //set { scintilla.Styles[ScintillaNET.Style.Default].Font = value; }
-            get
-            {
-                var length = scintilla.DirectMessage(NativeMethods.SCI_STYLEGETFONT, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), IntPtr.Zero).ToInt32();
-                var font = new byte[length];
-                unsafe
-                {
-                    fixed (byte* bp = font)
-                        scintilla.DirectMessage(NativeMethods.SCI_STYLEGETFONT, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(bp));
-                }
-
-                var name = Encoding.UTF8.GetString(font, 0, length);
-                return name;
-            }
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                    value = "Verdana";
-
-                // Scintilla expects UTF-8
-                var font = Helpers.GetBytes(value, Encoding.UTF8, true);
-                unsafe
-                {
-                    fixed (byte* bp = font)
-                        scintilla.DirectMessage(NativeMethods.SCI_STYLESETFONT, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(bp));
-                }
-            }
+            get => scintilla.FontName;
+            set => scintilla.FontName = value;
         }
+
+        public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
+        {
+            scintilla.SetColor(section, foreground, background);
+        }
+
+        public int CurrentPosition
+        {
+            get => scintilla.CurrentPosition;
+            set => scintilla.CurrentPosition = value;
+        }
+
+        public int CurrentPositionInLine => scintilla.CurrentPositionInLine;
+
+        public int CurrentLineNumber => scintilla.CurrentLineNumber;
+
+        public string GetLineText(int lineNumber)
+        {
+            return scintilla.GetLineText(lineNumber);
+        }
+
+        public unsafe void InsertText(int position, string text) 
+        {
+            scintilla.InsertText(position, text);
+        }
+
+        public unsafe int ReplaceTarget(string text, int start, int end)
+        {
+            return scintilla.ReplaceTarget(text, start, end);
+        }
+
+        public void DeleteRange(int position, int length) 
+        {
+            scintilla.DeleteRange(position, length);
+        }
+
+        public int WordStartPosition(int position, bool onlyWordCharacters)
+        {
+            return scintilla.WordStartPosition(position, onlyWordCharacters);
+        }
+
+        public unsafe void AutoCompleteShow(int lenEntered, string list)
+        {
+            scintilla.AutoCompleteShow(lenEntered, list);
+        }
+        #endregion
 
         public int FontSize
         {
@@ -211,226 +190,6 @@ namespace Eto.CodeEditor.Wpf
             {
                 scintilla.DirectMessage(NativeMethods.SCI_STYLESETSIZE, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(value));
             }
-        }
-
-        public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
-        {
-            //var fg = System.Drawing.Color.FromArgb(forecolor.Rb, forecolor.Gb, forecolor.Bb);
-            //var bg = System.Drawing.Color.FromArgb(backcolor.Rb, backcolor.Gb, backcolor.Bb);
-
-            //if ( section == Section.Default)
-            //{
-            //    scintilla.Styles[ScintillaNET.Style.Default].ForeColor = fg;
-            //    scintilla.CaretForeColor = fg;
-            //    scintilla.Styles[ScintillaNET.Style.Default].BackColor = bg;
-            //    scintilla.StyleClearAll();
-            //}
-            //if (section == Section.Comment)
-            //{
-            //    foreach (var id in CommentStyleIds(Language))
-            //    {
-            //        scintilla.Styles[id].ForeColor = fg;
-            //        scintilla.Styles[id].BackColor = bg;
-            //    }
-            //}
-            //if (section == Section.Keyword1)
-            //{
-            //    foreach (var id in Keyword1Ids(Language))
-            //    {
-            //        scintilla.Styles[id].ForeColor = fg;
-            //        scintilla.Styles[id].BackColor = bg;
-            //    }
-            //}
-            //if (section == Section.Keyword2)
-            //{
-            //    foreach (var id in Keyword2Ids(Language))
-            //    {
-            //        scintilla.Styles[id].ForeColor = fg;
-            //        scintilla.Styles[id].BackColor = bg;
-            //    }
-            //}
-            //if (section == Section.Strings)
-            //{
-            //    foreach (var id in StringStyleIds(Language))
-            //    {
-            //        scintilla.Styles[id].ForeColor = fg;
-            //        scintilla.Styles[id].BackColor = bg;
-            //    }
-            //}
-            //if (section == Section.LineNumber)
-            //{
-            //    scintilla.Styles[ScintillaNET.Style.LineNumber].ForeColor = fg;
-            //    scintilla.Styles[ScintillaNET.Style.LineNumber].BackColor = bg;
-            //}
-            //if( section == Section.DefName && Language == ProgrammingLanguage.Python)
-            //{
-            //    scintilla.Styles[ScintillaNET.Style.Python.DefName].ForeColor = fg;
-            //    scintilla.Styles[ScintillaNET.Style.Python.DefName].BackColor = bg;
-            //}
-            //if(section == Section.Preprocessor)
-            //{
-            //    foreach (var id in PreprocessorIds(Language))
-            //    {
-            //        scintilla.Styles[id].ForeColor = fg;
-            //        scintilla.Styles[id].BackColor = bg;
-            //    }
-
-            //}
-
-            //string fg = foreground.ToHex(false);
-            //string bg = background.ToHex(false);
-            int fg = ColorTranslator.ToWin32(System.Drawing.Color.FromArgb(foreground.ToArgb()));
-            int bg = ColorTranslator.ToWin32(System.Drawing.Color.FromArgb(background.ToArgb()));
-
-            if (section == Section.Default)
-            {
-                scintilla.DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(NativeMethods.STYLE_DEFAULT), new IntPtr(fg));
-                int argb = foreground.ToArgb();
-                scintilla.DirectMessage(NativeMethods.SCI_SETCARETFORE, new IntPtr(argb), new IntPtr(0));
-                scintilla.DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(NativeMethods.STYLE_DEFAULT), new IntPtr(bg));
-                scintilla.DirectMessage(NativeMethods.SCI_STYLECLEARALL, new IntPtr(0), new IntPtr(0));
-            }
-            if (section == Section.Comment)
-            {
-                foreach (var id in CommentStyleIds(Language))
-                {
-                    scintilla.DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(id), new IntPtr(fg));
-                    scintilla.DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(id), new IntPtr(bg));
-                }
-            }
-            if (section == Section.Keyword1)
-            {
-                foreach (var id in Keyword1Ids(Language))
-                {
-                    scintilla.DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(id), new IntPtr(fg));
-                    scintilla.DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(id), new IntPtr(bg));
-                }
-            }
-            if (section == Section.Keyword2)
-            {
-                foreach (var id in Keyword2Ids(Language))
-                {
-                    scintilla.DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(id), new IntPtr(fg));
-                    scintilla.DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(id), new IntPtr(bg));
-                }
-            }
-            if (section == Section.Strings)
-            {
-                foreach (var id in StringStyleIds(Language))
-                {
-                    scintilla.DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(id), new IntPtr(fg));
-                    scintilla.DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(id), new IntPtr(bg));
-                }
-            }
-            if (section == Section.LineNumber)
-            {
-                scintilla.DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(NativeMethods.STYLE_LINENUMBER), new IntPtr(fg));
-                scintilla.DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(NativeMethods.STYLE_LINENUMBER), new IntPtr(bg));
-            }
-            if (section == Section.DefName && Language == ProgrammingLanguage.Python)
-            {
-                scintilla.DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(NativeMethods.SCE_P_DEFNAME), new IntPtr(fg));
-                scintilla.DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(NativeMethods.SCE_P_DEFNAME), new IntPtr(bg));
-            }
-            if (section == Section.Preprocessor)
-            {
-                foreach (var id in PreprocessorIds(Language))
-                {
-                    scintilla.DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(id), new IntPtr(fg));
-                    scintilla.DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(id), new IntPtr(bg));
-                }
-
-            }
-        }
-
-        static int[] CommentStyleIds(ProgrammingLanguage language)
-        {
-            //if (language == ProgrammingLanguage.Python)
-            //    return new int[] { ScintillaNET.Style.Python.CommentBlock, ScintillaNET.Style.Python.CommentLine};
-
-            //if (language == ProgrammingLanguage.VB)
-            //    return new int[] { ScintillaNET.Style.Vb.Comment, ScintillaNET.Style.Vb.CommentBlock,
-            //        ScintillaNET.Style.Vb.DocBlock, ScintillaNET.Style.Vb.Preprocessor};
-
-            //return new int[] {ScintillaNET.Style.Cpp.Comment, ScintillaNET.Style.Cpp.CommentLine,
-            //    ScintillaNET.Style.Cpp.CommentDoc, ScintillaNET.Style.Cpp.CommentLineDoc};
-            if (language == ProgrammingLanguage.Python)
-                return new int[] { NativeMethods.SCE_P_COMMENTBLOCK, NativeMethods.SCE_P_COMMENTLINE };
-
-            if (language == ProgrammingLanguage.VB)
-                return new int[] { NativeMethods.SCE_B_COMMENT, NativeMethods.SCE_B_COMMENTBLOCK,
-                    NativeMethods.SCE_B_DOCBLOCK};
-
-            return new int[] { NativeMethods.SCE_C_COMMENT, NativeMethods.SCE_C_COMMENTLINE,
-                NativeMethods.SCE_C_COMMENTDOC, NativeMethods.SCE_C_COMMENTLINEDOC };
-        }
-
-        static int[] StringStyleIds(ProgrammingLanguage language)
-        {
-            //if (language == ProgrammingLanguage.Python)
-            //    return new int[] { ScintillaNET.Style.Python.Character, ScintillaNET.Style.Python.String,
-            //        ScintillaNET.Style.Python.Triple, ScintillaNET.Style.Python.TripleDouble };
-
-            //if (language == ProgrammingLanguage.VB)
-            //    return new int[] { ScintillaNET.Style.Vb.String };
-            //return new int[] {ScintillaNET.Style.Cpp.String, ScintillaNET.Style.Cpp.Character};
-
-            if (language == ProgrammingLanguage.Python)
-                return new int[] { NativeMethods.SCE_P_CHARACTER, NativeMethods.SCE_P_STRING,
-                    NativeMethods.SCE_P_TRIPLE, NativeMethods.SCE_P_TRIPLEDOUBLE };
-
-            if (language == ProgrammingLanguage.VB)
-                return new int[] { NativeMethods.SCE_B_STRING };
-            return new int[] { NativeMethods.SCE_C_STRING, NativeMethods.SCE_C_CHARACTER };
-        }
-
-        static int[] Keyword1Ids(ProgrammingLanguage language)
-        {
-            //if (language == ProgrammingLanguage.Python)
-            //    return new int[] { ScintillaNET.Style.Python.Word };
-
-            //if (language == ProgrammingLanguage.VB)
-            //    return new int[] { ScintillaNET.Style.Vb.Keyword };
-
-            //return new int[] { ScintillaNET.Style.Cpp.Word };
-
-            if (language == ProgrammingLanguage.Python)
-                return new int[] { NativeMethods.SCE_P_WORD };
-
-            if (language == ProgrammingLanguage.VB)
-                return new int[] { NativeMethods.SCE_B_KEYWORD };
-
-            return new int[] { NativeMethods.SCE_C_WORD };
-        }
-
-        static int[] Keyword2Ids(ProgrammingLanguage language)
-        {
-            //if (language == ProgrammingLanguage.Python)
-            //    return new int[] { ScintillaNET.Style.Python.Word2 };
-
-            //if (language == ProgrammingLanguage.VB)
-            //    return new int[] { ScintillaNET.Style.Vb.Keyword2, ScintillaNET.Style.Vb.Keyword3, ScintillaNET.Style.Vb.Keyword4 };
-
-            //return new int[] { ScintillaNET.Style.Cpp.Word2 };
-
-            if (language == ProgrammingLanguage.Python)
-                return new int[] { NativeMethods.SCE_P_WORD2 };
-
-            if (language == ProgrammingLanguage.VB)
-                return new int[] { NativeMethods.SCE_B_KEYWORD2, NativeMethods.SCE_B_KEYWORD3, NativeMethods.SCE_B_KEYWORD4 };
-
-            return new int[] { NativeMethods.SCE_C_WORD2 };
-        }
-
-        static int[] PreprocessorIds(ProgrammingLanguage language)
-        {
-            if (language == ProgrammingLanguage.Python)
-                return new int[] { };
-
-            if (language == ProgrammingLanguage.VB)
-                return new int[] { /*ScintillaNET.Style.Vb.Preprocessor*/NativeMethods.SCE_B_PREPROCESSOR };
-
-            return new int[] { /*ScintillaNET.Style.Cpp.Preprocessor*/NativeMethods.SCE_C_PREPROCESSOR };
         }
 
         private const int ErrorIndex = 20;
@@ -543,15 +302,6 @@ namespace Eto.CodeEditor.Wpf
                 //pass
             }
         }
-        public int CurrentPosition
-        {
-            get => scintilla.DirectMessage(NativeMethods.SCI_GETCURRENTPOS).ToInt32();
-            set => scintilla.DirectMessage(NativeMethods.SCI_SETCURRENTPOS, new IntPtr(value));
-        }
-
-        public int CurrentPositionInLine => CurrentPosition - scintilla.DirectMessage(NativeMethods.SCI_POSITIONFROMLINE, new IntPtr(CurrentPosition)).ToInt32();
-
-        public int CurrentLineNumber => scintilla.DirectMessage(NativeMethods.SCI_LINEFROMPOSITION, new IntPtr(CurrentPosition)).ToInt32();
 
         public bool IsWhitespaceVisible => scintilla.DirectMessage(NativeMethods.SCI_GETVIEWWS).ToInt32() != NativeMethods.SCWS_INVISIBLE;
 
@@ -633,19 +383,6 @@ namespace Eto.CodeEditor.Wpf
             }
         }
 
-        public string GetLineText(int lineNumber)
-        {
-            //var line = new Line(scintilla, lineNumber);
-            //return line?.Text ?? "";
-            var start = scintilla.DirectMessage(NativeMethods.SCI_POSITIONFROMLINE, new IntPtr(lineNumber));
-            var length = scintilla.DirectMessage(NativeMethods.SCI_LINELENGTH, new IntPtr(lineNumber));
-            var ptr = scintilla.DirectMessage(NativeMethods.SCI_GETRANGEPOINTER, start, length);
-            if (ptr == IntPtr.Zero)
-                return string.Empty;
-            var text = Mac.Helpers.GetString(ptr, length.ToInt32(), Encoding); // new string((sbyte*)ptr, 0, length.ToInt32(), scintilla.Encoding);
-            return text;
-        }
-
         public int GetLineLength(int lineNumber)
         {
             //var line = new Line(scintilla, lineNumber);
@@ -654,97 +391,9 @@ namespace Eto.CodeEditor.Wpf
         }
 
         public bool AutoCompleteActive { get { return scintilla.DirectMessage(NativeMethods.SCI_AUTOCACTIVE) != IntPtr.Zero; } }
-        public unsafe void InsertText(int position, string text) 
-        { 
-            //scintilla.InsertText(position, text); 
-            if (position < -1)
-                throw new ArgumentOutOfRangeException(nameof(position), "Position must be greater or equal to -1");
-            if (position != -1)
-            {
-                int textLength = scintilla.DirectMessage(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
-                if (position > textLength)
-                    throw new ArgumentOutOfRangeException(nameof(position), "Position cannot exceed document length");
-            }
-
-            fixed (byte* bp = Eto.CodeEditor.Mac.Helpers.GetBytes(text ?? string.Empty, Encoding, zeroTerminated: true))
-                scintilla.DirectMessage(NativeMethods.SCI_INSERTTEXT, new IntPtr(position), new IntPtr(bp));
-        }
-
-        public void DeleteRange(int position, int length) 
-        { 
-            //scintilla.DeleteRange(position, length); 
-            var textLength = scintilla.DirectMessage(NativeMethods.SCI_GETLENGTH).ToInt32();
-            position = Mac.Helpers.Clamp(position, 0, textLength);
-            length = Mac.Helpers.Clamp(length, 0, textLength - position);
-
-            scintilla.DirectMessage(NativeMethods.SCI_DELETERANGE, new IntPtr(position), new IntPtr(length));
-        }
-
-        public void SetTargetRange(int start, int end)
-        {
-            var textLength = scintilla.DirectMessage(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
-            start = Mac.Helpers.Clamp(start, 0, textLength);
-            end = Mac.Helpers.Clamp(end, 0, textLength);
-
-            scintilla.DirectMessage(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(start), new IntPtr(end));
-        }
-
-        public unsafe int ReplaceTarget(string text, int start, int end)
-        {
-            //scintilla.SetTargetRange(start, end);
-            //return scintilla.ReplaceTarget(text);
-
-            SetTargetRange(start, end);
-            if (text == null)
-                text = string.Empty;
-
-            var bytes = Mac.Helpers.GetBytes(text, Encoding, false);
-            fixed (byte* bp = bytes)
-                scintilla.DirectMessage(NativeMethods.SCI_REPLACETARGET, new IntPtr(bytes.Length), new IntPtr(bp));
-
-            return text.Length;
-        }
-
         public unsafe void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber)
         {
-            //var line = scintilla.Lines[lineNumber];
-            //scintilla.SetTargetRange(line.Position, line.EndPosition);
-
-            //var pos = scintilla.SearchInTarget(oldText);
-            //if (pos == -1)
-            //  return;
-
-            //scintilla.SetTargetRange(pos, pos + oldText.Length);
-
-            //scintilla.ReplaceTarget(newText);
-
-            var lineStartPos = scintilla.DirectMessage(NativeMethods.SCI_POSITIONFROMLINE, new IntPtr(CurrentLineNumber));
-            var lineEndPos = scintilla.DirectMessage(NativeMethods.SCI_GETLINEENDPOSITION, new IntPtr(CurrentLineNumber));
-            scintilla.DirectMessage(NativeMethods.SCI_SETTARGETRANGE, lineStartPos, lineEndPos);
-
-            int bytePos = 0;
-            var bytes = Mac.Helpers.GetBytes(oldText ?? string.Empty, Encoding, zeroTerminated: false);
-            fixed (byte* bp = bytes)
-                bytePos = scintilla.DirectMessage(NativeMethods.SCI_SEARCHINTARGET, new IntPtr(bytes.Length), new IntPtr(bp)).ToInt32();
-
-            if (bytePos == -1)
-                return;
-
-            scintilla.DirectMessage(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(bytePos), new IntPtr(bytePos + bytes.Length));
-
-            bytes = Mac.Helpers.GetBytes(newText ?? string.Empty, Encoding, zeroTerminated:false);
-            fixed (byte* bp = bytes)
-                scintilla.DirectMessage(NativeMethods.SCI_REPLACETARGET, new IntPtr(bytes.Length), new IntPtr(bp));
-        }
-
-        public int WordStartPosition(int position, bool onlyWordCharacters)
-        {
-            //return scintilla.WordStartPosition(position, onlyWordCharacters);
-            var onlyWordChars = (onlyWordCharacters ? new IntPtr(1) : IntPtr.Zero);
-            int textLength = scintilla.DirectMessage(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
-            position = Eto.CodeEditor.Mac.Helpers.Clamp(position, 0, textLength);
-            position = scintilla.DirectMessage(NativeMethods.SCI_WORDSTARTPOSITION, new IntPtr(position), onlyWordChars).ToInt32();
-            return position;
+            scintilla.ReplaceFirstOccuranceInLine(oldText, newText, lineNumber);
         }
 
         public string GetTextRange(int position, int length)
@@ -752,30 +401,6 @@ namespace Eto.CodeEditor.Wpf
             //return scintilla.GetTextRange(position, length);
             string txt = Text;
             return txt.Substring(position, length);
-        }
-
-        public unsafe void AutoCompleteShow(int lenEntered, string list)
-        {
-            //scintilla.AutoCShow(lenEntered, list);
-            if (string.IsNullOrEmpty(list))
-                return;
-            lenEntered = Eto.CodeEditor.Mac.Helpers.ClampMin(lenEntered, 0);
-            if( lenEntered > 0 )
-            {
-                int endPos = scintilla.DirectMessage(NativeMethods.SCI_GETCURRENTPOS, IntPtr.Zero, IntPtr.Zero).ToInt32();
-                int startPos = endPos;
-                for (int i = 0; i < lenEntered; i++)
-                    startPos = scintilla.DirectMessage(NativeMethods.SCI_POSITIONRELATIVE, new IntPtr(startPos), new IntPtr(-1)).ToInt32();
-                lenEntered = (endPos - startPos);
-            }
-
-            var bytes = Eto.CodeEditor.Mac.Helpers.GetBytes(list, Encoding, zeroTerminated: true);
-            fixed (byte* bp = bytes)
-                scintilla.DirectMessage(NativeMethods.SCI_AUTOCSHOW, new IntPtr(lenEntered), new IntPtr(bp));
-            // if the following property is not set, items after 'import' that start with an uppercase
-            // closes the completion window. Ex: 'import R' closes the window even though 'Rhino' is
-            // in the list.
-            scintilla.DirectMessage(NativeMethods.SCI_AUTOCSETIGNORECASE, new IntPtr(1), IntPtr.Zero);
         }
 
         public void BreakOnLine(int lineNumber)
