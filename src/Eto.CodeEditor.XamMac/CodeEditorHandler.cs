@@ -9,13 +9,13 @@ using Foundation;
 using System.IO;
 using ObjCRuntime;
 using System.Collections.Generic;
-using System.Linq;
+using Scintilla;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
 
-namespace Eto.CodeEditor.XamMac2
+namespace Eto.CodeEditor
 {
-    public class CodeEditorHandler : Eto.Mac.Forms.MacView<ScintillaView, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
+    public partial class CodeEditorHandler : Eto.Mac.Forms.MacView<Scintilla.ScintillaControl, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
     {
         private const int BREAKPOINT_MARKER = 3; // arbitrary number
         private const int BREAK_MARKER = 4; // arbitrary number
@@ -28,14 +28,16 @@ namespace Eto.CodeEditor.XamMac2
             Dlfcn.dlopen(path, 4);
         }
 
+        private Scintilla.ScintillaControl scintilla;
+
         private EtoScintillaNotificationProtocol notificationProtocol;
         public CodeEditorHandler()
         {
-            var sv = new ScintillaView();
+            scintilla = new Scintilla.ScintillaControl();
             notificationProtocol = new EtoScintillaNotificationProtocol();
             notificationProtocol.Notify += NotificationProtocol_Notify;
-            sv.WeakDelegate = notificationProtocol;
-            Control = sv;
+            scintilla.WeakDelegate = notificationProtocol;
+            Control = scintilla;
 
             FontName = "Menlo";
             FontSize = 14;
@@ -70,14 +72,14 @@ namespace Eto.CodeEditor.XamMac2
             Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETBACK, BREAK_MARKER, yellow);
         }
 
-        public string Text
-        {
-            get => Control.Text;
-            set
-            {
-                Control.Text = value ?? string.Empty;
-            }
-        }
+        //public string Text
+        //{
+        //    get => Control.Text;
+        //    set
+        //    {
+        //        Control.Text = value ?? string.Empty;
+        //    }
+        //}
 
         public override NSView ContainerControl => Control;
 
@@ -88,42 +90,42 @@ namespace Eto.CodeEditor.XamMac2
             Control.SetKeywords(set, keywords);
         }
 
-        ProgrammingLanguage _language = ProgrammingLanguage.None;
-        public ProgrammingLanguage Language
-        {
-            get { return _language; }
-            set
-            {
-                _language = value;
-                int which = ScintillaNET.NativeMethods.SCLEX_CPP;
-                switch (_language)
-                {
-                    case ProgrammingLanguage.CSharp:
-                    case ProgrammingLanguage.GLSL:
-                        which = ScintillaNET.NativeMethods.SCLEX_CPP;
-                        break;
-                    case ProgrammingLanguage.VB:
-                        which = ScintillaNET.NativeMethods.SCLEX_VB;
-                        break;
-                    case ProgrammingLanguage.Python:
-                        which = ScintillaNET.NativeMethods.SCLEX_PYTHON;
-                        break;
-                }
-                Control.SetGeneralProperty(ScintillaNET.NativeMethods.SCI_SETLEXER, which, 0);
-            }
-        }
+        //ProgrammingLanguage _language = ProgrammingLanguage.None;
+        //public ProgrammingLanguage Language
+        //{
+        //    get { return _language; }
+        //    set
+        //    {
+        //        _language = value;
+        //        int which = ScintillaNET.NativeMethods.SCLEX_CPP;
+        //        switch (_language)
+        //        {
+        //            case ProgrammingLanguage.CSharp:
+        //            case ProgrammingLanguage.GLSL:
+        //                which = ScintillaNET.NativeMethods.SCLEX_CPP;
+        //                break;
+        //            case ProgrammingLanguage.VB:
+        //                which = ScintillaNET.NativeMethods.SCLEX_VB;
+        //                break;
+        //            case ProgrammingLanguage.Python:
+        //                which = ScintillaNET.NativeMethods.SCLEX_PYTHON;
+        //                break;
+        //        }
+        //        Control.SetGeneralProperty(ScintillaNET.NativeMethods.SCI_SETLEXER, which, 0);
+        //    }
+        //}
 
-        public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
-        {
-            Language = language;
-            if (keywordSets != null)
-            {
-                for (int i = 0; i < keywordSets.Length; i++)
-                {
-                    SetKeywords(i, keywordSets[i]);
-                }
-            }
-        }
+        //public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
+        //{
+        //    Language = language;
+        //    if (keywordSets != null)
+        //    {
+        //        for (int i = 0; i < keywordSets.Length; i++)
+        //        {
+        //            SetKeywords(i, keywordSets[i]);
+        //        }
+        //    }
+        //}
 
         public bool IsWhitespaceVisible => Control.GetGeneralProperty(NativeMethods.SCI_GETVIEWWS) == 1;
 
@@ -155,17 +157,17 @@ namespace Eto.CodeEditor.XamMac2
             Control.SetGeneralProperty(NativeMethods.SCI_SETINDENTATIONGUIDES, NativeMethods.SC_IV_NONE);
         }
 
-        public string FontName
-        {
-            get
-            {
-                return Control.GetStringProperty(ScintillaNET.NativeMethods.SCI_STYLEGETFONT, ScintillaNET.NativeMethods.STYLE_DEFAULT);
-            }
-            set
-            {
-                Control.SetStringProperty(ScintillaNET.NativeMethods.SCI_STYLEGETFONT, ScintillaNET.NativeMethods.STYLE_DEFAULT, value);
-            }
-        }
+        //public string FontName
+        //{
+        //    get
+        //    {
+        //        return Control.GetStringProperty(ScintillaNET.NativeMethods.SCI_STYLEGETFONT, ScintillaNET.NativeMethods.STYLE_DEFAULT);
+        //    }
+        //    set
+        //    {
+        //        Control.SetStringProperty(ScintillaNET.NativeMethods.SCI_STYLEGETFONT, ScintillaNET.NativeMethods.STYLE_DEFAULT, value);
+        //    }
+        //}
 
         public int FontSize
         {
@@ -233,83 +235,83 @@ namespace Eto.CodeEditor.XamMac2
             set => Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINWIDTHN, BREAKPOINTS_MARGIN, value ? 16 : 0);
         }
 
-        public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
-        {
-            string fg = foreground.ToHex(false);
-            string bg = background.ToHex(false);
+        //public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
+        //{
+        //    string fg = foreground.ToHex(false);
+        //    string bg = background.ToHex(false);
 
-            if (section == Section.Default)
-            {
-                Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.STYLE_DEFAULT, fg);
-                int argb = foreground.ToArgb();
-                Control.Message(NativeMethods.SCI_SETCARETFORE, new IntPtr(argb), new IntPtr(0));
-                Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_DEFAULT, bg);
-                Control.Message(NativeMethods.SCI_STYLECLEARALL, new IntPtr(0), new IntPtr(0));
-            }
-            if (section == Section.Comment)
-            {
-                foreach (var id in CommentStyleIds(Language))
-                {
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
-                }
-            }
-            if (section == Section.Keyword1)
-            {
-                foreach (var id in Keyword1Ids(Language))
-                {
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
-                }
-            }
-            if (section == Section.Keyword2)
-            {
-                foreach (var id in Keyword2Ids(Language))
-                {
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
-                }
-            }
-            if (section == Section.Strings)
-            {
-                foreach (var id in StringStyleIds(Language))
-                {
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
-                }
-            }
-            if (section == Section.LineNumber)
-            {
-                Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.STYLE_LINENUMBER, fg);
-                Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_LINENUMBER, bg);
-            }
-            if (section == Section.DefName && Language == ProgrammingLanguage.Python)
-            {
-                Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.SCE_P_DEFNAME, fg);
-                Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_P_DEFNAME, bg);
-            }
-            if (section == Section.Preprocessor)
-            {
-                foreach (var id in PreprocessorIds(Language))
-                {
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
-                    Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
-                }
+        //    if (section == Section.Default)
+        //    {
+        //        Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.STYLE_DEFAULT, fg);
+        //        int argb = foreground.ToArgb();
+        //        Control.Message(NativeMethods.SCI_SETCARETFORE, new IntPtr(argb), new IntPtr(0));
+        //        Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_DEFAULT, bg);
+        //        Control.Message(NativeMethods.SCI_STYLECLEARALL, new IntPtr(0), new IntPtr(0));
+        //    }
+        //    if (section == Section.Comment)
+        //    {
+        //        foreach (var id in CommentStyleIds(Language))
+        //        {
+        //            Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
+        //            Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
+        //        }
+        //    }
+        //    if (section == Section.Keyword1)
+        //    {
+        //        foreach (var id in Keyword1Ids(Language))
+        //        {
+        //            Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
+        //            Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
+        //        }
+        //    }
+        //    if (section == Section.Keyword2)
+        //    {
+        //        foreach (var id in Keyword2Ids(Language))
+        //        {
+        //            Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
+        //            Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
+        //        }
+        //    }
+        //    if (section == Section.Strings)
+        //    {
+        //        foreach (var id in StringStyleIds(Language))
+        //        {
+        //            Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
+        //            Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
+        //        }
+        //    }
+        //    if (section == Section.LineNumber)
+        //    {
+        //        Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.STYLE_LINENUMBER, fg);
+        //        Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_LINENUMBER, bg);
+        //    }
+        //    if (section == Section.DefName && Language == ProgrammingLanguage.Python)
+        //    {
+        //        Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, NativeMethods.SCE_P_DEFNAME, fg);
+        //        Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_P_DEFNAME, bg);
+        //    }
+        //    if (section == Section.Preprocessor)
+        //    {
+        //        foreach (var id in PreprocessorIds(Language))
+        //        {
+        //            Control.SetColorProperty(NativeMethods.SCI_STYLESETFORE, id, fg);
+        //            Control.SetColorProperty(NativeMethods.SCI_STYLESETBACK, id, bg);
+        //        }
 
-            }
+        //    }
 
-        }
+        //}
 
-        public int CurrentPosition
-        {
-            get => (int)Control.GetGeneralProperty(NativeMethods.SCI_GETCURRENTPOS);
-            set => Control.SetGeneralProperty(NativeMethods.SCI_GOTOPOS, value);
-        }
+        //public int CurrentPosition
+        //{
+        //    get => (int)Control.GetGeneralProperty(NativeMethods.SCI_GETCURRENTPOS);
+        //    set => Control.SetGeneralProperty(NativeMethods.SCI_GOTOPOS, value);
+        //}
 
-        public int CurrentPositionInLine =>
-            CurrentPosition - (int)Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, CurrentLineNumber);
+        //public int CurrentPositionInLine =>
+        //    CurrentPosition - (int)Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, CurrentLineNumber);
 
-        public int CurrentLineNumber => (int)Control.GetGeneralProperty(NativeMethods.SCI_LINEFROMPOSITION, CurrentPosition);
+        //public int CurrentLineNumber => (int)Control.GetGeneralProperty(NativeMethods.SCI_LINEFROMPOSITION, CurrentPosition);
 
         public int GetLineIndentation(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_GETLINEINDENTATION, lineNumber);
 
@@ -328,16 +330,17 @@ namespace Eto.CodeEditor.XamMac2
             return lineLastChar;
         }
 
-        public string GetLineText(int lineNumber)
-        {
-            var start = Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, lineNumber);
-            var length = Control.GetGeneralProperty(NativeMethods.SCI_LINELENGTH, lineNumber);
-            var ptr = Control.GetGeneralProperty(NativeMethods.SCI_GETRANGEPOINTER, start, length);
-            if (ptr == 0)
-                return string.Empty;
-            var text = Mac.Helpers.GetString(new IntPtr(ptr), (int)length, Encoding); // new string((sbyte*)ptr, 0, length.ToInt32(), scintilla.Encoding);
-            return text;
-        }
+        //public string GetLineText(int lineNumber)
+        //{
+        //    //var start = Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, lineNumber);
+        //    //var length = Control.GetGeneralProperty(NativeMethods.SCI_LINELENGTH, lineNumber);
+        //    //var ptr = Control.GetGeneralProperty(NativeMethods.SCI_GETRANGEPOINTER, start, length);
+        //    //if (ptr == 0)
+        //    //    return string.Empty;
+        //    //var text = Helpers.GetString(new IntPtr(ptr), (int)length, Encoding); // new string((sbyte*)ptr, 0, length.ToInt32(), scintilla.Encoding);
+        //    //return text;
+        //    return Control.GetLineText(lineNumber);
+        //}
 
         public int GetLineLength(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_LINELENGTH, lineNumber);
 
@@ -395,58 +398,58 @@ namespace Eto.CodeEditor.XamMac2
             }
         }
 
-        public unsafe void InsertText(int position, string text)
-        {
-            if (position < -1)
-                throw new ArgumentOutOfRangeException(nameof(position), "Position must be greater or equal to -1");
-            if (position != -1)
-            {
-                int textLength = Control.Message(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
-                if (position > textLength)
-                    throw new ArgumentOutOfRangeException(nameof(position), "Position cannot exceed document length");
-            }
+        //public unsafe void InsertText(int position, string text)
+        //{
+        //    if (position < -1)
+        //        throw new ArgumentOutOfRangeException(nameof(position), "Position must be greater or equal to -1");
+        //    if (position != -1)
+        //    {
+        //        int textLength = Control.Message(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+        //        if (position > textLength)
+        //            throw new ArgumentOutOfRangeException(nameof(position), "Position cannot exceed document length");
+        //    }
 
-            fixed (byte* bp = Eto.CodeEditor.Mac.Helpers.GetBytes(text ?? string.Empty, Encoding, zeroTerminated: true))
-                Control.Message(NativeMethods.SCI_INSERTTEXT, new IntPtr(position), new IntPtr(bp));
-        }
+        //    fixed (byte* bp = Helpers.GetBytes(text ?? string.Empty, Encoding, zeroTerminated: true))
+        //        Control.Message(NativeMethods.SCI_INSERTTEXT, new IntPtr(position), new IntPtr(bp));
+        //}
 
-        public void DeleteRange(int position, int length)
-        {
-            var textLength = (int)Control.GetGeneralProperty(NativeMethods.SCI_GETLENGTH);
-            position = Mac.Helpers.Clamp(position, 0, textLength);
-            length = Mac.Helpers.Clamp(length, 0, textLength - position);
+        //public void DeleteRange(int position, int length)
+        //{
+        //    var textLength = (int)Control.GetGeneralProperty(NativeMethods.SCI_GETLENGTH);
+        //    position = Helpers.Clamp(position, 0, textLength);
+        //    length = Helpers.Clamp(length, 0, textLength - position);
 
-            // Convert to byte position/length
-            //var byteStartPos = Lines.CharToBytePosition(position);
-            //var byteEndPos = Lines.CharToBytePosition(position + length);
+        //    // Convert to byte position/length
+        //    //var byteStartPos = Lines.CharToBytePosition(position);
+        //    //var byteEndPos = Lines.CharToBytePosition(position + length);
 
-            Control.Message(NativeMethods.SCI_DELETERANGE, new IntPtr(position), new IntPtr(length));
-        }
+        //    Control.Message(NativeMethods.SCI_DELETERANGE, new IntPtr(position), new IntPtr(length));
+        //}
 
-        public void SetTargetRange(int start, int end)
-        {
-            var textLength = Control.Message(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
-            start = Mac.Helpers.Clamp(start, 0, textLength);
-            end = Mac.Helpers.Clamp(end, 0, textLength);
+        //public void SetTargetRange(int start, int end)
+        //{
+        //    var textLength = Control.Message(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+        //    start = Helpers.Clamp(start, 0, textLength);
+        //    end = Helpers.Clamp(end, 0, textLength);
 
-            //start = Lines.CharToBytePosition(start);
-            //end = Lines.CharToBytePosition(end);
+        //    //start = Lines.CharToBytePosition(start);
+        //    //end = Lines.CharToBytePosition(end);
 
-            Control.Message(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(start), new IntPtr(end));
-        }
+        //    Control.Message(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(start), new IntPtr(end));
+        //}
 
-        public unsafe int ReplaceTarget(string text, int start, int end)
-        {
-            SetTargetRange(start, end);
-            if (text == null)
-                text = string.Empty;
+        //public unsafe int ReplaceTarget(string text, int start, int end)
+        //{
+        //    SetTargetRange(start, end);
+        //    if (text == null)
+        //        text = string.Empty;
 
-            var bytes = Mac.Helpers.GetBytes(text, Encoding, false);
-            fixed (byte* bp = bytes)
-                Control.Message(NativeMethods.SCI_REPLACETARGET, new IntPtr(bytes.Length), new IntPtr(bp));
+        //    var bytes = Helpers.GetBytes(text, Encoding, false);
+        //    fixed (byte* bp = bytes)
+        //        Control.Message(NativeMethods.SCI_REPLACETARGET, new IntPtr(bytes.Length), new IntPtr(bp));
 
-            return text.Length;
-        }
+        //    return text.Length;
+        //}
 
         public unsafe void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNember)
         {
@@ -455,7 +458,7 @@ namespace Eto.CodeEditor.XamMac2
             Control.Message(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(lineStartPos), new IntPtr(lineEndPos));
 
             int bytePos = 0;
-            var bytes = Mac.Helpers.GetBytes(oldText ?? string.Empty, Encoding, zeroTerminated: false);
+            var bytes = Helpers.GetBytes(oldText ?? string.Empty, Encoding, zeroTerminated: false);
             fixed (byte* bp = bytes)
                 bytePos = Control.Message(NativeMethods.SCI_SEARCHINTARGET, new IntPtr(bytes.Length), new IntPtr(bp)).ToInt32();
 
@@ -464,19 +467,19 @@ namespace Eto.CodeEditor.XamMac2
 
             Control.Message(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(bytePos), new IntPtr(bytePos + bytes.Length));
 
-            bytes = Mac.Helpers.GetBytes(newText ?? string.Empty, Encoding, zeroTerminated:false);
+            bytes = Helpers.GetBytes(newText ?? string.Empty, Encoding, zeroTerminated:false);
             fixed (byte* bp = bytes)
                 Control.Message(NativeMethods.SCI_REPLACETARGET, new IntPtr(bytes.Length), new IntPtr(bp));
         }
 
-        public int WordStartPosition(int position, bool onlyWordCharacters)
-        {
-            var onlyWordChars = (onlyWordCharacters ? new IntPtr(1) : IntPtr.Zero);
-            int textLength = Control.Message(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
-            position = Eto.CodeEditor.Mac.Helpers.Clamp(position, 0, textLength);
-            position = Control.Message(NativeMethods.SCI_WORDSTARTPOSITION, new IntPtr(position), onlyWordChars).ToInt32();
-            return position;
-        }
+        //public int WordStartPosition(int position, bool onlyWordCharacters)
+        //{
+        //    var onlyWordChars = (onlyWordCharacters ? new IntPtr(1) : IntPtr.Zero);
+        //    int textLength = Control.Message(NativeMethods.SCI_GETLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32();
+        //    position = Helpers.Clamp(position, 0, textLength);
+        //    position = Control.Message(NativeMethods.SCI_WORDSTARTPOSITION, new IntPtr(position), onlyWordChars).ToInt32();
+        //    return position;
+        //}
 
         public string GetTextRange(int position, int length)
         {
@@ -484,28 +487,28 @@ namespace Eto.CodeEditor.XamMac2
             return txt.Substring(position, length);
         }
 
-        public unsafe void AutoCompleteShow(int lenEntered, string list)
-        {
-            if (string.IsNullOrEmpty(list))
-                return;
-            lenEntered = Eto.CodeEditor.Mac.Helpers.ClampMin(lenEntered, 0);
-            if( lenEntered > 0 )
-            {
-                int endPos = Control.Message(NativeMethods.SCI_GETCURRENTPOS, IntPtr.Zero, IntPtr.Zero).ToInt32();
-                int startPos = endPos;
-                for (int i = 0; i < lenEntered; i++)
-                    startPos = Control.Message(NativeMethods.SCI_POSITIONRELATIVE, new IntPtr(startPos), new IntPtr(-1)).ToInt32();
-                lenEntered = (endPos - startPos);
-            }
+        //public unsafe void AutoCompleteShow(int lenEntered, string list)
+        //{
+        //    if (string.IsNullOrEmpty(list))
+        //        return;
+        //    lenEntered = Helpers.ClampMin(lenEntered, 0);
+        //    if( lenEntered > 0 )
+        //    {
+        //        int endPos = Control.Message(NativeMethods.SCI_GETCURRENTPOS, IntPtr.Zero, IntPtr.Zero).ToInt32();
+        //        int startPos = endPos;
+        //        for (int i = 0; i < lenEntered; i++)
+        //            startPos = Control.Message(NativeMethods.SCI_POSITIONRELATIVE, new IntPtr(startPos), new IntPtr(-1)).ToInt32();
+        //        lenEntered = (endPos - startPos);
+        //    }
 
-            var bytes = Eto.CodeEditor.Mac.Helpers.GetBytes(list, Encoding, zeroTerminated: true);
-            fixed (byte* bp = bytes)
-                Control.Message(NativeMethods.SCI_AUTOCSHOW, new IntPtr(lenEntered), new IntPtr(bp));
-            // if the following property is not set, items after 'import' that start with an uppercase
-            // closes the completion window. Ex: 'import R' closes the window even though 'Rhino' is
-            // in the list.
-            Control.Message(NativeMethods.SCI_AUTOCSETIGNORECASE, new IntPtr(1), IntPtr.Zero);
-        }
+        //    var bytes = Helpers.GetBytes(list, Encoding, zeroTerminated: true);
+        //    fixed (byte* bp = bytes)
+        //        Control.Message(NativeMethods.SCI_AUTOCSHOW, new IntPtr(lenEntered), new IntPtr(bp));
+        //    // if the following property is not set, items after 'import' that start with an uppercase
+        //    // closes the completion window. Ex: 'import R' closes the window even though 'Rhino' is
+        //    // in the list.
+        //    Control.Message(NativeMethods.SCI_AUTOCSETIGNORECASE, new IntPtr(1), IntPtr.Zero);
+        //}
 
         unsafe void NotificationProtocol_Notify(object sender, SCNotifyEventArgs e)
         {
@@ -519,7 +522,7 @@ namespace Eto.CodeEditor.XamMac2
                 case NativeMethods.SCN_MODIFIED:
                     if ((n.modificationType & NativeMethods.SC_MOD_INSERTCHECK) > 0)
                     {
-                        var text = Mac.Helpers.GetString(n.text, (int)n.length, Encoding);
+                        var text = Helpers.GetString(n.text, (int)n.length, Encoding);
                         InsertCheck?.Invoke(this, new InsertCheckEventArgs(text));
                     }
                     TextChanged?.Invoke(this, EventArgs.Empty);
@@ -561,7 +564,7 @@ namespace Eto.CodeEditor.XamMac2
 
         public unsafe void ChangeInsertion(string text)
         {
-            var bytes = Mac.Helpers.GetBytes(text ?? string.Empty, Encoding, zeroTerminated: false);
+            var bytes = Helpers.GetBytes(text ?? string.Empty, Encoding, zeroTerminated: false);
             fixed (byte* bp = bytes)
             Control.Message(NativeMethods.SCI_CHANGEINSERTION, new IntPtr(bytes.Length), new IntPtr(bp));
         }
