@@ -48,7 +48,7 @@ namespace Scintilla
             }
         }
         #region IHandler impl
-        public unsafe string Text
+        public unsafe override string Text
         {
             get
             {
@@ -188,7 +188,7 @@ namespace Scintilla
         public int CurrentPosition
         {
             get => DirectMessage(NativeMethods.SCI_GETCURRENTPOS).ToInt32();
-            set => DirectMessage(NativeMethods.SCI_SETCURRENTPOS, new IntPtr(value));
+            set => DirectMessage(NativeMethods./*SCI_SETCURRENTPOS*/SCI_GOTOPOS, new IntPtr(value));
         }
 
         public int CurrentPositionInLine => CurrentPosition - DirectMessage(NativeMethods.SCI_POSITIONFROMLINE, new IntPtr(CurrentPosition)).ToInt32();
