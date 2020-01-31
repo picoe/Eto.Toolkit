@@ -121,8 +121,8 @@ namespace Scintilla
 
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
-            int fg = ColorTranslator.ToWin32(System.Drawing.Color.FromArgb(foreground.ToArgb()));
-            int bg = ColorTranslator.ToWin32(System.Drawing.Color.FromArgb(background.ToArgb()));
+            int fg = (foreground.Bb << 16) + (foreground.Gb << 8) + foreground.Rb;
+            int bg = (background.Bb << 16) + (background.Gb << 8) + background.Rb;
 
             if (section == Section.Default)
             {
