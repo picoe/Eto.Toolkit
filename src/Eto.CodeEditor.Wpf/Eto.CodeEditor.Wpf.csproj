@@ -54,6 +54,9 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\common\CodeEditorHandler.cs">
+      <Link>common\CodeEditorHandler.cs</Link>
+    </Compile>
     <Compile Include="..\common\Helpers.cs">
       <Link>common\Helpers.cs</Link>
     </Compile>
