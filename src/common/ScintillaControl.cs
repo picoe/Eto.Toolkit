@@ -9,14 +9,9 @@ using System.Drawing;
 
 namespace Scintilla
 {
-    public class SciX //: CodeEditor.IHandler
+    public partial class ScintillaControl //: CodeEditor.IHandler
     {
-        //public delegate IntPtr Scintilla_DirectFunction(IntPtr ptr, int iMessage, IntPtr wParam, IntPtr lParam);
-
-        public IntPtr ScintillaHandle;
-        public NativeMethods.Scintilla_DirectFunction DirectFunction;
-
-        public bool IsNotInitialized => ScintillaHandle == null || DirectFunction == null;
+        public NativeMethods.Scintilla_DirectFunction directFunction;
 
         public unsafe void SetKeywords(int set, string keywords)
         {
@@ -119,6 +114,7 @@ namespace Scintilla
                 {
                     fixed (byte* bp = font)
                         DirectMessage(NativeMethods.SCI_STYLESETFONT, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(bp));
+                    DirectMessage(NativeMethods.SCI_STYLECLEARALL, IntPtr.Zero, IntPtr.Zero);
                 }
             }
         }
@@ -419,6 +415,7 @@ namespace Scintilla
 
             return new int[] { /*ScintillaNET.Style.Cpp.Preprocessor*/NativeMethods.SCE_C_PREPROCESSOR };
         }
+
         internal IntPtr DirectMessage(int msg)
         {
             return DirectMessage(msg, IntPtr.Zero, IntPtr.Zero);
@@ -432,16 +429,14 @@ namespace Scintilla
         public virtual IntPtr DirectMessage(int msg, IntPtr wParam, IntPtr lParam)
         {
             // If the control handle, ptr, direct function, etc... hasn't been created yet, it will be now.
-            var result = DirectMessage(ScintillaHandle, msg, wParam, lParam);
+            var result = DirectMessage(SciPointer, msg, wParam, lParam);
             return result;
         }
 
         internal IntPtr DirectMessage(IntPtr sciPtr, int msg, IntPtr wParam, IntPtr lParam)
         {
-            if (IsNotInitialized)
-                throw new Exception("SciX is not initialized");
             // Like Win32 SendMessage but directly to Scintilla
-            var result = DirectFunction(sciPtr, msg, wParam, lParam);
+            var result = directFunction(sciPtr, msg, wParam, lParam);
             return result;
         }
     }

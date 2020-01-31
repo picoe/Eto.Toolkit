@@ -57,8 +57,9 @@
     <Compile Include="..\common\Helpers.cs">
       <Link>common\Helpers.cs</Link>
     </Compile>
-    <Compile Include="..\common\SciX.cs">
-      <Link>common\SciX.cs</Link>
+    <Compile Include="..\common\ScintillaControl.cs">
+      <Link>common\ScintillaControl.cs</Link>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="CodeEditorHandler.cs">
       <SubType>Code</SubType>

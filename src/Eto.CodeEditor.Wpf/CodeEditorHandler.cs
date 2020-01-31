@@ -17,7 +17,7 @@ using Eto.Wpf.Forms;
 
 namespace Eto.CodeEditor.Wpf
 {
-    public class CodeEditorHandler : Eto.Wpf.Forms.WindowsFormsHostHandler<ScintillaControl, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
+    public class CodeEditorHandler : Eto.Wpf.Forms.WindowsFormsHostHandler<Scintilla.ScintillaControl, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
     {
         private const int BREAKPOINT_MARKER = 3; // arbitrary number
         private const int BREAK_MARKER = 4; // arbitrary number
@@ -25,13 +25,13 @@ namespace Eto.CodeEditor.Wpf
         private const int BREAKPOINTS_MARGIN = 1;
         private const int LINENUMBERS_MARGIN = 2;
 
-        private ScintillaControl scintilla;
+        private Scintilla.ScintillaControl scintilla;
 
         public CodeEditorHandler()
         {
             //string path = ScintillaControl.UnpackNativeScintilla();
             //ScintillaNET.Scintilla.SetModulePath(path);
-            scintilla = new ScintillaControl(); // new ScintillaNET.Scintilla();
+            scintilla = new Scintilla.ScintillaControl(); // new ScintillaNET.Scintilla();
             WinFormsControl = scintilla;
 
             /*scintilla*/this.CharAdded += WinFormsControl_CharAdded;

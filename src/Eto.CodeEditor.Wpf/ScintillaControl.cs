@@ -8,15 +8,14 @@ using System.Runtime.InteropServices;
 using Scintilla;
 using Eto.CodeEditor;
 
-namespace Eto.CodeEditor.Wpf
+namespace Scintilla
 {
-    public class ScintillaControl : Control//, CodeEditor.IHandler
+    public partial class ScintillaControl : Control//, CodeEditor.IHandler
     {
-        private SciX scix;
         private static IntPtr moduleHandle;
         private IntPtr sciPtr;
         private BorderStyle borderStyle;
-        private static NativeMethods.Scintilla_DirectFunction directFunction;
+        //private static NativeMethods.Scintilla_DirectFunction directFunction;
 
         private IntPtr SciPointer
         {
@@ -43,104 +42,8 @@ namespace Eto.CodeEditor.Wpf
         public ScintillaControl()
         {
             base.SetStyle(ControlStyles.UserPaint, false);
-            CreateHandle();
-            scix = new SciX { DirectFunction = directFunction, ScintillaHandle = SciPointer };
+            //CreateHandle();
         }
-
-        #region IHandler impl
-        public unsafe override string Text
-        {
-            get => scix.Text;
-            set => scix.Text = value;
-        }
-
-        public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
-        {
-            scix.SetProgrammingLanguage(language, keywordSets);
-        }
-
-        public string FontName
-        {
-            get => scix.FontName;
-            set => scix.FontName = value;
-        }
-        
-        public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
-        {
-            scix.SetColor(section, foreground, background);
-        }
-
-        public int CurrentPosition
-        {
-            get => scix.CurrentPosition;
-            set => scix.CurrentPosition = value;
-        }
-
-        public int CurrentPositionInLine => scix.CurrentPositionInLine;
-
-        public int CurrentLineNumber => scix.CurrentLineNumber;
-
-        public string GetLineText(int lineNumber)
-        {
-            return scix.GetLineText(lineNumber);
-        }
-
-        public unsafe void InsertText(int position, string text)
-        {
-            scix.InsertText(position, text);
-        }
-
-        public unsafe int ReplaceTarget(string text, int start, int end)
-        {
-            return scix.ReplaceTarget(text, start, end);
-        }
-
-        public unsafe void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber)
-        {
-            scix.ReplaceFirstOccuranceInLine(oldText, newText, lineNumber);
-        }
-
-        public void DeleteRange(int position, int length)
-        {
-            scix.DeleteRange(position, length);
-        }
-
-        public int WordStartPosition(int position, bool onlyWordCharacters)
-        {
-            return scix.WordStartPosition(position, onlyWordCharacters);
-        }
-
-        public unsafe void AutoCompleteShow(int lenEntered, string list)
-        {
-            scix.AutoCompleteShow(lenEntered, list);
-        }
-        #endregion
-
-        internal IntPtr DirectMessage(int msg)
-        {
-            //return DirectMessage(msg, IntPtr.Zero, IntPtr.Zero);
-            return scix.DirectMessage(msg, IntPtr.Zero, IntPtr.Zero);
-        }
-
-        internal IntPtr DirectMessage(int msg, IntPtr wParam)
-        {
-            //return DirectMessage(msg, wParam, IntPtr.Zero);
-            return scix.DirectMessage(msg, wParam, IntPtr.Zero);
-        }
-
-        public virtual IntPtr DirectMessage(int msg, IntPtr wParam, IntPtr lParam)
-        {
-            // If the control handle, ptr, direct function, etc... hasn't been created yet, it will be now.
-            var result = scix.DirectMessage(SciPointer, msg, wParam, lParam);
-            return result;
-        }
-
-        //private static IntPtr DirectMessage(IntPtr sciPtr, int msg, IntPtr wParam, IntPtr lParam)
-        //{
-        //    // Like Win32 SendMessage but directly to Scintilla
-        //    var result = directFunction(sciPtr, msg, wParam, lParam);
-        //    return result;
-        //}
 
         /// <summary>
         /// Gets the required creation parameters when the control handle is created.
