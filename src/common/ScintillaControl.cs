@@ -172,10 +172,10 @@ namespace Scintilla
 
         public bool ReplaceTabsWithSpaces
         {
-            get => DirectMessage(NativeMethods.SCI_GETUSETABS) != IntPtr.Zero;
+            get => DirectMessage(NativeMethods.SCI_GETUSETABS) == IntPtr.Zero;
             set
             {
-                var useTabs = (value ? new IntPtr(1) : IntPtr.Zero);
+                var useTabs = (value ? IntPtr.Zero : new IntPtr(1));
                 DirectMessage(NativeMethods.SCI_SETUSETABS, useTabs);
             }
         }
@@ -737,14 +737,14 @@ namespace Scintilla
                 case NativeMethods.SCN_CHARADDED:
                     CharAdded?.Invoke(this, new CharAddedEventArgs(c));
                     break;
-                /*case NativeMethods.SCN_MODIFIED:
-                    if ((n.modificationType & NativeMethods.SC_MOD_INSERTCHECK) > 0)
+                case NativeMethods.SCN_MODIFIED:
+                    /*if ((n.modificationType & NativeMethods.SC_MOD_INSERTCHECK) > 0)
                     {
                         var text = Helpers.GetString(n.text, (int)n.length, Encoding);
                         InsertCheck?.Invoke(this, new InsertCheckEventArgs(text));
-                    }
+                    }*/
                     TextChanged?.Invoke(this, EventArgs.Empty);
-                    break;*/
+                    break;
                 case NativeMethods.SCN_MARGINCLICK:
                     const uint bmmask = (1 << BREAKPOINT_MARKER);
                     var lineNumber = DirectMessage(NativeMethods.SCI_LINEFROMPOSITION, new IntPtr(position));

@@ -10,6 +10,7 @@ namespace Scintilla
         public ScintillaControl()
         {
             directFunction = (_, m, w, l) => Message((uint)m, w, l);
+            init();
         }
     }
 }
