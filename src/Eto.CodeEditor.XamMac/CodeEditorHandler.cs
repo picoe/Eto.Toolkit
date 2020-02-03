@@ -17,11 +17,6 @@ namespace Eto.CodeEditor
 {
     public partial class CodeEditorHandler : Eto.Mac.Forms.MacView<Scintilla.ScintillaControl, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
     {
-        private const int BREAKPOINT_MARKER = 3; // arbitrary number
-        private const int BREAK_MARKER = 4; // arbitrary number
-
-        private const int BREAKPOINTS_MARGIN = 1;
-        private const int LINENUMBERS_MARGIN = 2;
         static CodeEditorHandler()
         {
             var path = Path.Combine(NSBundle.MainBundle.PrivateFrameworksPath, "Scintilla.framework", "Scintilla");
@@ -47,29 +42,29 @@ namespace Eto.CodeEditor
             ShowIndentationGuides();
             Control.Message(NativeMethods.SCI_AUTOCSETMAXHEIGHT, new IntPtr(10), IntPtr.Zero);
 
-            // breakpoints margin
-            Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINSENSITIVEN, BREAKPOINTS_MARGIN, 1);
-            Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINTYPEN, BREAKPOINTS_MARGIN, NativeMethods.SC_MARGIN_SYMBOL);
-            Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, (nint)uint.MaxValue); // ScintillaNet -> public const uint MaskAll = unchecked((uint)-1);
-            Control.SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAKPOINTS_MARGIN, NativeMethods.SC_MARK_FULLRECT);
-            IsBreakpointsMarginVisible = false;
+            //// breakpoints margin
+            //Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINSENSITIVEN, BREAKPOINTS_MARGIN, 1);
+            //Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINTYPEN, BREAKPOINTS_MARGIN, NativeMethods.SC_MARGIN_SYMBOL);
+            //Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, (nint)uint.MaxValue); // ScintillaNet -> public const uint MaskAll = unchecked((uint)-1);
+            //Control.SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAKPOINTS_MARGIN, NativeMethods.SC_MARK_FULLRECT);
+            //IsBreakpointsMarginVisible = false;
 
-            // line numbers margin
-            Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINSENSITIVEN, LINENUMBERS_MARGIN, 0);
-            Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINTYPEN, LINENUMBERS_MARGIN, NativeMethods.SC_MARGIN_NUMBER);
-            //Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, (nint)uint.MaxValue);
+            //// line numbers margin
+            //Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINSENSITIVEN, LINENUMBERS_MARGIN, 0);
+            //Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINTYPEN, LINENUMBERS_MARGIN, NativeMethods.SC_MARGIN_NUMBER);
+            ////Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, (nint)uint.MaxValue);
 
-            // breakpoint marker
-            Control.SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAKPOINT_MARKER, NativeMethods.SC_MARK_CIRCLE); // default
-            var red = 255; // 0xFF0000; // */ 16711680;
-            Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETFORE, BREAKPOINT_MARKER, red);
-            Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETBACK, BREAKPOINT_MARKER, red);
+            //// breakpoint marker
+            //Control.SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAKPOINT_MARKER, NativeMethods.SC_MARK_CIRCLE); // default
+            //var red = 255; // 0xFF0000; // */ 16711680;
+            //Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETFORE, BREAKPOINT_MARKER, red);
+            //Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETBACK, BREAKPOINT_MARKER, red);
 
-            // break marker
-            Control.SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAK_MARKER, NativeMethods.SC_MARK_ARROW);
-            var yellow = 0x00FFFF; // */ 16776960;
-            Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETFORE, BREAK_MARKER, 0xFFFFFF); //black
-            Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETBACK, BREAK_MARKER, yellow);
+            //// break marker
+            //Control.SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAK_MARKER, NativeMethods.SC_MARK_ARROW);
+            //var yellow = 0x00FFFF; // */ 16776960;
+            //Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETFORE, BREAK_MARKER, 0xFFFFFF); //black
+            //Control.SetGeneralProperty(NativeMethods.SCI_MARKERSETBACK, BREAK_MARKER, yellow);
         }
 
         //public string Text
@@ -127,35 +122,35 @@ namespace Eto.CodeEditor
         //    }
         //}
 
-        public bool IsWhitespaceVisible => Control.GetGeneralProperty(NativeMethods.SCI_GETVIEWWS) == 1;
+        //public bool IsWhitespaceVisible => Control.GetGeneralProperty(NativeMethods.SCI_GETVIEWWS) == 1;
 
-        public void ShowWhitespace()
-        {
-            Control.SetGeneralProperty(NativeMethods.SCI_SETVIEWWS, NativeMethods.SCWS_VISIBLEALWAYS);
-        }
+        //public void ShowWhitespace()
+        //{
+        //    Control.SetGeneralProperty(NativeMethods.SCI_SETVIEWWS, NativeMethods.SCWS_VISIBLEALWAYS);
+        //}
 
-        public void HideWhitespace()
-        {
-            Control.SetGeneralProperty(NativeMethods.SCI_SETVIEWWS, 0);
-        }
+        //public void HideWhitespace()
+        //{
+        //    Control.SetGeneralProperty(NativeMethods.SCI_SETVIEWWS, 0);
+        //}
 
-        public void ShowWhitespaceWithColor(Eto.Drawing.Color color)
-        {
-            ShowWhitespace();
-            Control.SetColorProperty(NativeMethods.SCI_SETWHITESPACEBACK, NativeMethods.SCWS_VISIBLEALWAYS, color.ToHex());
-        }
+        //public void ShowWhitespaceWithColor(Eto.Drawing.Color color)
+        //{
+        //    ShowWhitespace();
+        //    Control.SetColorProperty(NativeMethods.SCI_SETWHITESPACEBACK, NativeMethods.SCWS_VISIBLEALWAYS, color.ToHex());
+        //}
 
-        public bool AreIndentationGuidesVisible => Control.GetGeneralProperty(NativeMethods.SCI_GETINDENTATIONGUIDES) != NativeMethods.SC_IV_NONE;
+        //public bool AreIndentationGuidesVisible => Control.GetGeneralProperty(NativeMethods.SCI_GETINDENTATIONGUIDES) != NativeMethods.SC_IV_NONE;
 
-        public void ShowIndentationGuides()
-        {
-            Control.SetGeneralProperty(NativeMethods.SCI_SETINDENTATIONGUIDES, NativeMethods.SC_IV_LOOKBOTH);
-        }
+        //public void ShowIndentationGuides()
+        //{
+        //    Control.SetGeneralProperty(NativeMethods.SCI_SETINDENTATIONGUIDES, NativeMethods.SC_IV_LOOKBOTH);
+        //}
 
-        public void HideIndentationGuides()
-        {
-            Control.SetGeneralProperty(NativeMethods.SCI_SETINDENTATIONGUIDES, NativeMethods.SC_IV_NONE);
-        }
+        //public void HideIndentationGuides()
+        //{
+        //    Control.SetGeneralProperty(NativeMethods.SCI_SETINDENTATIONGUIDES, NativeMethods.SC_IV_NONE);
+        //}
 
         //public string FontName
         //{
@@ -169,71 +164,71 @@ namespace Eto.CodeEditor
         //    }
         //}
 
-        public int FontSize
-        {
-            get
-            {
-                return (int)Control.GetGeneralProperty(ScintillaNET.NativeMethods.SCI_STYLEGETSIZE);
-            }
-            set
-            {
-                Control.SetGeneralProperty(ScintillaNET.NativeMethods.SCI_STYLESETSIZE, ScintillaNET.NativeMethods.STYLE_DEFAULT, value);
-            }
-        }
+        //public int FontSize
+        //{
+        //    get
+        //    {
+        //        return (int)Control.GetGeneralProperty(ScintillaNET.NativeMethods.SCI_STYLEGETSIZE);
+        //    }
+        //    set
+        //    {
+        //        Control.SetGeneralProperty(ScintillaNET.NativeMethods.SCI_STYLESETSIZE, ScintillaNET.NativeMethods.STYLE_DEFAULT, value);
+        //    }
+        //}
 
-        public int TabWidth
-        {
-            get
-            {
-                return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETTABWIDTH);
-            }
-            set
-            {
-                Control.SetGeneralProperty(NativeMethods.SCI_SETTABWIDTH, value);
-            }
-        }
+        //public int TabWidth
+        //{
+        //    get
+        //    {
+        //        return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETTABWIDTH);
+        //    }
+        //    set
+        //    {
+        //        Control.SetGeneralProperty(NativeMethods.SCI_SETTABWIDTH, value);
+        //    }
+        //}
 
-        public bool ReplaceTabsWithSpaces
-        {
-            get
-            {
-                return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETUSETABS) == 0;
-            }
-            set
-            {
-                Control.SetGeneralProperty(NativeMethods.SCI_SETUSETABS, value ? 0 : 1);
-            }
-        }
+        //public bool ReplaceTabsWithSpaces
+        //{
+        //    get
+        //    {
+        //        return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETUSETABS) == 0;
+        //    }
+        //    set
+        //    {
+        //        Control.SetGeneralProperty(NativeMethods.SCI_SETUSETABS, value ? 0 : 1);
+        //    }
+        //}
 
-        public bool BackspaceUnindents
-        {
-            get
-            {
-                return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETBACKSPACEUNINDENTS) == 1;
-            }
-            set
-            {
-                Control.SetGeneralProperty(NativeMethods.SCI_SETBACKSPACEUNINDENTS, value ? 1 : 0);
-            }
-        }
+        //public bool BackspaceUnindents
+        //{
+        //    get
+        //    {
+        //        return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETBACKSPACEUNINDENTS) == 1;
+        //    }
+        //    set
+        //    {
+        //        Control.SetGeneralProperty(NativeMethods.SCI_SETBACKSPACEUNINDENTS, value ? 1 : 0);
+        //    }
+        //}
 
-        public int LineNumberColumnWidth
-        {
-            get
-            {
-                return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETMARGINWIDTHN, LINENUMBERS_MARGIN);
-            }
-            set
-            {
-                Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINWIDTHN, LINENUMBERS_MARGIN, value);
-            }
-        }
+        //public int LineNumberColumnWidth
+        //{
+        //    get
+        //    {
+        //        return (int)Control.GetGeneralProperty(NativeMethods.SCI_GETMARGINWIDTHN, LINENUMBERS_MARGIN);
+        //    }
+        //    set
+        //    {
+        //        Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINWIDTHN, LINENUMBERS_MARGIN, value);
+        //    }
+        //}
 
-        public bool IsBreakpointsMarginVisible
-        {
-            get => Control.GetGeneralProperty(NativeMethods.SCI_GETMARGINWIDTHN, BREAKPOINTS_MARGIN) != 0;
-            set => Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINWIDTHN, BREAKPOINTS_MARGIN, value ? 16 : 0);
-        }
+        //public bool IsBreakpointsMarginVisible
+        //{
+        //    get => Control.GetGeneralProperty(NativeMethods.SCI_GETMARGINWIDTHN, BREAKPOINTS_MARGIN) != 0;
+        //    set => Control.SetGeneralProperty(NativeMethods.SCI_SETMARGINWIDTHN, BREAKPOINTS_MARGIN, value ? 16 : 0);
+        //}
 
         //public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         //{
@@ -313,22 +308,22 @@ namespace Eto.CodeEditor
 
         //public int CurrentLineNumber => (int)Control.GetGeneralProperty(NativeMethods.SCI_LINEFROMPOSITION, CurrentPosition);
 
-        public int GetLineIndentation(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_GETLINEINDENTATION, lineNumber);
+        //public int GetLineIndentation(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_GETLINEINDENTATION, lineNumber);
 
-        public void SetLineIndentation(int lineNumber, int indentation) => Control.SetGeneralProperty(NativeMethods.SCI_SETLINEINDENTATION, lineNumber, indentation);
+        //public void SetLineIndentation(int lineNumber, int indentation) => Control.SetGeneralProperty(NativeMethods.SCI_SETLINEINDENTATION, lineNumber, indentation);
 
-        public char GetLineLastChar(int lineNumber)
-        {
-            var lineEndPos = Control.GetGeneralProperty(NativeMethods.SCI_GETLINEENDPOSITION, lineNumber);
-            var lineStartPos = Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, lineNumber);
-            char lineLastChar;
-            do
-            {
-                lineLastChar = (char)Control.GetGeneralProperty(NativeMethods.SCI_GETCHARAT, lineEndPos--);
-            }
-            while (lineEndPos >= lineStartPos && (lineLastChar == '\n' || lineLastChar == '\r'));
-            return lineLastChar;
-        }
+        //public char GetLineLastChar(int lineNumber)
+        //{
+        //    var lineEndPos = Control.GetGeneralProperty(NativeMethods.SCI_GETLINEENDPOSITION, lineNumber);
+        //    var lineStartPos = Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, lineNumber);
+        //    char lineLastChar;
+        //    do
+        //    {
+        //        lineLastChar = (char)Control.GetGeneralProperty(NativeMethods.SCI_GETCHARAT, lineEndPos--);
+        //    }
+        //    while (lineEndPos >= lineStartPos && (lineLastChar == '\n' || lineLastChar == '\r'));
+        //    return lineLastChar;
+        //}
 
         //public string GetLineText(int lineNumber)
         //{
@@ -342,61 +337,61 @@ namespace Eto.CodeEditor
         //    return Control.GetLineText(lineNumber);
         //}
 
-        public int GetLineLength(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_LINELENGTH, lineNumber);
+        //public int GetLineLength(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_LINELENGTH, lineNumber);
 
-        private const int ErrorIndex = 20;
-        private const int WarningIndex = 21;
-        public void SetupIndicatorStyles()
-        {
-            SetupIndicator(ErrorIndex, NativeMethods.INDIC_SQUIGGLE, Eto.Drawing.Colors.Red);
-            SetupIndicator(WarningIndex, NativeMethods.INDIC_SQUIGGLE, Eto.Drawing.Colors.Gold);
-        }
+        //private const int ErrorIndex = 20;
+        //private const int WarningIndex = 21;
+        //public void SetupIndicatorStyles()
+        //{
+        //    SetupIndicator(ErrorIndex, NativeMethods.INDIC_SQUIGGLE, Eto.Drawing.Colors.Red);
+        //    SetupIndicator(WarningIndex, NativeMethods.INDIC_SQUIGGLE, Eto.Drawing.Colors.Gold);
+        //}
 
-        void SetupIndicator(uint index, int style, Eto.Drawing.Color forecolor)
-        {
-            Control.Message(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(index), new IntPtr(style));
-            int abgr = forecolor.Rb | forecolor.Gb << 8 | forecolor.Bb << 16;
-            Control.Message(NativeMethods.SCI_INDICSETFORE, new IntPtr(index), new IntPtr(abgr));
-            Control.Message(NativeMethods.SCI_INDICSETALPHA, new IntPtr(index), new IntPtr(0));
-            Control.Message(NativeMethods.SCI_INDICSETUNDER, new IntPtr(index), new IntPtr(1));
-        }
+        //void SetupIndicator(uint index, int style, Eto.Drawing.Color forecolor)
+        //{
+        //    Control.Message(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(index), new IntPtr(style));
+        //    int abgr = forecolor.Rb | forecolor.Gb << 8 | forecolor.Bb << 16;
+        //    Control.Message(NativeMethods.SCI_INDICSETFORE, new IntPtr(index), new IntPtr(abgr));
+        //    Control.Message(NativeMethods.SCI_INDICSETALPHA, new IntPtr(index), new IntPtr(0));
+        //    Control.Message(NativeMethods.SCI_INDICSETUNDER, new IntPtr(index), new IntPtr(1));
+        //}
 
-        public void ClearAllErrorIndicators()
-        {
-            Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(ErrorIndex), IntPtr.Zero);
-            int length = Text.Length;
-            Control.Message(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(length));
-        }
+        //public void ClearAllErrorIndicators()
+        //{
+        //    Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(ErrorIndex), IntPtr.Zero);
+        //    int length = Text.Length;
+        //    Control.Message(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(length));
+        //}
 
-        public void ClearAllWarningIndicators()
-        {
-            Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(WarningIndex), IntPtr.Zero);
-            int length = Text.Length;
-            Control.Message(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(length));
-        }
+        //public void ClearAllWarningIndicators()
+        //{
+        //    Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(WarningIndex), IntPtr.Zero);
+        //    int length = Text.Length;
+        //    Control.Message(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(length));
+        //}
 
-        public void AddErrorIndicator(int position, int length)
-        {
-            Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(ErrorIndex), IntPtr.Zero);
-            Control.Message(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
-        }
+        //public void AddErrorIndicator(int position, int length)
+        //{
+        //    Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(ErrorIndex), IntPtr.Zero);
+        //    Control.Message(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
+        //}
 
-        public void AddWarningIndicator(int position, int length)
-        {
-            Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(WarningIndex), IntPtr.Zero);
-            Control.Message(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
-        }
+        //public void AddWarningIndicator(int position, int length)
+        //{
+        //    Control.Message(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(WarningIndex), IntPtr.Zero);
+        //    Control.Message(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
+        //}
 
-        public void ClearAllTypeNameIndicators() { }
-        public void AddTypeNameIndicator(int position, int length) { }
+        //public void ClearAllTypeNameIndicators() { }
+        //public void AddTypeNameIndicator(int position, int length) { }
 
-        public bool AutoCompleteActive
-        {
-            get
-            {
-                return Control.Message(NativeMethods.SCI_AUTOCACTIVE, IntPtr.Zero, IntPtr.Zero) != IntPtr.Zero;
-            }
-        }
+        //public bool AutoCompleteActive
+        //{
+        //    get
+        //    {
+        //        return Control.Message(NativeMethods.SCI_AUTOCACTIVE, IntPtr.Zero, IntPtr.Zero) != IntPtr.Zero;
+        //    }
+        //}
 
         //public unsafe void InsertText(int position, string text)
         //{
@@ -451,26 +446,26 @@ namespace Eto.CodeEditor
         //    return text.Length;
         //}
 
-        public unsafe void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNember)
-        {
-            var lineStartPos = Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, CurrentLineNumber);
-            var lineEndPos = Control.GetGeneralProperty(NativeMethods.SCI_GETLINEENDPOSITION, CurrentLineNumber);
-            Control.Message(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(lineStartPos), new IntPtr(lineEndPos));
+        //public unsafe void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNember)
+        //{
+        //    var lineStartPos = Control.GetGeneralProperty(NativeMethods.SCI_POSITIONFROMLINE, CurrentLineNumber);
+        //    var lineEndPos = Control.GetGeneralProperty(NativeMethods.SCI_GETLINEENDPOSITION, CurrentLineNumber);
+        //    Control.Message(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(lineStartPos), new IntPtr(lineEndPos));
 
-            int bytePos = 0;
-            var bytes = Helpers.GetBytes(oldText ?? string.Empty, Encoding, zeroTerminated: false);
-            fixed (byte* bp = bytes)
-                bytePos = Control.Message(NativeMethods.SCI_SEARCHINTARGET, new IntPtr(bytes.Length), new IntPtr(bp)).ToInt32();
+        //    int bytePos = 0;
+        //    var bytes = Helpers.GetBytes(oldText ?? string.Empty, Encoding, zeroTerminated: false);
+        //    fixed (byte* bp = bytes)
+        //        bytePos = Control.Message(NativeMethods.SCI_SEARCHINTARGET, new IntPtr(bytes.Length), new IntPtr(bp)).ToInt32();
 
-            if (bytePos == -1)
-                return;
+        //    if (bytePos == -1)
+        //        return;
 
-            Control.Message(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(bytePos), new IntPtr(bytePos + bytes.Length));
+        //    Control.Message(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(bytePos), new IntPtr(bytePos + bytes.Length));
 
-            bytes = Helpers.GetBytes(newText ?? string.Empty, Encoding, zeroTerminated:false);
-            fixed (byte* bp = bytes)
-                Control.Message(NativeMethods.SCI_REPLACETARGET, new IntPtr(bytes.Length), new IntPtr(bp));
-        }
+        //    bytes = Helpers.GetBytes(newText ?? string.Empty, Encoding, zeroTerminated:false);
+        //    fixed (byte* bp = bytes)
+        //        Control.Message(NativeMethods.SCI_REPLACETARGET, new IntPtr(bytes.Length), new IntPtr(bp));
+        //}
 
         //public int WordStartPosition(int position, bool onlyWordCharacters)
         //{
@@ -481,11 +476,11 @@ namespace Eto.CodeEditor
         //    return position;
         //}
 
-        public string GetTextRange(int position, int length)
-        {
-            string txt = Text;
-            return txt.Substring(position, length);
-        }
+        //public string GetTextRange(int position, int length)
+        //{
+        //    string txt = Text;
+        //    return txt.Substring(position, length);
+        //}
 
         //public unsafe void AutoCompleteShow(int lenEntered, string list)
         //{
@@ -513,78 +508,46 @@ namespace Eto.CodeEditor
         unsafe void NotificationProtocol_Notify(object sender, SCNotifyEventArgs e)
         {
             var n = e.Notification;
-            switch (n.nmhdr.code)
-            {
-
-                case NativeMethods.SCN_CHARADDED:
-                    CharAdded?.Invoke(this, new CharAddedEventArgs((char)n.ch));
-                    break;
-                case NativeMethods.SCN_MODIFIED:
-                    if ((n.modificationType & NativeMethods.SC_MOD_INSERTCHECK) > 0)
-                    {
-                        var text = Helpers.GetString(n.text, (int)n.length, Encoding);
-                        InsertCheck?.Invoke(this, new InsertCheckEventArgs(text));
-                    }
-                    TextChanged?.Invoke(this, EventArgs.Empty);
-                    break;
-                case NativeMethods.SCN_MARGINCLICK:
-                    const uint bmmask = (1 << BREAKPOINT_MARKER);
-                    var lineNumber = Control.GetGeneralProperty(NativeMethods.SCI_LINEFROMPOSITION, (nint)n.position);
-                    var mask = (int)(Control.GetGeneralProperty(NativeMethods.SCI_MARKERGET, lineNumber));
-                    var uimask = unchecked((uint)mask);
-                    var addOrRemove = ((uimask & bmmask) > 0) ? BreakpointChangeType.Remove : BreakpointChangeType.Add;
-                    if (addOrRemove == BreakpointChangeType.Add && string.IsNullOrWhiteSpace(GetLineText((int)lineNumber)))
-                        return;
-                    Control.SetGeneralProperty(addOrRemove == BreakpointChangeType.Add ? NativeMethods.SCI_MARKERADD : NativeMethods.SCI_MARKERDELETE, lineNumber, BREAKPOINT_MARKER);
-                    BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(addOrRemove, (int)lineNumber));
-                    break;
-                default:
-                    break;
-            }
+            Control.HandleScintillaMessage((int)n.nmhdr.code, (char)n.ch, (int)n.position);
         }
 
-        public void ClearBreakpoints()
-        {
-            Control.SetGeneralProperty(NativeMethods.SCI_MARKERDELETEALL, BREAKPOINT_MARKER);
-            BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(BreakpointChangeType.Clear));
-        }
+        //public void ClearBreakpoints()
+        //{
+        //    Control.SetGeneralProperty(NativeMethods.SCI_MARKERDELETEALL, BREAKPOINT_MARKER);
+        //    BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(BreakpointChangeType.Clear));
+        //}
 
-        public void BreakOnLine(int lineNumber)
-        {
-            ClearBreak();
-            Control.SetGeneralProperty(NativeMethods.SCI_MARKERADD, lineNumber, BREAK_MARKER);
-        }
+        //public void BreakOnLine(int lineNumber)
+        //{
+        //    ClearBreak();
+        //    Control.SetGeneralProperty(NativeMethods.SCI_MARKERADD, lineNumber, BREAK_MARKER);
+        //}
 
-        public void ClearBreak() => Control.SetGeneralProperty(NativeMethods.SCI_MARKERDELETEALL, BREAK_MARKER);
+        //public void ClearBreak() => Control.SetGeneralProperty(NativeMethods.SCI_MARKERDELETEALL, BREAK_MARKER);
 
-        public event EventHandler<CharAddedEventArgs> CharAdded;
-        public event EventHandler<EventArgs> TextChanged;
-        public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
-        public event EventHandler<InsertCheckEventArgs> InsertCheck;
+        //public unsafe void ChangeInsertion(string text)
+        //{
+        //    var bytes = Helpers.GetBytes(text ?? string.Empty, Encoding, zeroTerminated: false);
+        //    fixed (byte* bp = bytes)
+        //    Control.Message(NativeMethods.SCI_CHANGEINSERTION, new IntPtr(bytes.Length), new IntPtr(bp));
+        //}
 
-        public unsafe void ChangeInsertion(string text)
-        {
-            var bytes = Helpers.GetBytes(text ?? string.Empty, Encoding, zeroTerminated: false);
-            fixed (byte* bp = bytes)
-            Control.Message(NativeMethods.SCI_CHANGEINSERTION, new IntPtr(bytes.Length), new IntPtr(bp));
-        }
-
-        private int MarkerNext(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_MARKERNEXT, lineNumber, 1 << BREAKPOINT_MARKER); // NativeMethods.SC_MARK_CIRCLE);
-        public IEnumerable<int> Breakpoints
-        {
-            get
-            {
-                int lineIndex = MarkerNext(0);
-                while (lineIndex != -1)
-                {
-                    // increment lineIndex before returning it because line numbers start at 1 on the client
-                    lineIndex++;
-                    yield return lineIndex;
-                    // start searching on the next (incremented) index
-                    lineIndex = MarkerNext(lineIndex);
-                }
-            }
-        }
+        //private int MarkerNext(int lineNumber) => (int)Control.GetGeneralProperty(NativeMethods.SCI_MARKERNEXT, lineNumber, 1 << BREAKPOINT_MARKER); // NativeMethods.SC_MARK_CIRCLE);
+        //public IEnumerable<int> Breakpoints
+        //{
+        //    get
+        //    {
+        //        int lineIndex = MarkerNext(0);
+        //        while (lineIndex != -1)
+        //        {
+        //            // increment lineIndex before returning it because line numbers start at 1 on the client
+        //            lineIndex++;
+        //            yield return lineIndex;
+        //            // start searching on the next (incremented) index
+        //            lineIndex = MarkerNext(lineIndex);
+        //        }
+        //    }
+        //}
 
         Encoding Encoding
         {
@@ -596,62 +559,62 @@ namespace Eto.CodeEditor
         }
 
 
-        static int[] CommentStyleIds(ProgrammingLanguage language)
-        {
-            if (language == ProgrammingLanguage.Python)
-                return new int[] { NativeMethods.SCE_P_COMMENTBLOCK, NativeMethods.SCE_P_COMMENTLINE };
+        //static int[] CommentStyleIds(ProgrammingLanguage language)
+        //{
+        //    if (language == ProgrammingLanguage.Python)
+        //        return new int[] { NativeMethods.SCE_P_COMMENTBLOCK, NativeMethods.SCE_P_COMMENTLINE };
 
-            if (language == ProgrammingLanguage.VB)
-                return new int[] { NativeMethods.SCE_B_COMMENT, NativeMethods.SCE_B_COMMENTBLOCK,
-                    NativeMethods.SCE_B_DOCBLOCK};
+        //    if (language == ProgrammingLanguage.VB)
+        //        return new int[] { NativeMethods.SCE_B_COMMENT, NativeMethods.SCE_B_COMMENTBLOCK,
+        //            NativeMethods.SCE_B_DOCBLOCK};
 
-            return new int[] { NativeMethods.SCE_C_COMMENT, NativeMethods.SCE_C_COMMENTLINE,
-                NativeMethods.SCE_C_COMMENTDOC, NativeMethods.SCE_C_COMMENTLINEDOC };
-        }
+        //    return new int[] { NativeMethods.SCE_C_COMMENT, NativeMethods.SCE_C_COMMENTLINE,
+        //        NativeMethods.SCE_C_COMMENTDOC, NativeMethods.SCE_C_COMMENTLINEDOC };
+        //}
 
-        static int[] StringStyleIds(ProgrammingLanguage language)
-        {
-            if (language == ProgrammingLanguage.Python)
-                return new int[] { NativeMethods.SCE_P_CHARACTER, NativeMethods.SCE_P_STRING,
-                    NativeMethods.SCE_P_TRIPLE, NativeMethods.SCE_P_TRIPLEDOUBLE };
+        //static int[] StringStyleIds(ProgrammingLanguage language)
+        //{
+        //    if (language == ProgrammingLanguage.Python)
+        //        return new int[] { NativeMethods.SCE_P_CHARACTER, NativeMethods.SCE_P_STRING,
+        //            NativeMethods.SCE_P_TRIPLE, NativeMethods.SCE_P_TRIPLEDOUBLE };
 
-            if (language == ProgrammingLanguage.VB)
-                return new int[] { NativeMethods.SCE_B_STRING };
-            return new int[] { NativeMethods.SCE_C_STRING, NativeMethods.SCE_C_CHARACTER };
-        }
+        //    if (language == ProgrammingLanguage.VB)
+        //        return new int[] { NativeMethods.SCE_B_STRING };
+        //    return new int[] { NativeMethods.SCE_C_STRING, NativeMethods.SCE_C_CHARACTER };
+        //}
 
-        static int[] Keyword1Ids(ProgrammingLanguage language)
-        {
-            if (language == ProgrammingLanguage.Python)
-                return new int[] { NativeMethods.SCE_P_WORD };
+        //static int[] Keyword1Ids(ProgrammingLanguage language)
+        //{
+        //    if (language == ProgrammingLanguage.Python)
+        //        return new int[] { NativeMethods.SCE_P_WORD };
 
-            if (language == ProgrammingLanguage.VB)
-                return new int[] { NativeMethods.SCE_B_KEYWORD };
+        //    if (language == ProgrammingLanguage.VB)
+        //        return new int[] { NativeMethods.SCE_B_KEYWORD };
 
-            return new int[] { NativeMethods.SCE_C_WORD };
-        }
+        //    return new int[] { NativeMethods.SCE_C_WORD };
+        //}
 
-        static int[] Keyword2Ids(ProgrammingLanguage language)
-        {
-            if (language == ProgrammingLanguage.Python)
-                return new int[] { NativeMethods.SCE_P_WORD2 };
+        //static int[] Keyword2Ids(ProgrammingLanguage language)
+        //{
+        //    if (language == ProgrammingLanguage.Python)
+        //        return new int[] { NativeMethods.SCE_P_WORD2 };
 
-            if (language == ProgrammingLanguage.VB)
-                return new int[] { NativeMethods.SCE_B_KEYWORD2, NativeMethods.SCE_B_KEYWORD3, NativeMethods.SCE_B_KEYWORD4 };
+        //    if (language == ProgrammingLanguage.VB)
+        //        return new int[] { NativeMethods.SCE_B_KEYWORD2, NativeMethods.SCE_B_KEYWORD3, NativeMethods.SCE_B_KEYWORD4 };
 
-            return new int[] { NativeMethods.SCE_C_WORD2 };
-        }
+        //    return new int[] { NativeMethods.SCE_C_WORD2 };
+        //}
 
-        static int[] PreprocessorIds(ProgrammingLanguage language)
-        {
-            if (language == ProgrammingLanguage.Python)
-                return new int[] { };
+        //static int[] PreprocessorIds(ProgrammingLanguage language)
+        //{
+        //    if (language == ProgrammingLanguage.Python)
+        //        return new int[] { };
 
-            if (language == ProgrammingLanguage.VB)
-                return new int[] { NativeMethods.SCE_B_PREPROCESSOR };
+        //    if (language == ProgrammingLanguage.VB)
+        //        return new int[] { NativeMethods.SCE_B_PREPROCESSOR };
 
-            return new int[] { NativeMethods.SCE_C_PREPROCESSOR };
-        }
+        //    return new int[] { NativeMethods.SCE_C_PREPROCESSOR };
+        //}
 
     }
 }

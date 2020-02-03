@@ -728,5 +728,38 @@ namespace Scintilla
             var result = directFunction(sciPtr, msg, wParam, lParam);
             return result;
         }
+
+        public void HandleScintillaMessage(int message, char c, int position)
+        {
+            switch (message)
+            {
+
+                case NativeMethods.SCN_CHARADDED:
+                    CharAdded?.Invoke(this, new CharAddedEventArgs(c));
+                    break;
+                /*case NativeMethods.SCN_MODIFIED:
+                    if ((n.modificationType & NativeMethods.SC_MOD_INSERTCHECK) > 0)
+                    {
+                        var text = Helpers.GetString(n.text, (int)n.length, Encoding);
+                        InsertCheck?.Invoke(this, new InsertCheckEventArgs(text));
+                    }
+                    TextChanged?.Invoke(this, EventArgs.Empty);
+                    break;*/
+                case NativeMethods.SCN_MARGINCLICK:
+                    const uint bmmask = (1 << BREAKPOINT_MARKER);
+                    var lineNumber = DirectMessage(NativeMethods.SCI_LINEFROMPOSITION, new IntPtr(position));
+                    var mask = DirectMessage(NativeMethods.SCI_MARKERGET, lineNumber).ToInt32();
+                    var uimask = unchecked((uint)mask);
+                    var addOrRemove = ((uimask & bmmask) > 0) ? BreakpointChangeType.Remove : BreakpointChangeType.Add;
+                    if (addOrRemove == BreakpointChangeType.Add && string.IsNullOrWhiteSpace(GetLineText(lineNumber.ToInt32())))
+                        return;
+                    //Control.SetGeneralProperty(addOrRemove == BreakpointChangeType.Add ? NativeMethods.SCI_MARKERADD : NativeMethods.SCI_MARKERDELETE, lineNumber, BREAKPOINT_MARKER);
+                    DirectMessage(addOrRemove == BreakpointChangeType.Add ? NativeMethods.SCI_MARKERADD : NativeMethods.SCI_MARKERDELETE, lineNumber, new IntPtr(BREAKPOINT_MARKER));
+                    BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(addOrRemove, lineNumber.ToInt32()));
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
