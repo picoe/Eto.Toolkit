@@ -222,10 +222,10 @@ namespace Eto.CodeEditor
         }
 
         // only call from InsertCheck handler
-        public void ChangeInsertion(string text)
-        {
-            Handler.ChangeInsertion(text);
-        }
+        //public void ChangeInsertion(string text)
+        //{
+        //    Handler.ChangeInsertion(text);
+        //}
 
 
 
@@ -285,8 +285,8 @@ namespace Eto.CodeEditor
             event EventHandler<CharAddedEventArgs> CharAdded;
             event EventHandler<EventArgs> TextChanged;
             event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
-            event EventHandler<InsertCheckEventArgs> InsertCheck;
-            void ChangeInsertion(string text); // only call from InsertCheck handler
+            //event EventHandler<InsertCheckEventArgs> InsertCheck;
+            //void ChangeInsertion(string text); // only call from InsertCheck handler
         }
     }
 

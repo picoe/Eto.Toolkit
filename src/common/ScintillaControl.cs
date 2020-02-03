@@ -11,7 +11,40 @@ namespace Scintilla
 {
     public partial class ScintillaControl //: CodeEditor.IHandler
     {
+        private const int BREAKPOINT_MARKER = 3; // arbitrary number
+        private const int BREAK_MARKER = 4; // arbitrary number
+
+        private const int BREAKPOINTS_MARGIN = 1;
+        private const int LINENUMBERS_MARGIN = 2;
+
         public NativeMethods.Scintilla_DirectFunction directFunction;
+
+        private void init()
+        {
+            Action<int, int, int> SetGeneralProperty = (c, i, j) => DirectMessage(c, new IntPtr(i), new IntPtr(j));
+            // breakpoints margin
+            SetGeneralProperty(NativeMethods.SCI_SETMARGINSENSITIVEN, BREAKPOINTS_MARGIN, 1);
+            SetGeneralProperty(NativeMethods.SCI_SETMARGINTYPEN, BREAKPOINTS_MARGIN, NativeMethods.SC_MARGIN_SYMBOL);
+            SetGeneralProperty(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, int.MaxValue); // ScintillaNet -> public const uint MaskAll = unchecked((uint)-1);
+            SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAKPOINTS_MARGIN, NativeMethods.SC_MARK_FULLRECT);
+            IsBreakpointsMarginVisible = false;
+
+            // line numbers margin
+            SetGeneralProperty(NativeMethods.SCI_SETMARGINSENSITIVEN, LINENUMBERS_MARGIN, 0);
+            SetGeneralProperty(NativeMethods.SCI_SETMARGINTYPEN, LINENUMBERS_MARGIN, NativeMethods.SC_MARGIN_NUMBER);
+
+            // breakpoint marker
+            SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAKPOINT_MARKER, NativeMethods.SC_MARK_CIRCLE); // default
+            var red = 255; // 0xFF0000; // */ 16711680;
+            SetGeneralProperty(NativeMethods.SCI_MARKERSETFORE, BREAKPOINT_MARKER, red);
+            SetGeneralProperty(NativeMethods.SCI_MARKERSETBACK, BREAKPOINT_MARKER, red);
+
+            // break marker
+            SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAK_MARKER, NativeMethods.SC_MARK_ARROW);
+            var yellow = 0x00FFFF; // */ 16776960;
+            SetGeneralProperty(NativeMethods.SCI_MARKERSETFORE, BREAK_MARKER, 0xFFFFFF); //black
+            SetGeneralProperty(NativeMethods.SCI_MARKERSETBACK, BREAK_MARKER, yellow);
+        }
 
         public unsafe void SetKeywords(int set, string keywords)
         {
@@ -119,6 +152,107 @@ namespace Scintilla
             }
         }
 
+        public int FontSize
+        {
+            get
+            {
+                return DirectMessage(NativeMethods.SCI_STYLEGETSIZE, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), IntPtr.Zero).ToInt32();
+            }
+            set
+            {
+                DirectMessage(NativeMethods.SCI_STYLESETSIZE, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(value));
+            }
+        }
+
+        public int TabWidth
+        {
+            get => DirectMessage(NativeMethods.SCI_GETTABWIDTH).ToInt32();
+            set => DirectMessage(NativeMethods.SCI_SETTABWIDTH, new IntPtr(value));
+        }
+
+        public bool ReplaceTabsWithSpaces
+        {
+            get => DirectMessage(NativeMethods.SCI_GETUSETABS) != IntPtr.Zero;
+            set
+            {
+                var useTabs = (value ? new IntPtr(1) : IntPtr.Zero);
+                DirectMessage(NativeMethods.SCI_SETUSETABS, useTabs);
+            }
+        }
+
+        public bool BackspaceUnindents
+        {
+          get => false;
+          set
+            {
+                //pass
+            }
+        }
+
+        public int LineNumberColumnWidth
+        {
+            get
+            {
+                return DirectMessage(NativeMethods.SCI_GETMARGINWIDTHN, new IntPtr(LINENUMBERS_MARGIN), IntPtr.Zero).ToInt32();
+            }
+            set
+            {
+                //scintilla.Margins[0].Width = value;
+                DirectMessage(NativeMethods.SCI_SETMARGINWIDTHN, new IntPtr(LINENUMBERS_MARGIN), new IntPtr(value));
+            }
+        }
+
+        private int MarkerNext(int lineNumber) => 
+            DirectMessage(NativeMethods.SCI_MARKERNEXT, new IntPtr(lineNumber), new IntPtr(1 << BREAKPOINT_MARKER)).ToInt32();
+
+        public IEnumerable<int> Breakpoints
+        {
+            get
+            {
+                int lineIndex = MarkerNext(0);
+                while (lineIndex != -1)
+                {
+                    // increment lineIndex before returning it because line numbers start at 1 on the client
+                    lineIndex++;
+                    yield return lineIndex;
+                    // start searching on the next (incremented) index
+                    lineIndex = MarkerNext(lineIndex);
+                }
+            }
+        }
+
+        public bool IsBreakpointsMarginVisible
+        {
+            get
+            {
+                var i = (DirectMessage(NativeMethods.SCI_GETMARGINWIDTHN, new IntPtr(BREAKPOINTS_MARGIN), IntPtr.Zero)).ToInt32();
+                return i != 0;
+            }
+            set
+            {
+                DirectMessage(2242, new IntPtr(BREAKPOINTS_MARGIN), value ? new IntPtr(16) : IntPtr.Zero);
+            }
+        }
+
+        public void BreakOnLine(int lineNumber)
+        {
+            ClearBreak();
+            DirectMessage(NativeMethods.SCI_MARKERADD, new IntPtr(lineNumber), new IntPtr(BREAK_MARKER));
+        }
+
+        public void ClearBreak() => DirectMessage(NativeMethods.SCI_MARKERDELETEALL, new IntPtr(BREAK_MARKER), IntPtr.Zero);
+
+        public void ClearBreakpoints()
+        {
+            //Control.SetGeneralProperty(NativeMethods.SCI_MARKERDELETEALL, BREAKPOINT_MARKER);
+            DirectMessage(NativeMethods.SCI_MARKERDELETEALL, new IntPtr(BREAKPOINT_MARKER), IntPtr.Zero);
+            BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(BreakpointChangeType.Clear));
+        }
+
+        public event EventHandler<CharAddedEventArgs> CharAdded;
+        public new event EventHandler<EventArgs> TextChanged; // hides inherited TextChanged
+        public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
+
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
             int fg = (foreground.Bb << 16) + (foreground.Gb << 8) + foreground.Rb;
@@ -195,6 +329,39 @@ namespace Scintilla
 
         public int CurrentLineNumber => DirectMessage(NativeMethods.SCI_LINEFROMPOSITION, new IntPtr(CurrentPosition)).ToInt32();
 
+        public int GetLineIndentation(int lineNumber)
+        {
+            //var line = new Line(scintilla, lineNumber);
+            //return line?.Indentation ?? 0;
+            return DirectMessage(NativeMethods.SCI_GETLINEINDENTATION, new IntPtr(lineNumber)).ToInt32();
+        }
+
+        public void SetLineIndentation(int lineNumber, int indentation)
+        {
+            //var line = new Line(scintilla, lineNumber);
+            //if (line != null)
+            //{
+            //    line.Indentation = indentation;
+            //    scintilla.GotoPosition(line.Position + indentation);
+            //}
+            DirectMessage(NativeMethods.SCI_SETLINEINDENTATION, new IntPtr(lineNumber), new IntPtr(indentation));
+        }
+
+        public char GetLineLastChar(int lineNumber)
+        {
+            //var line = new Line(scintilla, lineNumber);
+            //return line?.Text.Reverse().SkipWhile(c => c == '\n' || c == '\r').FirstOrDefault() ?? '\0';
+            var lineEndPos = DirectMessage(NativeMethods.SCI_GETLINEENDPOSITION, new IntPtr(lineNumber)).ToInt32();
+            var lineStartPos = DirectMessage(NativeMethods.SCI_POSITIONFROMLINE, new IntPtr(lineNumber)).ToInt32();
+            char lineLastChar;
+            do
+            {
+                lineLastChar = (char)DirectMessage(NativeMethods.SCI_GETCHARAT, new IntPtr(lineEndPos--));
+            }
+            while (lineEndPos >= lineStartPos && (lineLastChar == '\n' || lineLastChar == '\r'));
+            return lineLastChar;
+        }
+
         public string GetLineText(int lineNumber)
         {
             //var line = new Line(scintilla, lineNumber);
@@ -207,6 +374,121 @@ namespace Scintilla
             var text = Helpers.GetString(ptr, length.ToInt32(), Encoding.UTF8); // new string((sbyte*)ptr, 0, length.ToInt32(), scintilla.Encoding);
             return text;
         }
+
+        public int GetLineLength(int lineNumber)
+        {
+            //var line = new Line(scintilla, lineNumber);
+            //return line?.Length ?? 0;
+            return DirectMessage(NativeMethods.SCI_LINELENGTH, new IntPtr(lineNumber)).ToInt32();
+        }
+
+
+        private const int ErrorIndex = 20;
+        private const int WarningIndex = 21;
+        private const int TypeNameIndex = 22;
+
+        public void SetupIndicatorStyles()
+        {
+            //scintilla.Indicators[ErrorIndex].Style = IndicatorStyle.CompositionThick;
+            DirectMessage(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(ErrorIndex), new IntPtr(NativeMethods.INDIC_COMPOSITIONTHICK));
+            //scintilla.Indicators[ErrorIndex].ForeColor = System.Drawing.Color.Crimson;
+            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(ErrorIndex), new IntPtr(ColorTranslator.ToWin32(System.Drawing.Color.Crimson)));
+            //scintilla.Indicators[ErrorIndex].Alpha = 255;
+   
+            //scintilla.Indicators[WarningIndex].Style = IndicatorStyle.CompositionThick;
+            DirectMessage(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(WarningIndex), new IntPtr(NativeMethods.INDIC_COMPOSITIONTHICK));
+            //scintilla.Indicators[WarningIndex].ForeColor = System.Drawing.Color.DarkOrange;
+            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(WarningIndex), new IntPtr(ColorTranslator.ToWin32(System.Drawing.Color.DarkOrange)));
+            //scintilla.Indicators[WarningIndex].Alpha = 255;
+
+            //scintilla.Indicators[TypeNameIndex].Style = IndicatorStyle.TextFore;
+            DirectMessage(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(TypeNameIndex), new IntPtr(NativeMethods.INDIC_TEXTFORE));
+            //scintilla.Indicators[TypeNameIndex].ForeColor = System.Drawing.Color.FromArgb(43, 145, 175);
+            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(TypeNameIndex), new IntPtr(ColorTranslator.ToWin32(System.Drawing.Color.FromArgb(43, 145, 175))));
+        }
+
+        public void ClearAllErrorIndicators()
+        {
+            //scintilla.IndicatorCurrent = ErrorIndex;
+            DirectMessage(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(ErrorIndex));
+            //scintilla.IndicatorClearRange(0, scintilla.TextLength);
+            DirectMessage(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(Text.Length));
+        }
+        public void ClearAllWarningIndicators()
+        {
+            //scintilla.IndicatorCurrent = WarningIndex;
+            DirectMessage(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(WarningIndex));
+            //scintilla.IndicatorClearRange(0, scintilla.TextLength);
+            DirectMessage(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(Text.Length));
+        }
+        public void ClearAllTypeNameIndicators()
+        {
+            //scintilla.IndicatorCurrent = TypeNameIndex;
+            DirectMessage(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(TypeNameIndex));
+            //scintilla.IndicatorClearRange(0, scintilla.TextLength);
+            DirectMessage(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(Text.Length));
+        }
+
+        public void AddErrorIndicator(int position, int length)
+        {
+            //scintilla.IndicatorCurrent = ErrorIndex;
+            DirectMessage(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(ErrorIndex));
+            //scintilla.IndicatorFillRange(position, length);
+            DirectMessage(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
+        }
+        public void AddWarningIndicator(int position, int length)
+        {
+            //scintilla.IndicatorCurrent = WarningIndex;
+            DirectMessage(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(WarningIndex));
+            //scintilla.IndicatorFillRange(position, length);
+            DirectMessage(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
+        }
+        public void AddTypeNameIndicator(int position, int length)
+        {
+            //scintilla.IndicatorCurrent = TypeNameIndex;
+            DirectMessage(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(TypeNameIndex));
+            //scintilla.IndicatorFillRange(position, length);
+            DirectMessage(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
+        }
+
+        public bool IsWhitespaceVisible => DirectMessage(NativeMethods.SCI_GETVIEWWS).ToInt32() != NativeMethods.SCWS_INVISIBLE;
+
+        public void ShowWhitespace()
+        {
+            //scintilla.ViewWhitespace = WhitespaceMode.VisibleAlways;
+            DirectMessage(NativeMethods.SCI_SETVIEWWS, new IntPtr(NativeMethods.SCWS_VISIBLEALWAYS));
+        }
+
+        public void HideWhitespace()
+        {
+            //scintilla.ViewWhitespace = WhitespaceMode.Invisible;
+            DirectMessage(NativeMethods.SCI_SETVIEWWS, new IntPtr(0));
+        }
+
+        public void ShowWhitespaceWithColor(Eto.Drawing.Color color)
+        {
+            ShowWhitespace();
+            //scintilla.SetWhitespaceBackColor(true, System.Drawing.Color.FromArgb(color.ToArgb()));
+            var colour = ColorTranslator.ToWin32(System.Drawing.Color.FromArgb(color.ToArgb()));
+            DirectMessage(NativeMethods.SCI_SETWHITESPACEBACK, new IntPtr(1), new IntPtr(colour));
+        }
+
+        //public bool AreIndentationGuidesVisible => scintilla.IndentationGuides != IndentView.None;
+        public bool AreIndentationGuidesVisible => DirectMessage(NativeMethods.SCI_GETINDENTATIONGUIDES).ToInt32() != NativeMethods.SC_IV_NONE;
+
+        public void ShowIndentationGuides()
+        {
+            //scintilla.IndentationGuides = IndentView.LookBoth;
+            DirectMessage(NativeMethods.SCI_SETINDENTATIONGUIDES, new IntPtr(NativeMethods.SC_IV_LOOKBOTH));
+        }
+
+        public void HideIndentationGuides()
+        {
+            //scintilla.IndentationGuides = IndentView.None;
+            DirectMessage(NativeMethods.SCI_SETINDENTATIONGUIDES, new IntPtr(NativeMethods.SC_IV_NONE));
+        }
+
+        public bool AutoCompleteActive { get { return DirectMessage(NativeMethods.SCI_AUTOCACTIVE) != IntPtr.Zero; } }
 
         public unsafe void InsertText(int position, string text) 
         { 
@@ -290,6 +572,13 @@ namespace Scintilla
             position = Helpers.Clamp(position, 0, textLength);
             position = DirectMessage(NativeMethods.SCI_WORDSTARTPOSITION, new IntPtr(position), onlyWordChars).ToInt32();
             return position;
+        }
+
+        public string GetTextRange(int position, int length)
+        {
+            //return scintilla.GetTextRange(position, length);
+            string txt = Text;
+            return txt.Substring(position, length);
         }
 
         public unsafe void AutoCompleteShow(int lenEntered, string list)

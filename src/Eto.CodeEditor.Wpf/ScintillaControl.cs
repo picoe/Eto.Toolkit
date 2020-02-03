@@ -42,7 +42,7 @@ namespace Scintilla
         public ScintillaControl()
         {
             base.SetStyle(ControlStyles.UserPaint, false);
-            //CreateHandle();
+            init();
         }
 
         /// <summary>
