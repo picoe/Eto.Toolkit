@@ -1838,7 +1838,7 @@ namespace ScintillaNET
         {
             public Sci_NotifyHeader nmhdr;
             //public int position;
-            public int position;
+            public long position;
             public int ch;
             public int modifiers;
             public int modificationType;

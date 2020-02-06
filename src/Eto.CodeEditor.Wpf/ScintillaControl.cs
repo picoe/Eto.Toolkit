@@ -137,101 +137,102 @@ namespace Scintilla
             NativeMethods.SCNotification scn = (NativeMethods.SCNotification)Marshal.PtrToStructure(m.LParam, typeof(NativeMethods.SCNotification));
             if (scn.nmhdr.code >= NativeMethods.SCN_STYLENEEDED && scn.nmhdr.code <= NativeMethods.SCN_AUTOCCOMPLETED)
             {
+                HandleScintillaMessage(scn.nmhdr.code, (char)scn.ch, (int)scn.position);
                 //var handler = Events[scNotificationEventKey] as EventHandler<SCNotificationEventArgs>;
                 //if (handler != null)
                 //    handler(this, new SCNotificationEventArgs(scn));
 
-                switch (scn.nmhdr.code)
-                {
-                    //case NativeMethods.SCN_PAINTED:
-                    //    OnPainted(EventArgs.Empty);
-                    //    break;
+                //switch (scn.nmhdr.code)
+                //{
+                //    //case NativeMethods.SCN_PAINTED:
+                //    //    OnPainted(EventArgs.Empty);
+                //    //    break;
 
-                    case NativeMethods.SCN_MODIFIED:
-                        //ScnModified(ref scn);
-                        break;
+                //    case NativeMethods.SCN_MODIFIED:
+                //        //ScnModified(ref scn);
+                //        break;
 
-                    //case NativeMethods.SCN_MODIFYATTEMPTRO:
-                    //    OnModifyAttempt(EventArgs.Empty);
-                    //    break;
+                //    //case NativeMethods.SCN_MODIFYATTEMPTRO:
+                //    //    OnModifyAttempt(EventArgs.Empty);
+                //    //    break;
 
-                    //case NativeMethods.SCN_STYLENEEDED:
-                    //    OnStyleNeeded(new StyleNeededEventArgs(this, scn.position));
-                    //    break;
+                //    //case NativeMethods.SCN_STYLENEEDED:
+                //    //    OnStyleNeeded(new StyleNeededEventArgs(this, scn.position));
+                //    //    break;
 
-                    //case NativeMethods.SCN_SAVEPOINTLEFT:
-                    //    OnSavePointLeft(EventArgs.Empty);
-                    //    break;
+                //    //case NativeMethods.SCN_SAVEPOINTLEFT:
+                //    //    OnSavePointLeft(EventArgs.Empty);
+                //    //    break;
 
-                    //case NativeMethods.SCN_SAVEPOINTREACHED:
-                    //    OnSavePointReached(EventArgs.Empty);
-                    //    break;
+                //    //case NativeMethods.SCN_SAVEPOINTREACHED:
+                //    //    OnSavePointReached(EventArgs.Empty);
+                //    //    break;
 
-                    case NativeMethods.SCN_MARGINCLICK:
-                    case NativeMethods.SCN_MARGINRIGHTCLICK:
-                        //ScnMarginClick(ref scn);
-                        break;
+                //    case NativeMethods.SCN_MARGINCLICK:
+                //    case NativeMethods.SCN_MARGINRIGHTCLICK:
+                //        //ScnMarginClick(ref scn);
+                //        break;
 
-                    //case NativeMethods.SCN_UPDATEUI:
-                    //    OnUpdateUI(new UpdateUIEventArgs((UpdateChange)scn.updated));
-                    //    break;
+                //    //case NativeMethods.SCN_UPDATEUI:
+                //    //    OnUpdateUI(new UpdateUIEventArgs((UpdateChange)scn.updated));
+                //    //    break;
 
-                    case NativeMethods.SCN_CHARADDED:
-                        //OnCharAdded(new CharAddedEventArgs(scn.ch));
-                        break;
+                //    case NativeMethods.SCN_CHARADDED:
+                //        //OnCharAdded(new CharAddedEventArgs(scn.ch));
+                //        break;
 
-                    //case NativeMethods.SCN_AUTOCSELECTION:
-                    //    OnAutoCSelection(new AutoCSelectionEventArgs(this, scn.position, scn.text, scn.ch, (ListCompletionMethod)scn.listCompletionMethod));
-                    //    break;
+                //    //case NativeMethods.SCN_AUTOCSELECTION:
+                //    //    OnAutoCSelection(new AutoCSelectionEventArgs(this, scn.position, scn.text, scn.ch, (ListCompletionMethod)scn.listCompletionMethod));
+                //    //    break;
 
-                    //case NativeMethods.SCN_AUTOCCOMPLETED:
-                    //    OnAutoCCompleted(new AutoCSelectionEventArgs(this, scn.position, scn.text, scn.ch, (ListCompletionMethod)scn.listCompletionMethod));
-                    //    break;
+                //    //case NativeMethods.SCN_AUTOCCOMPLETED:
+                //    //    OnAutoCCompleted(new AutoCSelectionEventArgs(this, scn.position, scn.text, scn.ch, (ListCompletionMethod)scn.listCompletionMethod));
+                //    //    break;
 
-                    //case NativeMethods.SCN_AUTOCCANCELLED:
-                    //    OnAutoCCancelled(EventArgs.Empty);
-                    //    break;
+                //    //case NativeMethods.SCN_AUTOCCANCELLED:
+                //    //    OnAutoCCancelled(EventArgs.Empty);
+                //    //    break;
 
-                    //case NativeMethods.SCN_AUTOCCHARDELETED:
-                    //    OnAutoCCharDeleted(EventArgs.Empty);
-                    //    break;
+                //    //case NativeMethods.SCN_AUTOCCHARDELETED:
+                //    //    OnAutoCCharDeleted(EventArgs.Empty);
+                //    //    break;
 
-                    //case NativeMethods.SCN_DWELLSTART:
-                    //    OnDwellStart(new DwellEventArgs(this, scn.position, scn.x, scn.y));
-                    //    break;
+                //    //case NativeMethods.SCN_DWELLSTART:
+                //    //    OnDwellStart(new DwellEventArgs(this, scn.position, scn.x, scn.y));
+                //    //    break;
 
-                    //case NativeMethods.SCN_DWELLEND:
-                    //    OnDwellEnd(new DwellEventArgs(this, scn.position, scn.x, scn.y));
-                    //    break;
+                //    //case NativeMethods.SCN_DWELLEND:
+                //    //    OnDwellEnd(new DwellEventArgs(this, scn.position, scn.x, scn.y));
+                //    //    break;
 
-                    //case NativeMethods.SCN_DOUBLECLICK:
-                    //    ScnDoubleClick(ref scn);
-                    //    break;
+                //    //case NativeMethods.SCN_DOUBLECLICK:
+                //    //    ScnDoubleClick(ref scn);
+                //    //    break;
 
-                    //case NativeMethods.SCN_NEEDSHOWN:
-                    //    OnNeedShown(new NeedShownEventArgs(this, scn.position, scn.length));
-                    //    break;
+                //    //case NativeMethods.SCN_NEEDSHOWN:
+                //    //    OnNeedShown(new NeedShownEventArgs(this, scn.position, scn.length));
+                //    //    break;
 
-                    //case NativeMethods.SCN_HOTSPOTCLICK:
-                    //case NativeMethods.SCN_HOTSPOTDOUBLECLICK:
-                    //case NativeMethods.SCN_HOTSPOTRELEASECLICK:
-                    //    ScnHotspotClick(ref scn);
-                    //    break;
+                //    //case NativeMethods.SCN_HOTSPOTCLICK:
+                //    //case NativeMethods.SCN_HOTSPOTDOUBLECLICK:
+                //    //case NativeMethods.SCN_HOTSPOTRELEASECLICK:
+                //    //    ScnHotspotClick(ref scn);
+                //    //    break;
 
-                    //case NativeMethods.SCN_INDICATORCLICK:
-                    //case NativeMethods.SCN_INDICATORRELEASE:
-                    //    ScnIndicatorClick(ref scn);
-                    //    break;
+                //    //case NativeMethods.SCN_INDICATORCLICK:
+                //    //case NativeMethods.SCN_INDICATORRELEASE:
+                //    //    ScnIndicatorClick(ref scn);
+                //    //    break;
 
-                    //case NativeMethods.SCN_ZOOM:
-                    //    OnZoomChanged(EventArgs.Empty);
-                    //    break;
+                //    //case NativeMethods.SCN_ZOOM:
+                //    //    OnZoomChanged(EventArgs.Empty);
+                //    //    break;
 
-                    default:
-                        // Not our notification
-                        base.WndProc(ref m);
-                        break;
-                }
+                //    default:
+                //        // Not our notification
+                //        base.WndProc(ref m);
+                //        break;
+                //}
             }
         }
 

@@ -29,8 +29,8 @@ namespace Eto.CodeEditor
             scintilla = new Scintilla.ScintillaControl(); // new ScintillaNET.Scintilla();
             WinFormsControl = scintilla;
 
-            /*scintilla*/this.CharAdded += WinFormsControl_CharAdded;
-            scintilla.TextChanged += WinFormsControl_TextChanged;
+            ///*scintilla*/this.CharAdded += WinFormsControl_CharAdded;
+            //scintilla.TextChanged += WinFormsControl_TextChanged;
             //InsertCheck += WinFormsControl_InsertCheck;
             //scintilla.AutoCMaxHeight = 10;
             scintilla.DirectMessage(NativeMethods.SCI_AUTOCSETMAXHEIGHT, new IntPtr(10));
@@ -54,16 +54,16 @@ namespace Eto.CodeEditor
         //    throw new NotImplementedException("InsertCheck handler needs to be reworked.");
         //}
 
-        private void WinFormsControl_CharAdded(object sender, /*ScintillaNET.*/CharAddedEventArgs e)
-        {
-            CharAdded?.Invoke(this, new Eto.CodeEditor.CharAddedEventArgs((char)e.Char));
-        }
+        //private void WinFormsControl_CharAdded(object sender, /*ScintillaNET.*/CharAddedEventArgs e)
+        //{
+        //    CharAdded?.Invoke(this, new Eto.CodeEditor.CharAddedEventArgs((char)e.Char));
+        //}
 
-        private void WinFormsControl_TextChanged(object sender, EventArgs e)
-        {
-            TextChanged?.Invoke(this, new Eto.CodeEditor.TextChangedEventArgs());
+        //private void WinFormsControl_TextChanged(object sender, EventArgs e)
+        //{
+        //    TextChanged?.Invoke(this, new Eto.CodeEditor.TextChangedEventArgs());
 
-        }
+        //}
 
         //public event EventHandler<Eto.CodeEditor.CharAddedEventArgs> CharAdded;
         ////public event EventHandler<Eto.CodeEditor.TextChangedEventArgs> TextChanged;

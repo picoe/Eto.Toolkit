@@ -17,7 +17,7 @@ namespace Eto.CodeEditor.TestApp
                 //FontName = "Wingdings",
                 //FontSize = 100
             };
-
+            editor.ReplaceTabsWithSpaces = true;
             editor.Text =
 @"// Just some sample code
 for( int i=0; i<10; i++ )
