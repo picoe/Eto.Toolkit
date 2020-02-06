@@ -12,12 +12,7 @@ namespace Eto.CodeEditor.TestApp
             ClientSize = new Size(400, 400);
 
 
-            var editor = new CodeEditor(ProgrammingLanguage.CSharp)
-            {
-                //FontName = "Wingdings",
-                //FontSize = 100
-            };
-            editor.ReplaceTabsWithSpaces = true;
+            var editor = new CodeEditor(ProgrammingLanguage.CSharp);
             editor.Text =
 @"// Just some sample code
 for( int i=0; i<10; i++ )

@@ -21,29 +21,31 @@ namespace Scintilla
 
         private void init()
         {
-            Action<int, int, int> SetGeneralProperty = (c, i, j) => DirectMessage(c, new IntPtr(i), new IntPtr(j));
             // breakpoints margin
-            SetGeneralProperty(NativeMethods.SCI_SETMARGINSENSITIVEN, BREAKPOINTS_MARGIN, 1);
-            SetGeneralProperty(NativeMethods.SCI_SETMARGINTYPEN, BREAKPOINTS_MARGIN, NativeMethods.SC_MARGIN_SYMBOL);
-            SetGeneralProperty(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, int.MaxValue); // ScintillaNet -> public const uint MaskAll = unchecked((uint)-1);
-            SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAKPOINTS_MARGIN, NativeMethods.SC_MARK_FULLRECT);
+            DirectMessage(NativeMethods.SCI_SETMARGINSENSITIVEN, BREAKPOINTS_MARGIN, 1);
+            DirectMessage(NativeMethods.SCI_SETMARGINTYPEN, BREAKPOINTS_MARGIN, NativeMethods.SC_MARGIN_SYMBOL);
+            DirectMessage(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, int.MaxValue); // ScintillaNet -> public const uint MaskAll = unchecked((uint)-1);
+            DirectMessage(NativeMethods.SCI_MARKERDEFINE, BREAKPOINTS_MARGIN, NativeMethods.SC_MARK_FULLRECT);
             IsBreakpointsMarginVisible = false;
 
             // line numbers margin
-            SetGeneralProperty(NativeMethods.SCI_SETMARGINSENSITIVEN, LINENUMBERS_MARGIN, 0);
-            SetGeneralProperty(NativeMethods.SCI_SETMARGINTYPEN, LINENUMBERS_MARGIN, NativeMethods.SC_MARGIN_NUMBER);
+            DirectMessage(NativeMethods.SCI_SETMARGINSENSITIVEN, LINENUMBERS_MARGIN, 0);
+            DirectMessage(NativeMethods.SCI_SETMARGINTYPEN, LINENUMBERS_MARGIN, NativeMethods.SC_MARGIN_NUMBER);
 
             // breakpoint marker
-            SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAKPOINT_MARKER, NativeMethods.SC_MARK_CIRCLE); // default
+            DirectMessage(NativeMethods.SCI_MARKERDEFINE, BREAKPOINT_MARKER, NativeMethods.SC_MARK_CIRCLE); // default
             var red = 255; // 0xFF0000; // */ 16711680;
-            SetGeneralProperty(NativeMethods.SCI_MARKERSETFORE, BREAKPOINT_MARKER, red);
-            SetGeneralProperty(NativeMethods.SCI_MARKERSETBACK, BREAKPOINT_MARKER, red);
+            DirectMessage(NativeMethods.SCI_MARKERSETFORE, BREAKPOINT_MARKER, red);
+            DirectMessage(NativeMethods.SCI_MARKERSETBACK, BREAKPOINT_MARKER, red);
 
             // break marker
-            SetGeneralProperty(NativeMethods.SCI_MARKERDEFINE, BREAK_MARKER, NativeMethods.SC_MARK_ARROW);
+            DirectMessage(NativeMethods.SCI_MARKERDEFINE, BREAK_MARKER, NativeMethods.SC_MARK_ARROW);
             var yellow = 0x00FFFF; // */ 16776960;
-            SetGeneralProperty(NativeMethods.SCI_MARKERSETFORE, BREAK_MARKER, 0xFFFFFF); //black
-            SetGeneralProperty(NativeMethods.SCI_MARKERSETBACK, BREAK_MARKER, yellow);
+            DirectMessage(NativeMethods.SCI_MARKERSETFORE, BREAK_MARKER, 0xFFFFFF); //black
+            DirectMessage(NativeMethods.SCI_MARKERSETBACK, BREAK_MARKER, yellow);
+
+            // use spaces for indentation by default. Auto indent doesn't work well at the moment
+            ReplaceTabsWithSpaces = true;
         }
 
         public unsafe void SetKeywords(int set, string keywords)
@@ -703,6 +705,11 @@ namespace Scintilla
                 return new int[] { /*ScintillaNET.Style.Vb.Preprocessor*/NativeMethods.SCE_B_PREPROCESSOR };
 
             return new int[] { /*ScintillaNET.Style.Cpp.Preprocessor*/NativeMethods.SCE_C_PREPROCESSOR };
+        }
+
+        internal IntPtr DirectMessage(int msg, int wParam, int lParam)
+        {
+            return DirectMessage(msg, new IntPtr(wParam), new IntPtr(lParam));
         }
 
         internal IntPtr DirectMessage(int msg)

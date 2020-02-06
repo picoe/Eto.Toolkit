@@ -14,7 +14,7 @@ using Eto.Drawing;
 
 namespace Eto.CodeEditor
 {
-    public partial class CodeEditorHandler  //: Eto.Wpf.Forms.WindowsFormsHostHandler<Scintilla.ScintillaControl, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
+    public partial class CodeEditorHandler
     {
         #region IHandler impl
         public string Text
