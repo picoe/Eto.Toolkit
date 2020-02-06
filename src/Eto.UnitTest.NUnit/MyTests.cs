@@ -1,6 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
 using System.Threading;
+using Eto.Forms;
+using System.Threading.Tasks;
 
 #if INCLUDE_TESTS
 
@@ -119,6 +121,39 @@ namespace Eto.UnitTest.NUnit.OtherTests
         public void Test4()
         {
             Thread.Sleep(1000);
+        }
+    }
+
+    [TestFixture]
+    public class UITests
+    {
+        [Test]
+        [InvokeOnUI]
+        public void RunThisOnUIThread()
+        {
+            Thread currentThread = Thread.CurrentThread;
+            Thread uiThread = null;
+            Application.Instance.Invoke(() =>
+            {
+                uiThread = Thread.CurrentThread;
+            });
+
+            Assert.IsNotNull(uiThread, "#1. UI thread was not found");
+            Assert.AreEqual(currentThread.ManagedThreadId, uiThread.ManagedThreadId, "#2. UI Thread should be the same as the test thread");
+        }
+
+        [Test]
+        public void RunThisOnTestThread()
+        {
+            Thread currentThread = Thread.CurrentThread;
+            Thread uiThread = null;
+            Application.Instance.Invoke(() =>
+            {
+                uiThread = Thread.CurrentThread;
+            });
+
+            Assert.IsNotNull(uiThread, "#1. UI thread was not found");
+            Assert.AreNotEqual(currentThread.ManagedThreadId, uiThread.ManagedThreadId, "#2. UI Thread should not be the same as the test thread");
         }
     }
 }
