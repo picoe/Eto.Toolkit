@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- For some (maybe non obvious) reason, xunit.runner.utility named the assemblies different for each framework. dur. -->
+    <!-- so by targetting each supported runtime (net461/netcoreapp) it'll reference the right one when it gets packaged up -->
+    <TargetFrameworks>net461;netcoreapp2.0;netstandard2.0</TargetFrameworks>
+    <DefineConstants Condition="$(Configuration) == 'Debug'">$(DefineConstants);INCLUDE_TESTS</DefineConstants>
+    <IsPackable>True</IsPackable> <!-- xunit packages disable this from automatically being set -->
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <Title>Xunit testing UI and utilities for Eto.Forms</Title>
+    <Description>Provides a control to use in Eto.Forms applications that can be used to display, filter, and run unit tests.</Description>
+    <PackageTags>xunit;unit test;test;testing;tdd</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eto.UnitTest\Eto.UnitTest.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.runner.utility" Version="2.4.1" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+  </ItemGroup>
+</Project>
