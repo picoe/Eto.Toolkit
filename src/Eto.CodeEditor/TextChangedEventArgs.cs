@@ -17,13 +17,13 @@ namespace Eto.CodeEditor
     {
     }
 
-    public class InsertCheckEventArgs : EventArgs
-    {
-        public InsertCheckEventArgs(string text)
-        {
-            Text = text;
-        }
+    //public class InsertCheckEventArgs : EventArgs
+    //{
+    //    public InsertCheckEventArgs(string text)
+    //    {
+    //        Text = text;
+    //    }
 
-        public string Text { get; }
-    }
+    //    public string Text { get; }
+    //}
 }

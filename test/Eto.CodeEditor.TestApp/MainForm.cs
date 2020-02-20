@@ -12,18 +12,24 @@ namespace Eto.CodeEditor.TestApp
             ClientSize = new Size(400, 400);
 
 
-            var editor = new CodeEditor(ProgrammingLanguage.CSharp)
-            {
-                Text =
+            var editor = new CodeEditor(ProgrammingLanguage.CSharp);
+            editor.Text =
 @"// Just some sample code
 for( int i=0; i<10; i++ )
 {
   print(i);
-}"
-            };
+}";
+
             editor.SetupIndicatorStyles();
-      editor.AddErrorIndicator(13, 6);
-            Content = editor;
+            editor.AddErrorIndicator(13, 6);
+
+            var btn = new Button { Text = "Font" };
+            btn.Click += (s, e) =>
+            {
+                MessageBox.Show(editor.GetLineText(1));
+                //editor.FontName = "Wingdings";
+            };
+            Content = new TableLayout { Rows = { btn, editor } };
         }
     }
 }
