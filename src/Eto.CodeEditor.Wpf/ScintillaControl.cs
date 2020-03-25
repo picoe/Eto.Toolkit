@@ -12,7 +12,7 @@ namespace Scintilla
 {
     public partial class ScintillaControl : Control//, CodeEditor.IHandler
     {
-        private static IntPtr moduleHandle;
+        private IntPtr moduleHandle;
         private IntPtr sciPtr;
         private BorderStyle borderStyle;
         //private static NativeMethods.Scintilla_DirectFunction directFunction;
