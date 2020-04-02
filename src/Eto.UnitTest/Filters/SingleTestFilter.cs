@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 
-namespace Eto.UnitTest
+namespace Eto.UnitTest.Filters
 {
-    class SingleTestFilter : ITestFilter
+    public class SingleTestFilter : ITestFilter
     {
         public ITest Test { get; set; }
 

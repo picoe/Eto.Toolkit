@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 
-namespace Eto.UnitTest
+namespace Eto.UnitTest.Filters
 {
-    class StatusFilter : ITestFilter
+    public class StatusFilter : ITestFilter
     {
         Func<ITest, ITestResult> _lookupResult;
 

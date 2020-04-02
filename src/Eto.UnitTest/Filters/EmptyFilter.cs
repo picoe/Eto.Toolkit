@@ -1,6 +1,6 @@
-﻿namespace Eto.UnitTest
+﻿namespace Eto.UnitTest.Filters
 {
-    class EmptyFilter : ITestFilter
+    public class EmptyFilter : ITestFilter
     {
         public bool IsExplicitMatch(ITest test) => true;
 

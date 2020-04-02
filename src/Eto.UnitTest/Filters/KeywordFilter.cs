@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Eto.UnitTest
+namespace Eto.UnitTest.Filters
 {
-    class KeywordFilter : BaseFilter
+    public class KeywordFilter : BaseFilter
     {
         string keywords;
         string[][] keywordTokens;
