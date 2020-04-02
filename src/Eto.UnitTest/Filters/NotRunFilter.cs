@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 
-namespace Eto.UnitTest
+namespace Eto.UnitTest.Filters
 {
-    class NotRunFilter : ITestFilter
+    public class NotRunFilter : ITestFilter
     {
         Func<ITest, ITestResult> LookupResult { get; }
 

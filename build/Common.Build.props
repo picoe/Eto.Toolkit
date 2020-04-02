@@ -15,7 +15,7 @@
     <!-- set version for CI build -->
     <Version Condition="$(Version) == '' AND $(BuildVersion) != ''">$(BuildVersion)</Version>
     
-    <Version Condition="$(Version) == ''">0.2.0-dev</Version>
+    <Version Condition="$(Version) == ''">0.3.0-dev</Version>
     <Authors>Eto.Toolkit Authors</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/picoe/Eto.Toolkit</RepositoryUrl>

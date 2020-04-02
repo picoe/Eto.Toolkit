@@ -10,6 +10,7 @@ using System.Text;
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using Eto.UnitTest.Runners;
+using Eto.UnitTest.Filters;
 
 namespace Eto.UnitTest.UI
 {

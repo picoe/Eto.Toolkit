@@ -1,6 +1,6 @@
-﻿namespace Eto.UnitTest
+﻿namespace Eto.UnitTest.Filters
 {
-    class NotFilter : ITestFilter
+    public class NotFilter : ITestFilter
     {
         public ITestFilter Filter { get; set; }
 

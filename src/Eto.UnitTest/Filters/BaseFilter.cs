@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 
-namespace Eto.UnitTest
+namespace Eto.UnitTest.Filters
 {
-    abstract class BaseFilter : ITestFilter
+    public abstract class BaseFilter : ITestFilter
     {
         public bool IsExplicitMatch(ITest test) => Matches(test);
 

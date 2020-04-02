@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Eto.UnitTest
+namespace Eto.UnitTest.Filters
 {
-    class CategoryFilter : BaseFilter
+    public class CategoryFilter : BaseFilter
     {
         public List<string> Categories { get; }
 
