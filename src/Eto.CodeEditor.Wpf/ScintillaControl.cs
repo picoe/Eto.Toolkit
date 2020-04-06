@@ -243,7 +243,7 @@ namespace Scintilla
         /// <returns></returns>
         public static string UnpackNativeScintilla()
         {
-            const string scilexerVersion = "4.2.0";
+            const string scilexerVersion = "4.3.0";
             string bitness = IntPtr.Size == 4 ? "x86" : "x64";
             string path = Path.Combine(Path.GetTempPath(), "Eto.CodeEditor.Wpf", scilexerVersion, bitness, "SciLexer.dll");
             if (!File.Exists(path))
