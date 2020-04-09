@@ -394,19 +394,19 @@ namespace Scintilla
             //scintilla.Indicators[ErrorIndex].Style = IndicatorStyle.CompositionThick;
             DirectMessage(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(ErrorIndex), new IntPtr(NativeMethods.INDIC_COMPOSITIONTHICK));
             //scintilla.Indicators[ErrorIndex].ForeColor = System.Drawing.Color.Crimson;
-            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(ErrorIndex), new IntPtr(ColorTranslator.ToWin32(System.Drawing.Color.Crimson)));
+            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(ErrorIndex), new IntPtr(System.Drawing.Color.Crimson.ToArgb()));
             //scintilla.Indicators[ErrorIndex].Alpha = 255;
    
             //scintilla.Indicators[WarningIndex].Style = IndicatorStyle.CompositionThick;
             DirectMessage(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(WarningIndex), new IntPtr(NativeMethods.INDIC_COMPOSITIONTHICK));
             //scintilla.Indicators[WarningIndex].ForeColor = System.Drawing.Color.DarkOrange;
-            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(WarningIndex), new IntPtr(ColorTranslator.ToWin32(System.Drawing.Color.DarkOrange)));
+            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(WarningIndex), new IntPtr(System.Drawing.Color.DarkOrange.ToArgb()));
             //scintilla.Indicators[WarningIndex].Alpha = 255;
 
             //scintilla.Indicators[TypeNameIndex].Style = IndicatorStyle.TextFore;
             DirectMessage(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(TypeNameIndex), new IntPtr(NativeMethods.INDIC_TEXTFORE));
             //scintilla.Indicators[TypeNameIndex].ForeColor = System.Drawing.Color.FromArgb(43, 145, 175);
-            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(TypeNameIndex), new IntPtr(ColorTranslator.ToWin32(System.Drawing.Color.FromArgb(43, 145, 175))));
+            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(TypeNameIndex), new IntPtr(System.Drawing.Color.FromArgb(43, 145, 175).ToArgb()));
         }
 
         public void ClearAllErrorIndicators()
@@ -471,8 +471,7 @@ namespace Scintilla
         {
             ShowWhitespace();
             //scintilla.SetWhitespaceBackColor(true, System.Drawing.Color.FromArgb(color.ToArgb()));
-            var colour = ColorTranslator.ToWin32(System.Drawing.Color.FromArgb(color.ToArgb()));
-            DirectMessage(NativeMethods.SCI_SETWHITESPACEBACK, new IntPtr(1), new IntPtr(colour));
+            DirectMessage(NativeMethods.SCI_SETWHITESPACEBACK, new IntPtr(1), new IntPtr(color.ToArgb()));
         }
 
         //public bool AreIndentationGuidesVisible => scintilla.IndentationGuides != IndentView.None;
