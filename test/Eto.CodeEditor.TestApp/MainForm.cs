@@ -26,8 +26,9 @@ for( int i=0; i<10; i++ )
             var btn = new Button { Text = "Font" };
             btn.Click += (s, e) =>
             {
-                MessageBox.Show(editor.GetLineText(1));
+                //MessageBox.Show(editor.GetLineText(1));
                 //editor.FontName = "Wingdings";
+                editor.ShowWhitespaceWithColor(Colors.Red);
             };
             Content = new TableLayout { Rows = { btn, editor } };
         }
