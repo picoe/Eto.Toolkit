@@ -257,65 +257,62 @@ namespace Scintilla
 
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
-            int fg = (foreground.Bb << 16) + (foreground.Gb << 8) + foreground.Rb;
-            int bg = (background.Bb << 16) + (background.Gb << 8) + background.Rb;
-
             if (section == Section.Default)
             {
-                DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(NativeMethods.STYLE_DEFAULT), new IntPtr(fg));
+                DirectMessage(NativeMethods.SCI_STYLESETFORE, NativeMethods.STYLE_DEFAULT, foreground);
                 int argb = foreground.ToArgb();
                 DirectMessage(NativeMethods.SCI_SETCARETFORE, new IntPtr(argb), new IntPtr(0));
-                DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(NativeMethods.STYLE_DEFAULT), new IntPtr(bg));
+                DirectMessage(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_DEFAULT, background);
                 DirectMessage(NativeMethods.SCI_STYLECLEARALL, new IntPtr(0), new IntPtr(0));
             }
             if (section == Section.Comment)
             {
                 foreach (var id in CommentStyleIds(Language))
                 {
-                    DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(id), new IntPtr(fg));
-                    DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(id), new IntPtr(bg));
+                    DirectMessage(NativeMethods.SCI_STYLESETFORE, id, foreground);
+                    DirectMessage(NativeMethods.SCI_STYLESETBACK, id, background);
                 }
             }
             if (section == Section.Keyword1)
             {
                 foreach (var id in Keyword1Ids(Language))
                 {
-                    DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(id), new IntPtr(fg));
-                    DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(id), new IntPtr(bg));
+                    DirectMessage(NativeMethods.SCI_STYLESETFORE, id, foreground);
+                    DirectMessage(NativeMethods.SCI_STYLESETBACK, id, background);
                 }
             }
             if (section == Section.Keyword2)
             {
                 foreach (var id in Keyword2Ids(Language))
                 {
-                    DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(id), new IntPtr(fg));
-                    DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(id), new IntPtr(bg));
+                    DirectMessage(NativeMethods.SCI_STYLESETFORE, id, foreground);
+                    DirectMessage(NativeMethods.SCI_STYLESETBACK, id, background);
                 }
             }
             if (section == Section.Strings)
             {
                 foreach (var id in StringStyleIds(Language))
                 {
-                    DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(id), new IntPtr(fg));
-                    DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(id), new IntPtr(bg));
+                    DirectMessage(NativeMethods.SCI_STYLESETFORE, id, foreground);
+                    DirectMessage(NativeMethods.SCI_STYLESETBACK, id, background);
                 }
             }
             if (section == Section.LineNumber)
             {
-                DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(NativeMethods.STYLE_LINENUMBER), new IntPtr(fg));
-                DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(NativeMethods.STYLE_LINENUMBER), new IntPtr(bg));
+                DirectMessage(NativeMethods.SCI_STYLESETFORE, NativeMethods.STYLE_LINENUMBER, foreground);
+                DirectMessage(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_LINENUMBER, background);
             }
             if (section == Section.DefName && Language == ProgrammingLanguage.Python)
             {
-                DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(NativeMethods.SCE_P_DEFNAME), new IntPtr(fg));
-                DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(NativeMethods.SCE_P_DEFNAME), new IntPtr(bg));
+                DirectMessage(NativeMethods.SCI_STYLESETFORE, NativeMethods.SCE_P_DEFNAME, foreground);
+                DirectMessage(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_P_DEFNAME, background);
             }
             if (section == Section.Preprocessor)
             {
                 foreach (var id in PreprocessorIds(Language))
                 {
-                    DirectMessage(NativeMethods.SCI_STYLESETFORE, new IntPtr(id), new IntPtr(fg));
-                    DirectMessage(NativeMethods.SCI_STYLESETBACK, new IntPtr(id), new IntPtr(bg));
+                    DirectMessage(NativeMethods.SCI_STYLESETFORE, id, foreground);
+                    DirectMessage(NativeMethods.SCI_STYLESETBACK, id, background);
                 }
 
             }
@@ -394,19 +391,19 @@ namespace Scintilla
             //scintilla.Indicators[ErrorIndex].Style = IndicatorStyle.CompositionThick;
             DirectMessage(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(ErrorIndex), new IntPtr(NativeMethods.INDIC_COMPOSITIONTHICK));
             //scintilla.Indicators[ErrorIndex].ForeColor = System.Drawing.Color.Crimson;
-            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(ErrorIndex), new IntPtr(System.Drawing.Color.Crimson.ToArgb()));
+            DirectMessage(NativeMethods.SCI_INDICSETFORE, ErrorIndex, Eto.Drawing.Colors.Crimson);
             //scintilla.Indicators[ErrorIndex].Alpha = 255;
    
             //scintilla.Indicators[WarningIndex].Style = IndicatorStyle.CompositionThick;
             DirectMessage(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(WarningIndex), new IntPtr(NativeMethods.INDIC_COMPOSITIONTHICK));
             //scintilla.Indicators[WarningIndex].ForeColor = System.Drawing.Color.DarkOrange;
-            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(WarningIndex), new IntPtr(System.Drawing.Color.DarkOrange.ToArgb()));
+            DirectMessage(NativeMethods.SCI_INDICSETFORE, WarningIndex, Eto.Drawing.Colors.DarkOrange);
             //scintilla.Indicators[WarningIndex].Alpha = 255;
 
             //scintilla.Indicators[TypeNameIndex].Style = IndicatorStyle.TextFore;
             DirectMessage(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(TypeNameIndex), new IntPtr(NativeMethods.INDIC_TEXTFORE));
             //scintilla.Indicators[TypeNameIndex].ForeColor = System.Drawing.Color.FromArgb(43, 145, 175);
-            DirectMessage(NativeMethods.SCI_INDICSETFORE, new IntPtr(TypeNameIndex), new IntPtr(System.Drawing.Color.FromArgb(43, 145, 175).ToArgb()));
+            DirectMessage(NativeMethods.SCI_INDICSETFORE, TypeNameIndex, Eto.Drawing.Color.FromArgb(43, 145, 175));
         }
 
         public void ClearAllErrorIndicators()
@@ -471,7 +468,7 @@ namespace Scintilla
         {
             ShowWhitespace();
             //scintilla.SetWhitespaceBackColor(true, System.Drawing.Color.FromArgb(color.ToArgb()));
-            DirectMessage(NativeMethods.SCI_SETWHITESPACEBACK, new IntPtr(1), new IntPtr(color.ToArgb()));
+            DirectMessage(NativeMethods.SCI_SETWHITESPACEBACK, color);
         }
 
         //public bool AreIndentationGuidesVisible => scintilla.IndentationGuides != IndentView.None;
@@ -719,6 +716,17 @@ namespace Scintilla
         internal IntPtr DirectMessage(int msg, IntPtr wParam)
         {
             return DirectMessage(msg, wParam, IntPtr.Zero);
+        }
+
+        internal IntPtr DirectMessage(int msg, int wParam, Eto.Drawing.Color color)
+        {
+            int c = (color.Bb << 16) + (color.Gb << 8) + color.Rb;
+            return DirectMessage(msg, new IntPtr(wParam), new IntPtr(c));
+        }
+
+        internal IntPtr DirectMessage(int msg, Eto.Drawing.Color color)
+        {
+            return DirectMessage(msg, 1, color);
         }
 
         public virtual IntPtr DirectMessage(int msg, IntPtr wParam, IntPtr lParam)
