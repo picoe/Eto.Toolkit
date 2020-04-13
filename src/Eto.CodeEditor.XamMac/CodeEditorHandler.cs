@@ -37,8 +37,6 @@ namespace Eto.CodeEditor
             FontName = "Menlo";
             FontSize = 14;
             LineNumberColumnWidth = 40;
-            TabWidth = 4;
-            ReplaceTabsWithSpaces = true;
             ShowIndentationGuides();
             Control.Message(NativeMethods.SCI_AUTOCSETMAXHEIGHT, new IntPtr(10), IntPtr.Zero);
         }
