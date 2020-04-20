@@ -148,7 +148,7 @@ namespace Scintilla
                 unsafe
                 {
                     fixed (byte* bp = font)
-                        DirectMessage(NativeMethods.SCI_STYLESETFONT, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(bp));
+                    DirectMessage(NativeMethods.SCI_STYLESETFONT, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(bp));
                     DirectMessage(NativeMethods.SCI_STYLECLEARALL, IntPtr.Zero, IntPtr.Zero);
                 }
             }
@@ -163,6 +163,46 @@ namespace Scintilla
             set
             {
                 DirectMessage(NativeMethods.SCI_STYLESETSIZE, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(value));
+            }
+        }
+
+        public float FontSizeFractional
+        {
+            get
+            {
+                var fraction = DirectMessage(NativeMethods.SCI_STYLEGETSIZEFRACTIONAL, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), IntPtr.Zero).ToInt32();
+                return (float)fraction / NativeMethods.SC_FONT_SIZE_MULTIPLIER;
+            }
+            set
+            {
+                var fraction = (int)(value * NativeMethods.SC_FONT_SIZE_MULTIPLIER);
+                DirectMessage(NativeMethods.SCI_STYLESETSIZEFRACTIONAL, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(fraction));
+            }
+        }
+
+        public bool Bold
+        {
+            get
+            {
+                return DirectMessage(NativeMethods.SCI_STYLEGETBOLD, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), IntPtr.Zero) != IntPtr.Zero;
+            }
+            set
+            {
+                var bold = (value ? new IntPtr(1) : IntPtr.Zero);
+                DirectMessage(NativeMethods.SCI_STYLESETBOLD, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), bold);
+            }
+        }
+
+        public bool Italic
+        {
+            get
+            {
+                return DirectMessage(NativeMethods.SCI_STYLEGETITALIC, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), IntPtr.Zero) != IntPtr.Zero;
+            }
+            set
+            {
+                var italic = (value ? new IntPtr(1) : IntPtr.Zero);
+                DirectMessage(NativeMethods.SCI_STYLESETITALIC, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), italic);
             }
         }
 
