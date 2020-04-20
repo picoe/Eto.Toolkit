@@ -55,6 +55,7 @@ namespace Scintilla
             {
                 if (moduleHandle == IntPtr.Zero)
                 {
+                    //var path = @"Z:\Users\acormier\src\Eto.Toolkit\artifacts\test\Debug\net45\SciLexer.dll";
                     var path = UnpackNativeScintilla(); // GetModulePath();
                     //var path = @"C:\Users\alain\src\Eto.Toolkit\artifacts\core\Debug\SciLexer.dll";
                     //path = @"C:\Users\alain\src\Eto.Toolkit\src\Eto.CodeEditor.Wpf\scintilla\x64\SciLexer.dll";

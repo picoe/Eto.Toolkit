@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using sd = System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +8,7 @@ using Eto;
 using Eto.Forms;
 using Eto.CodeEditor;
 using ScintillaNET;
-using Eto.Drawing;
+using ed = Eto.Drawing;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
 
@@ -26,6 +26,20 @@ namespace Eto.CodeEditor
         public void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets)
         {
             scintilla.SetProgrammingLanguage(language, keywordSets);
+        }
+
+        private ed.FontStyle FontStyle(bool b, bool i) => (b ? ed.FontStyle.Bold : ed.FontStyle.None) | (i ? ed.FontStyle.Italic : ed.FontStyle.None);
+
+        public Eto.Drawing.Font Font
+        {
+            get => new ed.Font(scintilla.FontName, scintilla.FontSizeFractional, FontStyle(scintilla.Bold, scintilla.Italic)) ;
+            set
+            {
+                scintilla.FontName = value.FamilyName;
+                scintilla.FontSizeFractional = value.Size;
+                scintilla.Bold = value.Bold;
+                scintilla.Italic = value.Italic;
+            }
         }
 
         public string FontName

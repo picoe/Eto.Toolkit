@@ -1,4 +1,5 @@
-﻿using Eto.Drawing;
+﻿using System;
+using Eto.Drawing;
 using Eto.Forms;
 
 namespace Eto.CodeEditor.TestApp
@@ -23,12 +24,28 @@ for( int i=0; i<10; i++ )
             editor.SetupIndicatorStyles();
             editor.AddErrorIndicator(13, 6);
 
+            Action<Font, string> pp = (f,pfx) => MessageBox.Show($"{pfx}: name: {editor.Font.FamilyName}, size: {editor.FontSize}");
+
             var btn = new Button { Text = "Font" };
             btn.Click += (s, e) =>
             {
-                //MessageBox.Show(editor.GetLineText(1));
-                //editor.FontName = "Wingdings";
-                editor.ShowWhitespaceWithColor(Colors.Red);
+                var originalFont = editor.Font ?? SystemFonts.Default();
+                pp(originalFont, "first");
+                var fd = new Eto.Forms.FontDialog { Font = originalFont };
+                fd.FontChanged += (ss, ee) =>
+                {
+                    editor.Font = fd.Font;
+                    pp(editor.Font, "FontChanged");
+                };
+                var r = fd.ShowDialog(this);
+                editor.Font = (r == DialogResult.Ok || r == DialogResult.Yes)
+                  ? fd.Font
+                  : originalFont;
+
+                pp(fd.Font, "fd");
+                pp(editor.Font, "editor");
+                //editor.ShowWhitespaceWithColor(Colors.Red);
+                //editor.Text = $"name: {editor.FontName}, size: {editor.FontSize}";
             };
             Content = new TableLayout { Rows = { btn, editor } };
         }
