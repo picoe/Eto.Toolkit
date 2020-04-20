@@ -80,6 +80,11 @@ namespace Eto.CodeEditor
             get => _language;
         }
 
+        public Eto.Drawing.Font Font
+        {
+            get => Handler.Font;
+            set => Handler.Font = value;
+        }
         public string FontName
         {
             get => Handler.FontName;
@@ -235,6 +240,7 @@ namespace Eto.CodeEditor
         {
             string Text { get; set; }
             void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets);
+            Eto.Drawing.Font Font { get; set; }
             string FontName { get; set; }
             int FontSize { get; set; }
             int TabWidth { get; set; }
