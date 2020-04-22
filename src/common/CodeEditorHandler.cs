@@ -107,6 +107,8 @@ namespace Eto.CodeEditor
 
         public int CurrentLineNumber => scintilla.CurrentLineNumber;
 
+        public string WordAtCurrentPosition => scintilla.WordAtCurrentPosition;
+
         public int GetLineIndentation(int lineNumber) => scintilla.GetLineIndentation(lineNumber);
 
         public void SetLineIndentation(int lineNumber, int indentation) => scintilla.SetLineIndentation(lineNumber, indentation);

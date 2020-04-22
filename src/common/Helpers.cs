@@ -941,8 +941,11 @@ namespace Scintilla
             }
         }
         */
-        public static unsafe string GetString(IntPtr bytes, int length, Encoding encoding)
+        public static unsafe string GetString(IntPtr bytes, int length, Encoding encoding = null)
         {
+            if (encoding == null)
+                encoding = Encoding.UTF8;
+
             var ptr = (sbyte*)bytes;
             var str = new string(ptr, 0, length, encoding);
 
