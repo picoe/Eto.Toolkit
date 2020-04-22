@@ -368,6 +368,21 @@ namespace Scintilla
 
         public int CurrentLineNumber => DirectMessage(NativeMethods.SCI_LINEFROMPOSITION, new IntPtr(CurrentPosition)).ToInt32();
 
+        public string WordAtCurrentPosition
+        {
+            get
+            {
+                var onlyWordChars = new IntPtr(1);
+                var currentPosition = DirectMessage(NativeMethods.SCI_GETCURRENTPOS);
+                var wordStartPos = DirectMessage(NativeMethods.SCI_WORDSTARTPOSITION, currentPosition, onlyWordChars).ToInt32();
+                var wordEndPos = DirectMessage(NativeMethods.SCI_WORDENDPOSITION, currentPosition, onlyWordChars).ToInt32();
+
+                var ptr = DirectMessage(NativeMethods.SCI_GETRANGEPOINTER, wordStartPos, wordEndPos - wordStartPos);
+
+                return ptr != IntPtr.Zero ? Helpers.GetString(ptr, wordEndPos - wordStartPos) : string.Empty;
+            }
+        }
+
         public int GetLineIndentation(int lineNumber)
         {
             //var line = new Line(scintilla, lineNumber);
@@ -615,6 +630,7 @@ namespace Scintilla
         public string GetTextRange(int position, int length)
         {
             //return scintilla.GetTextRange(position, length);
+            //TODO: use SCI_GETRANGEPOINTER instead
             string txt = Text;
             return txt.Substring(position, length);
         }
