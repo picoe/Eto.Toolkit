@@ -150,6 +150,8 @@ namespace Eto.CodeEditor
 
         public int CurrentLineNumber => Handler.CurrentLineNumber;
 
+        public string WordAtCurrentPosition => Handler.WordAtCurrentPosition;
+
         public int GetLineIndentation(int lineNumber) => Handler.GetLineIndentation(lineNumber);
         public void SetLineIndentation(int lineNumber, int indentation) => Handler.SetLineIndentation(lineNumber, indentation);
 
@@ -256,6 +258,8 @@ namespace Eto.CodeEditor
             int CurrentPosition { get; set; }
             int CurrentPositionInLine { get; }
             int CurrentLineNumber { get; }
+
+            string WordAtCurrentPosition { get; }
 
             int GetLineIndentation(int lineNumber);
             void SetLineIndentation(int lineNumber, int indentation);
