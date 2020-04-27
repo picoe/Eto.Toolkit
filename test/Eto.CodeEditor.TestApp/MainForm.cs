@@ -6,11 +6,15 @@ namespace Eto.CodeEditor.TestApp
 {
     public class MainForm : Form
     {
+        static MainForm()
+        {
+            Eto.UnitTest.NUnit.NUnitTestRunnerType.Register();
+        }
+
         public MainForm()
         {
             Title = $"CodeEditor Test, Platform: {Platform.ID}";
-            Menu = new MenuBar();
-            ClientSize = new Size(400, 400);
+            ClientSize = new Size(1400, 400);
 
 
             var editor = new CodeEditor(ProgrammingLanguage.CSharp);
@@ -24,7 +28,7 @@ for( int i=0; i<10; i++ )
             editor.SetupIndicatorStyles();
             editor.AddErrorIndicator(13, 6);
 
-            Action<Font, string> pp = (f,pfx) => MessageBox.Show($"{pfx}: name: {editor.Font.FamilyName}, size: {editor.FontSize}");
+            Action<Font, string> pp = (f, pfx) => MessageBox.Show($"{pfx}: name: {editor.Font.FamilyName}, size: {editor.FontSize}");
 
             var btn = new Button { Text = "Font" };
             btn.Click += (s, e) =>
@@ -47,7 +51,25 @@ for( int i=0; i<10; i++ )
                 //editor.ShowWhitespaceWithColor(Colors.Red);
                 //editor.Text = $"name: {editor.FontName}, size: {editor.FontSize}";
             };
-            Content = new TableLayout { Rows = { btn, editor } };
+            
+
+            var tests = new Eto.UnitTest.UI.UnitTestPanel(true);
+
+            this.LoadComplete += async (s,e) =>
+            {
+                var testSource = new UnitTest.TestSource(System.Reflection.Assembly.GetExecutingAssembly());
+                var mtr = new Eto.UnitTest.Runners.MultipleTestRunner();
+                await mtr.Load(testSource);
+                tests.Runner = new UnitTest.Runners.LoggingTestRunner(mtr);
+                CodeEditorTests.editor = editor;
+            };
+
+            var splitter = new Splitter
+            {
+                Panel1 = tests,
+                Panel2 = editor
+            };
+            Content = new TableLayout { Rows = { splitter } };
         }
     }
 }
