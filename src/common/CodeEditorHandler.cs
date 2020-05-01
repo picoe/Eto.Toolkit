@@ -153,6 +153,8 @@ namespace Eto.CodeEditor
             scintilla.InsertText(position, text);
         }
 
+        public unsafe IList<int> SearchInAll(string text, bool highlight = false) => scintilla.SearchInAll(text, highlight);
+
         public unsafe int ReplaceTarget(string text, int start, int end)
         {
             return scintilla.ReplaceTarget(text, start, end);

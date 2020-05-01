@@ -42,6 +42,14 @@ namespace Eto.CodeEditor.TestApp
         }
 
         [Test, InvokeOnUI]
+        public void SearchInAll()
+        {
+            editor.Text = "Be who you are and say what you feel, because those who mind don't matter, and those who matter don't mind";
+            var foundPositions = editor.SearchInAll("who", true);
+            Assert.AreEqual(3, foundPositions.Count);
+        }
+
+        [Test, InvokeOnUI]
         public void FontSticks()
         {
             Assert.IsNotNull(editor, "oops");

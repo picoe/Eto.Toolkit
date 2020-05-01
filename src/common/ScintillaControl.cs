@@ -598,6 +598,38 @@ namespace Scintilla
                 DirectMessage(NativeMethods.SCI_INSERTTEXT, new IntPtr(position), new IntPtr(bp));
         }
 
+        public unsafe IList<int> SearchInAll(string text, bool highlight = false)
+        {
+            var bytePoss = new List<int>();
+            ClearAllHighlightIndicators();
+            if (!string.IsNullOrEmpty(text))
+            {
+                DirectMessage(NativeMethods.SCI_SETTARGETRANGE, IntPtr.Zero, new IntPtr(Text.Length));
+
+                int bytePos = 0;
+                var bytes = Helpers.GetBytes(text, Encoding.UTF8, zeroTerminated: false);
+                fixed (byte* bp = bytes)
+                {
+                    while (bytePos != -1)
+                    {
+                        bytePos = DirectMessage(NativeMethods.SCI_SEARCHINTARGET, new IntPtr(bytes.Length), new IntPtr(bp)).ToInt32();
+                        if (bytePos != -1)
+                        {
+                            // a successful search is supposed to move the target start but it doesn't.
+                            // move it manually if it didn't get moved.
+                            int getstart = DirectMessage(NativeMethods.SCI_GETTARGETSTART).ToInt32();
+                            if (getstart <= bytePos)
+                                DirectMessage(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(bytePos+1), new IntPtr(Text.Length));
+                            bytePoss.Add(bytePos);
+                            if (highlight)
+                                AddHighlightIndicator(bytePos, text.Length);
+                        }
+                    }
+                }
+            }
+            return bytePoss;
+        }
+
         public unsafe int ReplaceTarget(string text, int start, int end)
         {
             //scintilla.SetTargetRange(start, end);
