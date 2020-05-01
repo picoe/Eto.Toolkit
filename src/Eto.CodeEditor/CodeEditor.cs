@@ -189,6 +189,16 @@ namespace Eto.CodeEditor
         {
             Handler.AddTypeNameIndicator(position, length);
         }
+        public Eto.Drawing.Color HighlightColor
+        {
+            get => Handler.HighlightColor;
+            set => Handler.HighlightColor = value;
+        }
+        public void HighlightRange(int position, int length)
+        {
+            Handler.HighlightRange(position, length);
+        }
+        public void ClearHighlights() => Handler.ClearHighlights();
 
         public bool IsWhitespaceVisible => Handler.IsWhitespaceVisible;
         public void ShowWhitespace() => Handler.ShowWhitespace();
@@ -276,6 +286,9 @@ namespace Eto.CodeEditor
             void AddErrorIndicator(int position, int length);
             void AddWarningIndicator(int position, int length);
             void AddTypeNameIndicator(int position, int length);
+            Eto.Drawing.Color HighlightColor { get; set; }
+            void HighlightRange(int position, int length);
+            void ClearHighlights();
             bool IsWhitespaceVisible { get; }
             void ShowWhitespace();
             void HideWhitespace();

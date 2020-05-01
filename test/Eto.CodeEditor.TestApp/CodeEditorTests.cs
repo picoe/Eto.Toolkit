@@ -14,6 +14,34 @@ namespace Eto.CodeEditor.TestApp
         public static CodeEditor editor { get; set; }
 
         [Test, InvokeOnUI]
+        public void Rnd()
+        {
+            editor.HighlightRange(13, 5);
+            Assert.IsTrue(true);
+        }
+
+        [Test, InvokeOnUI]
+        public void Rnd2()
+        {
+            editor.HighlightColor = Colors.Fuchsia;
+            Assert.IsTrue(true);
+        }
+
+        [Test, InvokeOnUI]
+        public void Rnd3()
+        {
+            editor.HighlightRange(20, 5);
+            Assert.IsTrue(true);
+        }
+
+        [Test, InvokeOnUI]
+        public void Rnd4()
+        {
+            editor.ClearHighlights();
+            Assert.IsTrue(true);
+        }
+
+        [Test, InvokeOnUI]
         public void FontSticks()
         {
             Assert.IsNotNull(editor, "oops");

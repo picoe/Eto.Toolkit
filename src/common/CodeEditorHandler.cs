@@ -129,6 +129,13 @@ namespace Eto.CodeEditor
         public void AddErrorIndicator(int position, int length) => scintilla.AddErrorIndicator(position, length);
         public void AddWarningIndicator(int position, int length) => scintilla.AddWarningIndicator(position, length);
         public void AddTypeNameIndicator(int position, int length) => scintilla.AddTypeNameIndicator(position, length);
+        public Eto.Drawing.Color HighlightColor
+        {
+            get => scintilla.HighlightColor;
+            set => scintilla.HighlightColor = value;
+        }
+        public void HighlightRange(int position, int length) => scintilla.AddHighlightIndicator(position, length);
+        public void ClearHighlights() => scintilla.ClearAllHighlightIndicators();
 
 
         public bool IsWhitespaceVisible => scintilla.IsWhitespaceVisible;

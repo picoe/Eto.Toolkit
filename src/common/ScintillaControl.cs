@@ -440,6 +440,7 @@ namespace Scintilla
         private const int ErrorIndex = 20;
         private const int WarningIndex = 21;
         private const int TypeNameIndex = 22;
+        private const int HighlightIndicator = 23;
 
         public void SetupIndicatorStyles()
         {
@@ -482,7 +483,6 @@ namespace Scintilla
             //scintilla.IndicatorClearRange(0, scintilla.TextLength);
             DirectMessage(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(Text.Length));
         }
-
         public void AddErrorIndicator(int position, int length)
         {
             //scintilla.IndicatorCurrent = ErrorIndex;
@@ -504,6 +504,45 @@ namespace Scintilla
             //scintilla.IndicatorFillRange(position, length);
             DirectMessage(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
         }
+
+        #region Highlight indicator
+        private Eto.Drawing.Color highlightColor = Eto.Drawing.Colors.Yellow;
+        public Eto.Drawing.Color HighlightColor {
+            get => highlightColor;
+            set
+            {
+                if (highlightColor != value)
+                {
+                    highlightColor = value;
+                    SetupHighlightIndicatorStyle();
+                }
+            }
+        }
+
+        private bool highlightIndicatorIsSetup = false;
+        private void SetupHighlightIndicatorStyle()
+        {
+            DirectMessage(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(HighlightIndicator), new IntPtr(NativeMethods.INDIC_STRAIGHTBOX));
+            DirectMessage(NativeMethods.SCI_INDICSETFORE, HighlightIndicator, HighlightColor);
+            DirectMessage(NativeMethods.SCI_INDICSETALPHA, new IntPtr(HighlightIndicator), new IntPtr(100));
+            DirectMessage(NativeMethods.SCI_INDICSETOUTLINEALPHA, new IntPtr(HighlightIndicator), new IntPtr(100));
+            highlightIndicatorIsSetup = true;
+        }
+
+        public void AddHighlightIndicator(int position, int length)
+        {
+            if (!highlightIndicatorIsSetup)
+                SetupHighlightIndicatorStyle();
+            DirectMessage(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(HighlightIndicator));
+            DirectMessage(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
+        }
+
+        public void ClearAllHighlightIndicators()
+        {
+            DirectMessage(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(HighlightIndicator));
+            DirectMessage(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(Text.Length));
+        }
+        #endregion
 
         public bool IsWhitespaceVisible => DirectMessage(NativeMethods.SCI_GETVIEWWS).ToInt32() != NativeMethods.SCWS_INVISIBLE;
 
