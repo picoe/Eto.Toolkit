@@ -598,12 +598,23 @@ namespace Scintilla
                 DirectMessage(NativeMethods.SCI_INSERTTEXT, new IntPtr(position), new IntPtr(bp));
         }
 
-        public unsafe IList<int> SearchInAll(string text, bool highlight = false)
+        private int combineSearchFlags(bool matchCase, bool wholeWord)
+        {
+            var searchFlags = 0;
+            if (matchCase)
+                searchFlags |= NativeMethods.SCFIND_MATCHCASE;
+            if (wholeWord)
+                searchFlags |= NativeMethods.SCFIND_WHOLEWORD;
+            return searchFlags;
+        }
+
+        public unsafe IList<int> SearchInAll(string text, bool matchCase = false, bool wholeWord = false, bool highlight = false)
         {
             var bytePoss = new List<int>();
             ClearAllHighlightIndicators();
             if (!string.IsNullOrEmpty(text))
             {
+                DirectMessage(NativeMethods.SCI_SETSEARCHFLAGS, new IntPtr(combineSearchFlags(matchCase, wholeWord)));
                 DirectMessage(NativeMethods.SCI_SETTARGETRANGE, IntPtr.Zero, new IntPtr(Text.Length));
 
                 int bytePos = 0;

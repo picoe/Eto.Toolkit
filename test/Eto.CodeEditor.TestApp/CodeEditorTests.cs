@@ -50,6 +50,20 @@ namespace Eto.CodeEditor.TestApp
         }
 
         [Test, InvokeOnUI]
+        public void SearchInAllWithMatchCaseAndWholeWord()
+        {
+            editor.Text = "Who is WHO? Whoever knows WHO speak up.";
+            var found = editor.SearchInAll("who", true, false, false).Count;
+            Assert.AreEqual(0, found);
+            found = editor.SearchInAll("who", false, false, false).Count;
+            Assert.AreEqual(4, found);
+            found = editor.SearchInAll("who", false, true, false).Count;
+            Assert.AreEqual(3, found);
+            found = editor.SearchInAll("whoever").Count;
+            Assert.AreEqual(1, found);
+        }
+
+        [Test, InvokeOnUI]
         public void FontSticks()
         {
             Assert.IsNotNull(editor, "oops");

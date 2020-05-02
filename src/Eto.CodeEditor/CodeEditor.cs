@@ -213,7 +213,8 @@ namespace Eto.CodeEditor
         public void InsertText(int position, string text) { Handler.InsertText(position, text); }
         public void DeleteRange(int position, int length) { Handler.DeleteRange(position, length); }
 
-        public IList<int> SearchInAll(string text, bool highlight = false) => Handler.SearchInAll(text, highlight);
+        public IList<int> SearchInAll(string text, bool matchCase = false, bool wholeWord = false, bool highlight = false)
+            => Handler.SearchInAll(text, matchCase, wholeWord, highlight);
 
         public void ReplaceTarget(string text, int start, int end) => Handler.ReplaceTarget(text, start, end);
         public void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber) =>
@@ -301,7 +302,7 @@ namespace Eto.CodeEditor
 
             bool AutoCompleteActive { get; }
             void InsertText(int position, string text);
-            IList<int> SearchInAll(string text, bool highlight = false);
+            IList<int> SearchInAll(string text, bool matchCase = false, bool wholeWord = false, bool highlight = false);
             int ReplaceTarget(string text, int start, int end);
             void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber);
             void DeleteRange(int position, int length);
