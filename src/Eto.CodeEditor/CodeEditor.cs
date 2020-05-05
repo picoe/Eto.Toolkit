@@ -200,6 +200,8 @@ namespace Eto.CodeEditor
         }
         public void ClearHighlights() => Handler.ClearHighlights();
 
+        public void SelectRange(int start, int length) => Handler.SelectRange(start, length);
+
         public bool IsWhitespaceVisible => Handler.IsWhitespaceVisible;
         public void ShowWhitespace() => Handler.ShowWhitespace();
         public void HideWhitespace() => Handler.HideWhitespace();
@@ -292,6 +294,9 @@ namespace Eto.CodeEditor
             Eto.Drawing.Color HighlightColor { get; set; }
             void HighlightRange(int position, int length);
             void ClearHighlights();
+
+            void SelectRange(int start, int length);
+
             bool IsWhitespaceVisible { get; }
             void ShowWhitespace();
             void HideWhitespace();

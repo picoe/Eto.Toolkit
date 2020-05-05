@@ -544,6 +544,11 @@ namespace Scintilla
         }
         #endregion
 
+        public void SetSelection(int anchor, int caret)
+        {
+            DirectMessage(NativeMethods.SCI_SETSEL, new IntPtr(anchor), new IntPtr(caret));
+        }
+
         public bool IsWhitespaceVisible => DirectMessage(NativeMethods.SCI_GETVIEWWS).ToInt32() != NativeMethods.SCWS_INVISIBLE;
 
         public void ShowWhitespace()

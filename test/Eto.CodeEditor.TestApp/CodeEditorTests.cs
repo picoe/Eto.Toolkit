@@ -64,6 +64,16 @@ namespace Eto.CodeEditor.TestApp
         }
 
         [Test, InvokeOnUI]
+        public void FindAndSelectRange()
+        {
+            var searchText = "syntax";
+            editor.Text = "import rhinoscriptsyntax as rs";
+            var hit = editor.SearchInAll(searchText).First();
+            editor.SelectRange(hit, searchText.Length);
+            Eto.Forms.MessageBox.Show("check that the word 'syntax' is selected");
+        }
+
+        [Test, InvokeOnUI]
         public void FontSticks()
         {
             Assert.IsNotNull(editor, "oops");

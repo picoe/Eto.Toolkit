@@ -137,6 +137,7 @@ namespace Eto.CodeEditor
         public void HighlightRange(int position, int length) => scintilla.AddHighlightIndicator(position, length);
         public void ClearHighlights() => scintilla.ClearAllHighlightIndicators();
 
+        public void SelectRange(int start, int length) => scintilla.SetSelection(start, start + length);
 
         public bool IsWhitespaceVisible => scintilla.IsWhitespaceVisible;
         public void ShowWhitespace() => scintilla.ShowWhitespace();
