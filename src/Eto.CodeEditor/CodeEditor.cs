@@ -239,6 +239,12 @@ namespace Eto.CodeEditor
             remove { Handler.TextChanged -= value; }
         }
 
+        public event EventHandler<SelectionChangedEventArgs> SelectionChanged
+        {
+            add { Handler.SelectionChanged += value; }
+            remove { Handler.SelectionChanged -= value; }
+        }
+
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged
         {
             add { Handler.BreakpointsChanged += value; }
@@ -318,6 +324,7 @@ namespace Eto.CodeEditor
 
             event EventHandler<CharAddedEventArgs> CharAdded;
             event EventHandler<EventArgs> TextChanged;
+            event EventHandler<SelectionChangedEventArgs> SelectionChanged;
             event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
             //event EventHandler<InsertCheckEventArgs> InsertCheck;
             //void ChangeInsertion(string text); // only call from InsertCheck handler

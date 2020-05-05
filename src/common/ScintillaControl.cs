@@ -293,6 +293,7 @@ namespace Scintilla
 
         public event EventHandler<CharAddedEventArgs> CharAdded;
         public new event EventHandler<EventArgs> TextChanged; // hides inherited TextChanged
+        public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
 
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
@@ -886,6 +887,15 @@ namespace Scintilla
             return result;
         }
 
+        private (bool, int, int, string) SelectionInfo()
+        {
+            bool selectionEmpty = DirectMessage(NativeMethods.SCI_GETSELECTIONEMPTY) != IntPtr.Zero;
+            int selectionStart = DirectMessage(NativeMethods.SCI_GETSELECTIONSTART).ToInt32();
+            int selectionEnd = DirectMessage(NativeMethods.SCI_GETSELECTIONEND).ToInt32();
+            string selectionText = selectionEmpty ? "" : GetTextRange(selectionStart, selectionEnd - selectionStart);
+            return (selectionEmpty, selectionStart, selectionEnd, selectionText);
+        }
+
         public void HandleScintillaMessage(int message, char c, int position)
         {
             switch (message)
@@ -893,6 +903,15 @@ namespace Scintilla
 
                 case NativeMethods.SCN_CHARADDED:
                     CharAdded?.Invoke(this, new CharAddedEventArgs(c));
+                    break;
+                case NativeMethods.SCN_UPDATEUI:
+                    // modificationType is always 0 for this message for some reason. 
+                    //if ((modificationType & NativeMethods.SC_UPDATE_SELECTION) > 0)
+                    //{
+                        var si = SelectionInfo();
+                        var ea = new SelectionChangedEventArgs(si.Item1, si.Item2, si.Item3, si.Item4);
+                        SelectionChanged?.Invoke(this, ea);
+                    //}
                     break;
                 case NativeMethods.SCN_MODIFIED:
                     /*if ((n.modificationType & NativeMethods.SC_MOD_INSERTCHECK) > 0)

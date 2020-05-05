@@ -196,6 +196,12 @@ namespace Eto.CodeEditor
             remove { scintilla.TextChanged -= value; }
         }
 
+        public event EventHandler<SelectionChangedEventArgs> SelectionChanged
+        {
+            add { scintilla.SelectionChanged += value; }
+            remove { scintilla.SelectionChanged -= value; }
+        }
+
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged
         {
             add { scintilla.BreakpointsChanged += value; }

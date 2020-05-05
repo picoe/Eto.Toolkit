@@ -14,7 +14,7 @@ namespace Eto.CodeEditor.TestApp
         public MainForm()
         {
             Title = $"CodeEditor Test, Platform: {Platform.ID}";
-            ClientSize = new Size(1400, 400);
+            ClientSize = new Size(1400, 800);
 
 
             var editor = new CodeEditor(ProgrammingLanguage.CSharp);
@@ -64,10 +64,15 @@ for( int i=0; i<10; i++ )
                 CodeEditorTests.editor = editor;
             };
 
+            var ta = new TextArea();
+
+            editor.SelectionChanged += (s, e) =>
+                ta.Text += $"empty: {e.SelectionIsEmpty}, s:{e.SelectionStart}, e:{e.SelectionEnd}, txt:{e.SelectionText}\n";
+
             var splitter = new Splitter
             {
                 Panel1 = tests,
-                Panel2 = editor
+                Panel2 = new Splitter { Panel1 = editor, Panel2 = ta, Orientation = Orientation.Vertical, Panel1MinimumSize = 100 }
             };
             Content = new TableLayout { Rows = { splitter } };
         }
