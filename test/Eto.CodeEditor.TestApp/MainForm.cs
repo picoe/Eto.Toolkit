@@ -62,6 +62,7 @@ for( int i=0; i<10; i++ )
                 await mtr.Load(testSource);
                 tests.Runner = new UnitTest.Runners.LoggingTestRunner(mtr);
                 CodeEditorTests.editor = editor;
+                RegexTests.editor = editor;
             };
 
             var ta = new TextArea();

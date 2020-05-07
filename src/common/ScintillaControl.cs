@@ -887,13 +887,13 @@ namespace Scintilla
             return result;
         }
 
-        private (bool, int, int, string) SelectionInfo()
+        private Tuple<bool, int, int, string> SelectionInfo()
         {
             bool selectionEmpty = DirectMessage(NativeMethods.SCI_GETSELECTIONEMPTY) != IntPtr.Zero;
             int selectionStart = DirectMessage(NativeMethods.SCI_GETSELECTIONSTART).ToInt32();
             int selectionEnd = DirectMessage(NativeMethods.SCI_GETSELECTIONEND).ToInt32();
             string selectionText = selectionEmpty ? "" : GetTextRange(selectionStart, selectionEnd - selectionStart);
-            return (selectionEmpty, selectionStart, selectionEnd, selectionText);
+            return Tuple.Create(selectionEmpty, selectionStart, selectionEnd, selectionText);
         }
 
         public void HandleScintillaMessage(int message, char c, int position)
