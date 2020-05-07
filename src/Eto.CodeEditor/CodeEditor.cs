@@ -220,8 +220,24 @@ namespace Eto.CodeEditor
         public IList<int> SearchInAll(string text, bool matchCase = false, bool wholeWord = false, bool highlight = false)
             => Handler.SearchInAll(text, matchCase, wholeWord, highlight);
 
-        public IList<int> SearchInAll(string pattern, bool matchCase, bool highlight)
+        private bool regexPatternIsInvalid(string pattern)
         {
+            // I don't see any other way to validate w/o throwing an exception
+            try
+            {
+                new Regex(pattern);
+                return false;
+            }
+            catch { }
+            return true;
+        }
+
+        public IList<Tuple<int,string>> SearchInAll(string pattern, bool matchCase, bool highlight)
+        {
+            ClearHighlights();
+            if (string.IsNullOrEmpty(pattern) || regexPatternIsInvalid(pattern))
+                return new List<Tuple<int, string>>();
+
             Func<bool, RegexOptions> combineRegexOptions = mc =>
               mc
                 ? RegexOptions.Multiline
@@ -229,11 +245,11 @@ namespace Eto.CodeEditor
 
             // scintilla regex search implementation is not well developed. There's a way to build Scintilla with an alternate
             // regex implementation but doing it in .Net and reading he whole doc into a string is much simpler even though not efficient.
-            var hits = Regex.Matches(Text, pattern, combineRegexOptions(matchCase)).Cast<Match>().Select(m => new { idx = m.Index, val = m.Value }).ToList();
+            var hits = Regex.Matches(Text, pattern, combineRegexOptions(matchCase)); ///*.Cast<Match>()*/.ToList();
             if (highlight)
-                foreach (var hit in hits)
-                    HighlightRange(hit.idx, hit.val.Length);
-            return hits.Select(h => h.idx).ToList();
+                foreach (Match hit in hits)
+                    HighlightRange(hit.Index, hit.Value.Length);
+            return hits.Cast<Match>().Select(h => Tuple.Create<int, string>(h.Index, h.Value)).ToList();
         }
 
 
