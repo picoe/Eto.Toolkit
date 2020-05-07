@@ -1,6 +1,8 @@
 ﻿using System;
 using Eto.Forms;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Eto.CodeEditor
 {
@@ -217,6 +219,23 @@ namespace Eto.CodeEditor
 
         public IList<int> SearchInAll(string text, bool matchCase = false, bool wholeWord = false, bool highlight = false)
             => Handler.SearchInAll(text, matchCase, wholeWord, highlight);
+
+        public IList<int> SearchInAll(string pattern, bool matchCase, bool highlight)
+        {
+            Func<bool, RegexOptions> combineRegexOptions = mc =>
+              mc
+                ? RegexOptions.Multiline
+                : RegexOptions.Multiline | RegexOptions.IgnoreCase;
+
+            // scintilla regex search implementation is not well developed. There's a way to build Scintilla with an alternate
+            // regex implementation but doing it in .Net and reading he whole doc into a string is much simpler even though not efficient.
+            var hits = Regex.Matches(Text, pattern, combineRegexOptions(matchCase)).Cast<Match>().Select(m => new { idx = m.Index, val = m.Value }).ToList();
+            if (highlight)
+                foreach (var hit in hits)
+                    HighlightRange(hit.idx, hit.val.Length);
+            return hits.Select(h => h.idx).ToList();
+        }
+
 
         public void ReplaceTarget(string text, int start, int end) => Handler.ReplaceTarget(text, start, end);
         public void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber) =>

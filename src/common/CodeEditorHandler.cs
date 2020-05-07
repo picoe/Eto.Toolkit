@@ -9,7 +9,6 @@ using Eto.Forms;
 using Eto.CodeEditor;
 using ScintillaNET;
 using ed = Eto.Drawing;
-using System.Text.RegularExpressions;
 
 [assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
 
@@ -157,22 +156,6 @@ namespace Eto.CodeEditor
 
         public unsafe IList<int> SearchInAll(string text, bool matchCase, bool wholeWord, bool highlight)
             => scintilla.SearchInAll(text, matchCase, wholeWord, highlight);
-
-        public IList<int> SearchInAll(string pattern, bool matchCase, bool highlight)
-        {
-            Func<bool, RegexOptions> combineRegexOptions = mc =>
-              mc
-                ? RegexOptions.Multiline
-                : RegexOptions.Multiline | RegexOptions.IgnoreCase;
-
-            // scintilla regex search implementation is not well developed. There's a way to build Scintilla with an alternate
-            // regex implementation but doing it in .Net and reading he whole doc into a string is much simpler even though not efficient.
-            var hits = Regex.Matches(Text, pattern, combineRegexOptions(matchCase)).Cast<Match>().Select(m => (m.Index, m.Value)).ToList();
-            if (highlight)
-                foreach (var hit in hits)
-                    HighlightRange(hit.Index, hit.Value.Length);
-            return hits.Select(h => h.Index).ToList();
-        }
 
         public unsafe int ReplaceTarget(string text, int start, int end)
         {
