@@ -148,8 +148,9 @@ namespace Scintilla
                 unsafe
                 {
                     fixed (byte* bp = font)
-                    DirectMessage(NativeMethods.SCI_STYLESETFONT, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(bp));
-                    DirectMessage(NativeMethods.SCI_STYLECLEARALL, IntPtr.Zero, IntPtr.Zero);
+                        foreach(int style in styles)
+                            DirectMessage(NativeMethods.SCI_STYLESETFONT, new IntPtr(style), new IntPtr(bp));
+                            //DirectMessage(NativeMethods.SCI_STYLECLEARALL, IntPtr.Zero, IntPtr.Zero);
                 }
             }
         }
@@ -162,7 +163,8 @@ namespace Scintilla
             }
             set
             {
-                DirectMessage(NativeMethods.SCI_STYLESETSIZE, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(value));
+                foreach(int style in styles)
+                    DirectMessage(NativeMethods.SCI_STYLESETSIZE, new IntPtr(style), new IntPtr(value));
             }
         }
 
@@ -176,7 +178,8 @@ namespace Scintilla
             set
             {
                 var fraction = (int)(value * NativeMethods.SC_FONT_SIZE_MULTIPLIER);
-                DirectMessage(NativeMethods.SCI_STYLESETSIZEFRACTIONAL, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), new IntPtr(fraction));
+                foreach(int style in styles)
+                    DirectMessage(NativeMethods.SCI_STYLESETSIZEFRACTIONAL, new IntPtr(style), new IntPtr(fraction));
             }
         }
 
@@ -189,7 +192,8 @@ namespace Scintilla
             set
             {
                 var bold = (value ? new IntPtr(1) : IntPtr.Zero);
-                DirectMessage(NativeMethods.SCI_STYLESETBOLD, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), bold);
+                foreach(int style in styles)
+                    DirectMessage(NativeMethods.SCI_STYLESETBOLD, new IntPtr(style), bold);
             }
         }
 
@@ -202,7 +206,8 @@ namespace Scintilla
             set
             {
                 var italic = (value ? new IntPtr(1) : IntPtr.Zero);
-                DirectMessage(NativeMethods.SCI_STYLESETITALIC, new IntPtr(ScintillaNET.NativeMethods.STYLE_DEFAULT), italic);
+                foreach(int style in styles)
+                    DirectMessage(NativeMethods.SCI_STYLESETITALIC, new IntPtr(style), italic);
             }
         }
 
@@ -296,6 +301,7 @@ namespace Scintilla
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
 
+        private HashSet<int> styles = new HashSet<int>() { NativeMethods.STYLE_DEFAULT };
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
             if (section == Section.Default)
@@ -305,6 +311,7 @@ namespace Scintilla
                 DirectMessage(NativeMethods.SCI_SETCARETFORE, new IntPtr(argb), new IntPtr(0));
                 DirectMessage(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_DEFAULT, background);
                 DirectMessage(NativeMethods.SCI_STYLECLEARALL, new IntPtr(0), new IntPtr(0));
+                styles.Add(NativeMethods.STYLE_DEFAULT);
             }
             if (section == Section.Comment)
             {
@@ -312,6 +319,7 @@ namespace Scintilla
                 {
                     DirectMessage(NativeMethods.SCI_STYLESETFORE, id, foreground);
                     DirectMessage(NativeMethods.SCI_STYLESETBACK, id, background);
+                    styles.Add(id);
                 }
             }
             if (section == Section.Keyword1)
@@ -320,6 +328,7 @@ namespace Scintilla
                 {
                     DirectMessage(NativeMethods.SCI_STYLESETFORE, id, foreground);
                     DirectMessage(NativeMethods.SCI_STYLESETBACK, id, background);
+                    styles.Add(id);
                 }
             }
             if (section == Section.Keyword2)
@@ -328,6 +337,7 @@ namespace Scintilla
                 {
                     DirectMessage(NativeMethods.SCI_STYLESETFORE, id, foreground);
                     DirectMessage(NativeMethods.SCI_STYLESETBACK, id, background);
+                    styles.Add(id);
                 }
             }
             if (section == Section.Strings)
@@ -336,17 +346,20 @@ namespace Scintilla
                 {
                     DirectMessage(NativeMethods.SCI_STYLESETFORE, id, foreground);
                     DirectMessage(NativeMethods.SCI_STYLESETBACK, id, background);
+                    styles.Add(id);
                 }
             }
             if (section == Section.LineNumber)
             {
                 DirectMessage(NativeMethods.SCI_STYLESETFORE, NativeMethods.STYLE_LINENUMBER, foreground);
                 DirectMessage(NativeMethods.SCI_STYLESETBACK, NativeMethods.STYLE_LINENUMBER, background);
+                styles.Add(NativeMethods.STYLE_LINENUMBER);
             }
             if (section == Section.DefName && Language == ProgrammingLanguage.Python)
             {
                 DirectMessage(NativeMethods.SCI_STYLESETFORE, NativeMethods.SCE_P_DEFNAME, foreground);
                 DirectMessage(NativeMethods.SCI_STYLESETBACK, NativeMethods.SCE_P_DEFNAME, background);
+                styles.Add(NativeMethods.SCE_P_DEFNAME);
             }
             if (section == Section.Preprocessor)
             {
@@ -354,6 +367,7 @@ namespace Scintilla
                 {
                     DirectMessage(NativeMethods.SCI_STYLESETFORE, id, foreground);
                     DirectMessage(NativeMethods.SCI_STYLESETBACK, id, background);
+                    styles.Add(id);
                 }
 
             }
