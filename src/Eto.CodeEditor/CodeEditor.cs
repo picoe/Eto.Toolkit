@@ -1,6 +1,8 @@
 ﻿using System;
 using Eto.Forms;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Eto.CodeEditor
 {
@@ -189,6 +191,18 @@ namespace Eto.CodeEditor
         {
             Handler.AddTypeNameIndicator(position, length);
         }
+        public Eto.Drawing.Color HighlightColor
+        {
+            get => Handler.HighlightColor;
+            set => Handler.HighlightColor = value;
+        }
+        public void HighlightRange(int position, int length)
+        {
+            Handler.HighlightRange(position, length);
+        }
+        public void ClearHighlights() => Handler.ClearHighlights();
+
+        public void SelectRange(int start, int length) => Handler.SelectRange(start, length);
 
         public bool IsWhitespaceVisible => Handler.IsWhitespaceVisible;
         public void ShowWhitespace() => Handler.ShowWhitespace();
@@ -202,6 +216,42 @@ namespace Eto.CodeEditor
         public bool AutoCompleteActive { get => Handler.AutoCompleteActive; }
         public void InsertText(int position, string text) { Handler.InsertText(position, text); }
         public void DeleteRange(int position, int length) { Handler.DeleteRange(position, length); }
+
+        public IList<int> SearchInAll(string text, bool matchCase = false, bool wholeWord = false, bool highlight = false)
+            => Handler.SearchInAll(text, matchCase, wholeWord, highlight);
+
+        private bool regexPatternIsInvalid(string pattern)
+        {
+            // I don't see any other way to validate w/o throwing an exception
+            try
+            {
+                new Regex(pattern);
+                return false;
+            }
+            catch { }
+            return true;
+        }
+
+        public IList<Tuple<int,string>> SearchInAll(string pattern, bool matchCase, bool highlight)
+        {
+            ClearHighlights();
+            if (string.IsNullOrEmpty(pattern) || regexPatternIsInvalid(pattern))
+                return new List<Tuple<int, string>>();
+
+            Func<bool, RegexOptions> combineRegexOptions = mc =>
+              mc
+                ? RegexOptions.Multiline
+                : RegexOptions.Multiline | RegexOptions.IgnoreCase;
+
+            // scintilla regex search implementation is not well developed. There's a way to build Scintilla with an alternate
+            // regex implementation but doing it in .Net and reading he whole doc into a string is much simpler even though not efficient.
+            var hits = Regex.Matches(Text, pattern, combineRegexOptions(matchCase)); ///*.Cast<Match>()*/.ToList();
+            if (highlight)
+                foreach (Match hit in hits)
+                    HighlightRange(hit.Index, hit.Value.Length);
+            return hits.Cast<Match>().Select(h => Tuple.Create<int, string>(h.Index, h.Value)).ToList();
+        }
+
 
         public void ReplaceTarget(string text, int start, int end) => Handler.ReplaceTarget(text, start, end);
         public void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber) =>
@@ -222,6 +272,12 @@ namespace Eto.CodeEditor
         {
             add { Handler.TextChanged += value; }
             remove { Handler.TextChanged -= value; }
+        }
+
+        public event EventHandler<SelectionChangedEventArgs> SelectionChanged
+        {
+            add { Handler.SelectionChanged += value; }
+            remove { Handler.SelectionChanged -= value; }
         }
 
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged
@@ -276,6 +332,12 @@ namespace Eto.CodeEditor
             void AddErrorIndicator(int position, int length);
             void AddWarningIndicator(int position, int length);
             void AddTypeNameIndicator(int position, int length);
+            Eto.Drawing.Color HighlightColor { get; set; }
+            void HighlightRange(int position, int length);
+            void ClearHighlights();
+
+            void SelectRange(int start, int length);
+
             bool IsWhitespaceVisible { get; }
             void ShowWhitespace();
             void HideWhitespace();
@@ -286,6 +348,7 @@ namespace Eto.CodeEditor
 
             bool AutoCompleteActive { get; }
             void InsertText(int position, string text);
+            IList<int> SearchInAll(string text, bool matchCase = false, bool wholeWord = false, bool highlight = false);
             int ReplaceTarget(string text, int start, int end);
             void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber);
             void DeleteRange(int position, int length);
@@ -296,6 +359,7 @@ namespace Eto.CodeEditor
 
             event EventHandler<CharAddedEventArgs> CharAdded;
             event EventHandler<EventArgs> TextChanged;
+            event EventHandler<SelectionChangedEventArgs> SelectionChanged;
             event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
             //event EventHandler<InsertCheckEventArgs> InsertCheck;
             //void ChangeInsertion(string text); // only call from InsertCheck handler

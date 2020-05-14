@@ -10,6 +10,7 @@
     <AssemblyName>Eto.CodeEditor.Test.XamMac2</AssemblyName>
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
     <UseXamMacFullFramework>true</UseXamMacFullFramework>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Mac' ">
     <DebugSymbols>true</DebugSymbols>

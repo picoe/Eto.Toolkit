@@ -129,7 +129,15 @@ namespace Eto.CodeEditor
         public void AddErrorIndicator(int position, int length) => scintilla.AddErrorIndicator(position, length);
         public void AddWarningIndicator(int position, int length) => scintilla.AddWarningIndicator(position, length);
         public void AddTypeNameIndicator(int position, int length) => scintilla.AddTypeNameIndicator(position, length);
+        public Eto.Drawing.Color HighlightColor
+        {
+            get => scintilla.HighlightColor;
+            set => scintilla.HighlightColor = value;
+        }
+        public void HighlightRange(int position, int length) => scintilla.AddHighlightIndicator(position, length);
+        public void ClearHighlights() => scintilla.ClearAllHighlightIndicators();
 
+        public void SelectRange(int start, int length) => scintilla.SetSelection(start, start + length);
 
         public bool IsWhitespaceVisible => scintilla.IsWhitespaceVisible;
         public void ShowWhitespace() => scintilla.ShowWhitespace();
@@ -145,6 +153,9 @@ namespace Eto.CodeEditor
         {
             scintilla.InsertText(position, text);
         }
+
+        public unsafe IList<int> SearchInAll(string text, bool matchCase, bool wholeWord, bool highlight)
+            => scintilla.SearchInAll(text, matchCase, wholeWord, highlight);
 
         public unsafe int ReplaceTarget(string text, int start, int end)
         {
@@ -183,6 +194,12 @@ namespace Eto.CodeEditor
         {
             add { scintilla.TextChanged += value; }
             remove { scintilla.TextChanged -= value; }
+        }
+
+        public event EventHandler<SelectionChangedEventArgs> SelectionChanged
+        {
+            add { scintilla.SelectionChanged += value; }
+            remove { scintilla.SelectionChanged -= value; }
         }
 
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged
