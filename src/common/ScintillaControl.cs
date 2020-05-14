@@ -293,6 +293,7 @@ namespace Scintilla
 
         public event EventHandler<CharAddedEventArgs> CharAdded;
         public new event EventHandler<EventArgs> TextChanged; // hides inherited TextChanged
+        public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
 
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
@@ -440,6 +441,7 @@ namespace Scintilla
         private const int ErrorIndex = 20;
         private const int WarningIndex = 21;
         private const int TypeNameIndex = 22;
+        private const int HighlightIndicator = 23;
 
         public void SetupIndicatorStyles()
         {
@@ -482,7 +484,6 @@ namespace Scintilla
             //scintilla.IndicatorClearRange(0, scintilla.TextLength);
             DirectMessage(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(Text.Length));
         }
-
         public void AddErrorIndicator(int position, int length)
         {
             //scintilla.IndicatorCurrent = ErrorIndex;
@@ -503,6 +504,50 @@ namespace Scintilla
             DirectMessage(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(TypeNameIndex));
             //scintilla.IndicatorFillRange(position, length);
             DirectMessage(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
+        }
+
+        #region Highlight indicator
+        private Eto.Drawing.Color highlightColor = Eto.Drawing.Colors.Yellow;
+        public Eto.Drawing.Color HighlightColor {
+            get => highlightColor;
+            set
+            {
+                if (highlightColor != value)
+                {
+                    highlightColor = value;
+                    SetupHighlightIndicatorStyle();
+                }
+            }
+        }
+
+        private bool highlightIndicatorIsSetup = false;
+        private void SetupHighlightIndicatorStyle()
+        {
+            DirectMessage(NativeMethods.SCI_INDICSETSTYLE, new IntPtr(HighlightIndicator), new IntPtr(NativeMethods.INDIC_STRAIGHTBOX));
+            DirectMessage(NativeMethods.SCI_INDICSETFORE, HighlightIndicator, HighlightColor);
+            DirectMessage(NativeMethods.SCI_INDICSETALPHA, new IntPtr(HighlightIndicator), new IntPtr(100));
+            DirectMessage(NativeMethods.SCI_INDICSETOUTLINEALPHA, new IntPtr(HighlightIndicator), new IntPtr(100));
+            highlightIndicatorIsSetup = true;
+        }
+
+        public void AddHighlightIndicator(int position, int length)
+        {
+            if (!highlightIndicatorIsSetup)
+                SetupHighlightIndicatorStyle();
+            DirectMessage(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(HighlightIndicator));
+            DirectMessage(NativeMethods.SCI_INDICATORFILLRANGE, new IntPtr(position), new IntPtr(length));
+        }
+
+        public void ClearAllHighlightIndicators()
+        {
+            DirectMessage(NativeMethods.SCI_SETINDICATORCURRENT, new IntPtr(HighlightIndicator));
+            DirectMessage(NativeMethods.SCI_INDICATORCLEARRANGE, IntPtr.Zero, new IntPtr(Text.Length));
+        }
+        #endregion
+
+        public void SetSelection(int anchor, int caret)
+        {
+            DirectMessage(NativeMethods.SCI_SETSEL, new IntPtr(anchor), new IntPtr(caret));
         }
 
         public bool IsWhitespaceVisible => DirectMessage(NativeMethods.SCI_GETVIEWWS).ToInt32() != NativeMethods.SCWS_INVISIBLE;
@@ -557,6 +602,49 @@ namespace Scintilla
 
             fixed (byte* bp = Helpers.GetBytes(text ?? string.Empty, Encoding.UTF8, zeroTerminated: true))
                 DirectMessage(NativeMethods.SCI_INSERTTEXT, new IntPtr(position), new IntPtr(bp));
+        }
+
+        private int combineSearchFlags(bool matchCase, bool wholeWord)
+        {
+            var searchFlags = 0;
+            if (matchCase)
+                searchFlags |= NativeMethods.SCFIND_MATCHCASE;
+            if (wholeWord)
+                searchFlags |= NativeMethods.SCFIND_WHOLEWORD;
+            return searchFlags;
+        }
+
+        public unsafe IList<int> SearchInAll(string text, bool matchCase = false, bool wholeWord = false, bool highlight = false)
+        {
+            var bytePoss = new List<int>();
+            ClearAllHighlightIndicators();
+            if (!string.IsNullOrEmpty(text))
+            {
+                DirectMessage(NativeMethods.SCI_SETSEARCHFLAGS, new IntPtr(combineSearchFlags(matchCase, wholeWord)));
+                DirectMessage(NativeMethods.SCI_SETTARGETRANGE, IntPtr.Zero, new IntPtr(Text.Length));
+
+                int bytePos = 0;
+                var bytes = Helpers.GetBytes(text, Encoding.UTF8, zeroTerminated: false);
+                fixed (byte* bp = bytes)
+                {
+                    while (bytePos != -1)
+                    {
+                        bytePos = DirectMessage(NativeMethods.SCI_SEARCHINTARGET, new IntPtr(bytes.Length), new IntPtr(bp)).ToInt32();
+                        if (bytePos != -1)
+                        {
+                            // a successful search is supposed to move the target start but it doesn't.
+                            // move it manually if it didn't get moved.
+                            int getstart = DirectMessage(NativeMethods.SCI_GETTARGETSTART).ToInt32();
+                            if (getstart <= bytePos)
+                                DirectMessage(NativeMethods.SCI_SETTARGETRANGE, new IntPtr(bytePos+1), new IntPtr(Text.Length));
+                            bytePoss.Add(bytePos);
+                            if (highlight)
+                                AddHighlightIndicator(bytePos, text.Length);
+                        }
+                    }
+                }
+            }
+            return bytePoss;
         }
 
         public unsafe int ReplaceTarget(string text, int start, int end)
@@ -799,6 +887,15 @@ namespace Scintilla
             return result;
         }
 
+        private Tuple<bool, int, int, string> SelectionInfo()
+        {
+            bool selectionEmpty = DirectMessage(NativeMethods.SCI_GETSELECTIONEMPTY) != IntPtr.Zero;
+            int selectionStart = DirectMessage(NativeMethods.SCI_GETSELECTIONSTART).ToInt32();
+            int selectionEnd = DirectMessage(NativeMethods.SCI_GETSELECTIONEND).ToInt32();
+            string selectionText = selectionEmpty ? "" : GetTextRange(selectionStart, selectionEnd - selectionStart);
+            return Tuple.Create(selectionEmpty, selectionStart, selectionEnd, selectionText);
+        }
+
         public void HandleScintillaMessage(int message, char c, int position)
         {
             switch (message)
@@ -806,6 +903,15 @@ namespace Scintilla
 
                 case NativeMethods.SCN_CHARADDED:
                     CharAdded?.Invoke(this, new CharAddedEventArgs(c));
+                    break;
+                case NativeMethods.SCN_UPDATEUI:
+                    // modificationType is always 0 for this message for some reason. 
+                    //if ((modificationType & NativeMethods.SC_UPDATE_SELECTION) > 0)
+                    //{
+                        var si = SelectionInfo();
+                        var ea = new SelectionChangedEventArgs(si.Item1, si.Item2, si.Item3, si.Item4);
+                        SelectionChanged?.Invoke(this, ea);
+                    //}
                     break;
                 case NativeMethods.SCN_MODIFIED:
                     /*if ((n.modificationType & NativeMethods.SC_MOD_INSERTCHECK) > 0)
