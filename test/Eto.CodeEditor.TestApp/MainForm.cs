@@ -24,6 +24,7 @@ for( int i=0; i<10; i++ )
 {
   print(i);
 }";
+            editor.IsFoldingMarginVisible = true;
 
             editor.SetupIndicatorStyles();
             editor.AddErrorIndicator(13, 6);

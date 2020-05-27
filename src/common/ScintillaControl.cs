@@ -16,6 +16,7 @@ namespace Scintilla
 
         private const int BREAKPOINTS_MARGIN = 1;
         private const int LINENUMBERS_MARGIN = 2;
+        private const int FOLDING_MARGIN = 3;
 
         public NativeMethods.Scintilla_DirectFunction directFunction;
 
@@ -24,13 +25,11 @@ namespace Scintilla
             // breakpoints margin
             DirectMessage(NativeMethods.SCI_SETMARGINSENSITIVEN, BREAKPOINTS_MARGIN, 1);
             DirectMessage(NativeMethods.SCI_SETMARGINTYPEN, BREAKPOINTS_MARGIN, NativeMethods.SC_MARGIN_SYMBOL);
-            DirectMessage(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, int.MaxValue); // ScintillaNet -> public const uint MaskAll = unchecked((uint)-1);
-            DirectMessage(NativeMethods.SCI_MARKERDEFINE, BREAKPOINTS_MARGIN, NativeMethods.SC_MARK_FULLRECT);
+            //DirectMessage(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, int.MaxValue); // ScintillaNet -> public const uint MaskAll = unchecked((uint)-1);
+            DirectMessage(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, 0x1FFFFFF); // BREAKPOINT_MARKER | BREAK_MARKER);
+            //DirectMessage(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, BREAKPOINT_MARKER);
+            //DirectMessage(NativeMethods.SCI_MARKERDEFINE, BREAKPOINTS_MARGIN, NativeMethods.SC_MARK_FULLRECT);
             IsBreakpointsMarginVisible = false;
-
-            // line numbers margin
-            DirectMessage(NativeMethods.SCI_SETMARGINSENSITIVEN, LINENUMBERS_MARGIN, 0);
-            DirectMessage(NativeMethods.SCI_SETMARGINTYPEN, LINENUMBERS_MARGIN, NativeMethods.SC_MARGIN_NUMBER);
 
             // breakpoint marker
             DirectMessage(NativeMethods.SCI_MARKERDEFINE, BREAKPOINT_MARKER, NativeMethods.SC_MARK_CIRCLE); // default
@@ -43,6 +42,36 @@ namespace Scintilla
             var yellow = 0x00FFFF; // */ 16776960;
             DirectMessage(NativeMethods.SCI_MARKERSETFORE, BREAK_MARKER, 0xFFFFFF); //black
             DirectMessage(NativeMethods.SCI_MARKERSETBACK, BREAK_MARKER, yellow);
+
+
+            // line numbers margin
+            DirectMessage(NativeMethods.SCI_SETMARGINSENSITIVEN, LINENUMBERS_MARGIN, 0);
+            DirectMessage(NativeMethods.SCI_SETMARGINTYPEN, LINENUMBERS_MARGIN, NativeMethods.SC_MARGIN_NUMBER);
+
+
+            // folding margin
+            DirectMessage(NativeMethods.SCI_SETMARGINSENSITIVEN, FOLDING_MARGIN, 1);
+            DirectMessage(NativeMethods.SCI_SETMARGINTYPEN, FOLDING_MARGIN, NativeMethods.SC_MARGIN_SYMBOL);
+            DirectMessage(NativeMethods.SCI_SETMARGINMASKN, FOLDING_MARGIN, unchecked((int)NativeMethods.SC_MASK_FOLDERS));
+
+            // folding markers and symbols
+            var foldMarkersAndSymbols = new[] {
+                (NativeMethods.SC_MARKNUM_FOLDEREND, NativeMethods.SC_MARK_BOXPLUSCONNECTED),
+                (NativeMethods.SC_MARKNUM_FOLDEROPENMID, NativeMethods.SC_MARK_BOXMINUSCONNECTED),
+                (NativeMethods.SC_MARKNUM_FOLDERMIDTAIL, NativeMethods.SC_MARK_TCORNER),
+                (NativeMethods.SC_MARKNUM_FOLDERTAIL, NativeMethods.SC_MARK_LCORNER),
+                (NativeMethods.SC_MARKNUM_FOLDERSUB, NativeMethods.SC_MARK_VLINE),
+                (NativeMethods.SC_MARKNUM_FOLDER, NativeMethods.SC_MARK_BOXPLUS),
+                (NativeMethods.SC_MARKNUM_FOLDEROPEN, NativeMethods.SC_MARK_BOXMINUS)
+            };
+            foreach (var (m,s) in foldMarkersAndSymbols)
+            {
+                DirectMessage(NativeMethods.SCI_MARKERSETFORE, m, Eto.Drawing.Colors.White); //Eto.Drawing.SystemColors.Control);
+                DirectMessage(NativeMethods.SCI_MARKERSETBACK, m, Eto.Drawing.Colors.Black);
+                DirectMessage(NativeMethods.SCI_MARKERDEFINE, m, s);
+            }
+            DirectMessage(NativeMethods.SCI_SETAUTOMATICFOLD, new IntPtr(NativeMethods.SC_AUTOMATICFOLD_SHOW | NativeMethods.SC_AUTOMATICFOLD_CLICK | NativeMethods.SC_AUTOMATICFOLD_CHANGE));
+            IsFoldingMarginVisible = false;
 
             // use spaces for indentation by default. Auto indent doesn't work well at the moment
             ReplaceTabsWithSpaces = true;
@@ -294,6 +323,21 @@ namespace Scintilla
             //Control.SetGeneralProperty(NativeMethods.SCI_MARKERDELETEALL, BREAKPOINT_MARKER);
             DirectMessage(NativeMethods.SCI_MARKERDELETEALL, new IntPtr(BREAKPOINT_MARKER), IntPtr.Zero);
             BreakpointsChanged?.Invoke(this, new BreakpointsChangedEventArgs(BreakpointChangeType.Clear));
+        }
+
+        public bool IsFoldingMarginVisible
+        {
+            get
+            {
+                var i = (DirectMessage(NativeMethods.SCI_GETMARGINWIDTHN, new IntPtr(FOLDING_MARGIN), IntPtr.Zero)).ToInt32();
+                return i != 0;
+            }
+            set
+            {
+                DirectMessage(2242, new IntPtr(FOLDING_MARGIN), value ? new IntPtr(16) : IntPtr.Zero);
+                SetProperty("fold", (value ? "1" : "0"));
+                SetProperty("fold.compact", (value ? "1" : "0"));
+            }
         }
 
         public event EventHandler<CharAddedEventArgs> CharAdded;
@@ -901,6 +945,13 @@ namespace Scintilla
             return result;
         }
 
+        internal unsafe void SetProperty(string name, string value)
+        {
+            fixed (byte* bpName = Helpers.GetBytes(name, Encoding.UTF8, zeroTerminated: true))
+            fixed (byte* bpValue = Helpers.GetBytes(value, Encoding.UTF8, zeroTerminated: true))
+                DirectMessage(NativeMethods.SCI_SETPROPERTY, new IntPtr(bpName), new IntPtr(bpValue));
+        }
+
         private Tuple<bool, int, int, string> SelectionInfo()
         {
             bool selectionEmpty = DirectMessage(NativeMethods.SCI_GETSELECTIONEMPTY) != IntPtr.Zero;
@@ -910,7 +961,7 @@ namespace Scintilla
             return Tuple.Create(selectionEmpty, selectionStart, selectionEnd, selectionText);
         }
 
-        public void HandleScintillaMessage(int message, char c, int position)
+        public void HandleScintillaMessage(int message, char c, int position, int margin)
         {
             switch (message)
             {
@@ -936,6 +987,8 @@ namespace Scintilla
                     TextChanged?.Invoke(this, EventArgs.Empty);
                     break;
                 case NativeMethods.SCN_MARGINCLICK:
+                    if (margin != BREAKPOINTS_MARGIN)
+                        break;
                     const uint bmmask = (1 << BREAKPOINT_MARKER);
                     var lineNumber = DirectMessage(NativeMethods.SCI_LINEFROMPOSITION, new IntPtr(position));
                     var mask = DirectMessage(NativeMethods.SCI_MARKERGET, lineNumber).ToInt32();

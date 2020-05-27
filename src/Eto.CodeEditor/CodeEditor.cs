@@ -137,6 +137,12 @@ namespace Eto.CodeEditor
 
         public void ClearBreakpoints() => Handler.ClearBreakpoints();
 
+        public bool IsFoldingMarginVisible
+        {
+            get => Handler.IsFoldingMarginVisible;
+            set => Handler.IsFoldingMarginVisible = value;
+        }
+
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
             Handler.SetColor(section, foreground, background);
@@ -310,6 +316,7 @@ namespace Eto.CodeEditor
             void BreakOnLine(int lineNumber);
             void ClearBreak();
             void ClearBreakpoints();
+            bool IsFoldingMarginVisible { get; set; }
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
             int CurrentPosition { get; set; }
             int CurrentPositionInLine { get; }
