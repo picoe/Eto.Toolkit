@@ -56,19 +56,19 @@ namespace Scintilla
 
             // folding markers and symbols
             var foldMarkersAndSymbols = new[] {
-                (NativeMethods.SC_MARKNUM_FOLDEREND, NativeMethods.SC_MARK_BOXPLUSCONNECTED),
-                (NativeMethods.SC_MARKNUM_FOLDEROPENMID, NativeMethods.SC_MARK_BOXMINUSCONNECTED),
-                (NativeMethods.SC_MARKNUM_FOLDERMIDTAIL, NativeMethods.SC_MARK_TCORNER),
-                (NativeMethods.SC_MARKNUM_FOLDERTAIL, NativeMethods.SC_MARK_LCORNER),
-                (NativeMethods.SC_MARKNUM_FOLDERSUB, NativeMethods.SC_MARK_VLINE),
-                (NativeMethods.SC_MARKNUM_FOLDER, NativeMethods.SC_MARK_BOXPLUS),
-                (NativeMethods.SC_MARKNUM_FOLDEROPEN, NativeMethods.SC_MARK_BOXMINUS)
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDEREND, NativeMethods.SC_MARK_BOXPLUSCONNECTED),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDEROPENMID, NativeMethods.SC_MARK_BOXMINUSCONNECTED),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDERMIDTAIL, NativeMethods.SC_MARK_TCORNER),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDERTAIL, NativeMethods.SC_MARK_LCORNER),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDERSUB, NativeMethods.SC_MARK_VLINE),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDER, NativeMethods.SC_MARK_BOXPLUS),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDEROPEN, NativeMethods.SC_MARK_BOXMINUS)
             };
-            foreach (var (m,s) in foldMarkersAndSymbols)
+            foreach (var t in foldMarkersAndSymbols)
             {
-                DirectMessage(NativeMethods.SCI_MARKERSETFORE, m, Eto.Drawing.Colors.White); //Eto.Drawing.SystemColors.Control);
-                DirectMessage(NativeMethods.SCI_MARKERSETBACK, m, Eto.Drawing.Colors.Black);
-                DirectMessage(NativeMethods.SCI_MARKERDEFINE, m, s);
+                DirectMessage(NativeMethods.SCI_MARKERSETFORE, t.Item1, Eto.Drawing.Colors.White); //Eto.Drawing.SystemColors.Control);
+                DirectMessage(NativeMethods.SCI_MARKERSETBACK, t.Item1, Eto.Drawing.Colors.Black);
+                DirectMessage(NativeMethods.SCI_MARKERDEFINE, t.Item1, t.Item2);
             }
             DirectMessage(NativeMethods.SCI_SETAUTOMATICFOLD, new IntPtr(NativeMethods.SC_AUTOMATICFOLD_SHOW | NativeMethods.SC_AUTOMATICFOLD_CLICK | NativeMethods.SC_AUTOMATICFOLD_CHANGE));
             IsFoldingMarginVisible = false;
