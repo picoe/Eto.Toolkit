@@ -20,6 +20,16 @@ namespace Scintilla
 
         public NativeMethods.Scintilla_DirectFunction directFunction;
 
+        private Tuple<int, int>[] foldMarkersAndSymbols = new[] {
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDEREND, NativeMethods.SC_MARK_BOXPLUSCONNECTED),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDEROPENMID, NativeMethods.SC_MARK_BOXMINUSCONNECTED),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDERMIDTAIL, NativeMethods.SC_MARK_TCORNER),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDERTAIL, NativeMethods.SC_MARK_LCORNER),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDERSUB, NativeMethods.SC_MARK_VLINE),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDER, NativeMethods.SC_MARK_BOXPLUS),
+                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDEROPEN, NativeMethods.SC_MARK_BOXMINUS)
+            };
+
         private void init()
         {
             // breakpoints margin
@@ -54,22 +64,11 @@ namespace Scintilla
             DirectMessage(NativeMethods.SCI_SETMARGINTYPEN, FOLDING_MARGIN, NativeMethods.SC_MARGIN_SYMBOL);
             DirectMessage(NativeMethods.SCI_SETMARGINMASKN, FOLDING_MARGIN, unchecked((int)NativeMethods.SC_MASK_FOLDERS));
 
-            // folding markers and symbols
-            var foldMarkersAndSymbols = new[] {
-                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDEREND, NativeMethods.SC_MARK_BOXPLUSCONNECTED),
-                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDEROPENMID, NativeMethods.SC_MARK_BOXMINUSCONNECTED),
-                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDERMIDTAIL, NativeMethods.SC_MARK_TCORNER),
-                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDERTAIL, NativeMethods.SC_MARK_LCORNER),
-                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDERSUB, NativeMethods.SC_MARK_VLINE),
-                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDER, NativeMethods.SC_MARK_BOXPLUS),
-                Tuple.Create<int, int>(NativeMethods.SC_MARKNUM_FOLDEROPEN, NativeMethods.SC_MARK_BOXMINUS)
-            };
             foreach (var t in foldMarkersAndSymbols)
             {
-                DirectMessage(NativeMethods.SCI_MARKERSETFORE, t.Item1, Eto.Drawing.Colors.White); //Eto.Drawing.SystemColors.Control);
-                DirectMessage(NativeMethods.SCI_MARKERSETBACK, t.Item1, Eto.Drawing.Colors.Black);
                 DirectMessage(NativeMethods.SCI_MARKERDEFINE, t.Item1, t.Item2);
             }
+
             DirectMessage(NativeMethods.SCI_SETAUTOMATICFOLD, new IntPtr(NativeMethods.SC_AUTOMATICFOLD_SHOW | NativeMethods.SC_AUTOMATICFOLD_CLICK | NativeMethods.SC_AUTOMATICFOLD_CHANGE));
             IsFoldingMarginVisible = false;
 
@@ -414,6 +413,19 @@ namespace Scintilla
                     styles.Add(id);
                 }
 
+            }
+            if (section == Section.FoldingMargin)
+            {
+                // background color for both
+                DirectMessage(NativeMethods.SCI_SETFOLDMARGINCOLOUR, 1, background);
+                DirectMessage(NativeMethods.SCI_SETFOLDMARGINHICOLOUR, 1, background);
+
+                foreach (var t in foldMarkersAndSymbols)
+                {
+                    // these look backwards but there not
+                    DirectMessage(NativeMethods.SCI_MARKERSETFORE, t.Item1, background);
+                    DirectMessage(NativeMethods.SCI_MARKERSETBACK, t.Item1, foreground);
+                }
             }
         }
 

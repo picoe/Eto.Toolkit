@@ -57,6 +57,7 @@ namespace Eto.CodeEditor
             SetColor(Section.LineNumber, darkMode ? Drawing.Color.FromArgb(160, 160, 160) : Drawing.Colors.Gray, backgroundColor);
             SetColor(Section.DefName, darkMode ? Drawing.Color.FromArgb(220, 220, 170) : Drawing.Color.FromArgb(64, 174, 215), backgroundColor);
             SetColor(Section.Preprocessor, darkMode ? Drawing.Colors.DarkGray : Drawing.Colors.DimGray, backgroundColor);
+            SetColor(Section.FoldingMargin, darkMode ? Drawing.Color.FromArgb(160, 160, 160) : Drawing.Colors.Gray, backgroundColor);
             TabWidth = 4;
             ReplaceTabsWithSpaces = true;
         }
@@ -382,7 +383,8 @@ namespace Eto.CodeEditor
         Strings,
         LineNumber,
         DefName,
-        Preprocessor
+        Preprocessor,
+        FoldingMargin
     }
 
     public enum ProgrammingLanguage
