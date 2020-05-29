@@ -92,6 +92,12 @@ namespace Eto.CodeEditor
 
         public void ClearBreakpoints() => scintilla.ClearBreakpoints();
 
+        public bool IsFoldingMarginVisible
+        {
+            get => scintilla.IsFoldingMarginVisible;
+            set => scintilla.IsFoldingMarginVisible = value;
+        }
+
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
             scintilla.SetColor(section, foreground, background);

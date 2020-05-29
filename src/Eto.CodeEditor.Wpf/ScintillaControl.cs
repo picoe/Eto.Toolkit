@@ -138,7 +138,7 @@ namespace Scintilla
             NativeMethods.SCNotification scn = (NativeMethods.SCNotification)Marshal.PtrToStructure(m.LParam, typeof(NativeMethods.SCNotification));
             if (scn.nmhdr.code >= NativeMethods.SCN_STYLENEEDED && scn.nmhdr.code <= NativeMethods.SCN_AUTOCCOMPLETED)
             {
-                HandleScintillaMessage(scn.nmhdr.code, (char)scn.ch, (int)scn.position);
+                HandleScintillaMessage(scn.nmhdr.code, (char)scn.ch, (int)scn.position, scn.margin);
                 //var handler = Events[scNotificationEventKey] as EventHandler<SCNotificationEventArgs>;
                 //if (handler != null)
                 //    handler(this, new SCNotificationEventArgs(scn));

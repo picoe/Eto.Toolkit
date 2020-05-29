@@ -17,13 +17,14 @@ namespace Eto.CodeEditor.TestApp
             ClientSize = new Size(1400, 800);
 
 
-            var editor = new CodeEditor(ProgrammingLanguage.CSharp);
+            var editor = new CodeEditor(ProgrammingLanguage.CSharp, true);
             editor.Text =
 @"// Just some sample code
 for( int i=0; i<10; i++ )
 {
   print(i);
 }";
+            editor.IsFoldingMarginVisible = true;
 
             editor.SetupIndicatorStyles();
             editor.AddErrorIndicator(13, 6);

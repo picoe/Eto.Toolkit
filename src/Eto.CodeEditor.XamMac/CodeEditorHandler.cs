@@ -53,7 +53,7 @@ namespace Eto.CodeEditor
         unsafe void NotificationProtocol_Notify(object sender, SCNotifyEventArgs e)
         {
             var n = e.Notification;
-            Control.HandleScintillaMessage((int)n.nmhdr.code, (char)n.ch, (int)n.position);
+            Control.HandleScintillaMessage((int)n.nmhdr.code, (char)n.ch, (int)n.position, n.margin);
         }
 
         Encoding Encoding

@@ -57,6 +57,7 @@ namespace Eto.CodeEditor
             SetColor(Section.LineNumber, darkMode ? Drawing.Color.FromArgb(160, 160, 160) : Drawing.Colors.Gray, backgroundColor);
             SetColor(Section.DefName, darkMode ? Drawing.Color.FromArgb(220, 220, 170) : Drawing.Color.FromArgb(64, 174, 215), backgroundColor);
             SetColor(Section.Preprocessor, darkMode ? Drawing.Colors.DarkGray : Drawing.Colors.DimGray, backgroundColor);
+            SetColor(Section.FoldingMargin, darkMode ? Drawing.Color.FromArgb(160, 160, 160) : Drawing.Colors.Gray, backgroundColor);
             TabWidth = 4;
             ReplaceTabsWithSpaces = true;
         }
@@ -136,6 +137,12 @@ namespace Eto.CodeEditor
         public void ClearBreak() => Handler.ClearBreak();
 
         public void ClearBreakpoints() => Handler.ClearBreakpoints();
+
+        public bool IsFoldingMarginVisible
+        {
+            get => Handler.IsFoldingMarginVisible;
+            set => Handler.IsFoldingMarginVisible = value;
+        }
 
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
         {
@@ -310,6 +317,7 @@ namespace Eto.CodeEditor
             void BreakOnLine(int lineNumber);
             void ClearBreak();
             void ClearBreakpoints();
+            bool IsFoldingMarginVisible { get; set; }
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
             int CurrentPosition { get; set; }
             int CurrentPositionInLine { get; }
@@ -375,7 +383,8 @@ namespace Eto.CodeEditor
         Strings,
         LineNumber,
         DefName,
-        Preprocessor
+        Preprocessor,
+        FoldingMargin
     }
 
     public enum ProgrammingLanguage
