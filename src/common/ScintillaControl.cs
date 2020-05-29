@@ -35,22 +35,20 @@ namespace Scintilla
             // breakpoints margin
             DirectMessage(NativeMethods.SCI_SETMARGINSENSITIVEN, BREAKPOINTS_MARGIN, 1);
             DirectMessage(NativeMethods.SCI_SETMARGINTYPEN, BREAKPOINTS_MARGIN, NativeMethods.SC_MARGIN_SYMBOL);
-            //DirectMessage(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, int.MaxValue); // ScintillaNet -> public const uint MaskAll = unchecked((uint)-1);
-            DirectMessage(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, 0x1FFFFFF); // BREAKPOINT_MARKER | BREAK_MARKER);
-            //DirectMessage(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, BREAKPOINT_MARKER);
-            //DirectMessage(NativeMethods.SCI_MARKERDEFINE, BREAKPOINTS_MARGIN, NativeMethods.SC_MARK_FULLRECT);
+            DirectMessage(NativeMethods.SCI_SETMARGINMASKN, BREAKPOINTS_MARGIN, 0x1FFFFFF); // all markers except folding markers // BREAKPOINT_MARKER | BREAK_MARKER);
             IsBreakpointsMarginVisible = false;
 
             // breakpoint marker
             DirectMessage(NativeMethods.SCI_MARKERDEFINE, BREAKPOINT_MARKER, NativeMethods.SC_MARK_CIRCLE); // default
-            var red = 255; // 0xFF0000; // */ 16711680;
+            var red = 255;
             DirectMessage(NativeMethods.SCI_MARKERSETFORE, BREAKPOINT_MARKER, red);
             DirectMessage(NativeMethods.SCI_MARKERSETBACK, BREAKPOINT_MARKER, red);
 
             // break marker
             DirectMessage(NativeMethods.SCI_MARKERDEFINE, BREAK_MARKER, NativeMethods.SC_MARK_ARROW);
-            var yellow = 0x00FFFF; // */ 16776960;
-            DirectMessage(NativeMethods.SCI_MARKERSETFORE, BREAK_MARKER, 0xFFFFFF); //black
+            var black = 0xFFFFFF;
+            var yellow = 0x00FFFF;
+            DirectMessage(NativeMethods.SCI_MARKERSETFORE, BREAK_MARKER, black);
             DirectMessage(NativeMethods.SCI_MARKERSETBACK, BREAK_MARKER, yellow);
 
 
