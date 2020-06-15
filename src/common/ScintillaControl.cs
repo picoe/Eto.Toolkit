@@ -255,10 +255,11 @@ namespace Scintilla
 
         public bool BackspaceUnindents
         {
-          get => false;
-          set
+            get => DirectMessage(NativeMethods.SCI_GETBACKSPACEUNINDENTS) == IntPtr.Zero;
+            set
             {
-                //pass
+                var bsUnindents = value ? new IntPtr(1) : IntPtr.Zero;
+                DirectMessage(NativeMethods.SCI_SETBACKSPACEUNINDENTS, bsUnindents);
             }
         }
 
