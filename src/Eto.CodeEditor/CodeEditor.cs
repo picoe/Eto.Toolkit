@@ -60,6 +60,7 @@ namespace Eto.CodeEditor
             SetColor(Section.FoldingMargin, darkMode ? Drawing.Color.FromArgb(160, 160, 160) : Drawing.Colors.Gray, backgroundColor);
             TabWidth = 4;
             ReplaceTabsWithSpaces = true;
+            BackspaceUnindents = true;
         }
 
         void CodeEditor_CharAdded(object sender, CharAddedEventArgs e)
