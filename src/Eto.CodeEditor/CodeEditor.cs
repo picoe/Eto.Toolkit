@@ -300,7 +300,9 @@ namespace Eto.CodeEditor
         //    Handler.ChangeInsertion(text);
         //}
 
-
+#if DEBUG
+        public int direct_message(int msg, int val) => Handler.direct_message(msg, val);
+#endif
 
         public new interface IHandler : Control.IHandler
         {
@@ -372,6 +374,10 @@ namespace Eto.CodeEditor
             event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
             //event EventHandler<InsertCheckEventArgs> InsertCheck;
             //void ChangeInsertion(string text); // only call from InsertCheck handler
+
+#if DEBUG
+            int direct_message(int msg, int val);
+#endif
         }
     }
 
