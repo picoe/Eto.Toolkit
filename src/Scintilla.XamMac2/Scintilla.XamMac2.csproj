@@ -14,16 +14,6 @@
     <SchemaVersion>2.0</SchemaVersion>
     <IsPackable>False</IsPackable>
   </PropertyGroup>
-  <PropertyGroup>
-    <!-- use these properties to compile an ObjectiveC binding project for XamMac Full.  Remove if/when UseXamMacFullFramework is supported. -->
-    <TargetFrameworkName>Full</TargetFrameworkName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
-    <XamarinMacFrameworkRoot>/Library/Frameworks/Xamarin.Mac.framework/Versions/Current</XamarinMacFrameworkRoot>
-    <AssemblySearchPaths>$(XamarinMacFrameworkRoot)/lib/mono/4.5;$(AssemblySearchPaths)</AssemblySearchPaths>
-    <MacBclPath>$(XamarinMacFrameworkRoot)/lib/mono/4.5</MacBclPath>
-    <TargetFrameworkDirectory>$(MacBclPath);@(DesignTimeFacadeDirectories)</TargetFrameworkDirectory>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -50,7 +40,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NativeMethods.cs" />
-    <Compile Include="ScintillaView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ObjcBindingApiDefinition Include="ApiDefinition.cs" />
