@@ -3,23 +3,27 @@ using System.Collections.Generic;
 
 namespace Eto.CodeEditor
 {
-    public enum TextChangeType {CharAdded, CharDeleted, Modified }
+    public class CharAddedEventArgs : EventArgs
+    {
+        public CharAddedEventArgs(char c)
+        {
+            Char = c;
+        }
+
+        public char Char { get; }
+    }
 
     public class TextChangedEventArgs : EventArgs
     {
-        private TextChangeType textChangeType;
-        private char charAddedOrDeleted;
-
-        public TextChangedEventArgs(TextChangeType textChangeType, char charAddedOrDeleted)
-        {
-            this.textChangeType = textChangeType;
-            this.charAddedOrDeleted = charAddedOrDeleted;
-        }
-
-        public bool NewLineAdded => charAddedOrDeleted == '\n' || charAddedOrDeleted == '\r';
-
-        public TextChangeType TextChangeType => textChangeType;
-
-        public char CharAddedOrDeleted => charAddedOrDeleted;
     }
+
+    //public class InsertCheckEventArgs : EventArgs
+    //{
+    //    public InsertCheckEventArgs(string text)
+    //    {
+    //        Text = text;
+    //    }
+
+    //    public string Text { get; }
+    //}
 }

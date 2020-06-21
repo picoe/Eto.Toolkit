@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>Eto.CodeEditor.TestAppMac</string>
+	<string>Eto.CodeEditor.TestApp.Mac</string>
 	<key>CFBundleIdentifier</key>
-	<string>ca.example.Eto-CodeEditor-Test-XamMac2</string>
+	<string>ca.example.Eto-CodeEditor-Test-Mac</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>

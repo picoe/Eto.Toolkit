@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Reflection;
 using Eto.Forms;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Eto.CodeEditor
 {
@@ -19,58 +21,57 @@ namespace Eto.CodeEditor
                     };
                 case ProgrammingLanguage.GLSL:
                     {
-                        string k, f;
-                        LanguageGlsl.GetKeywords(out k, out f);
+                        LanguageGlsl.GetKeywords(out string k, out string f);
                         return new string[] { k, f };
                     }
                 case ProgrammingLanguage.Python:
                     return new string[]
                     {
-                        // import keyword
-                        // keyword.kwlist
-                        "and as assert break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return try while with yield"
+                        "and as assert break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return try while with yield",
+                        "None is not def"
                     };
+                case ProgrammingLanguage.VB:
+                    {
+                        LanguageVbNet.GetKeywords(out string k, out string f);
+                        return new string[] { k, f };
+                    }
                 default:
                     return new string[0];
             }
         }
 
         readonly ProgrammingLanguage _language;
-        public CodeEditor(ProgrammingLanguage language)
+        public CodeEditor(ProgrammingLanguage language, bool darkMode=false)
         {
+            AutoIndentEnabled = true;
             _language = language;
             Handler.SetProgrammingLanguage( language, GetKeywords(language) );
 
-            SetColor(Section.Comment, Drawing.Colors.DarkGray, Drawing.Colors.White);
-            SetColor(Section.Keyword, Drawing.Colors.Blue, Drawing.Colors.White);
-            SetColor(Section.LineNumber, Drawing.Colors.Gray, Drawing.Colors.White);
-
             Handler.CharAdded += CodeEditor_CharAdded;
+            var backgroundColor = darkMode ? Eto.Drawing.Color.FromArgb(30,30,30) : Eto.Drawing.Colors.White;
+            SetColor(Section.Default, darkMode ? Drawing.Color.FromArgb(212,212,212) : Drawing.Colors.Black, backgroundColor);
+            SetColor(Section.Comment, darkMode ? Drawing.Color.FromArgb(106, 153, 85) : Drawing.Colors.DimGray, backgroundColor);
+            SetColor(Section.Keyword1, darkMode ? Drawing.Color.FromArgb(197, 134, 192) : Drawing.Colors.Blue, backgroundColor);
+            SetColor(Section.Keyword2, darkMode ? Drawing.Color.FromArgb(197, 134, 192) : Drawing.Colors.Blue, backgroundColor);
+            SetColor(Section.Strings, darkMode ? Drawing.Color.FromArgb(206, 145, 120) : Drawing.Color.FromArgb(163, 21, 21), backgroundColor);
+            SetColor(Section.LineNumber, darkMode ? Drawing.Color.FromArgb(160, 160, 160) : Drawing.Colors.Gray, backgroundColor);
+            SetColor(Section.DefName, darkMode ? Drawing.Color.FromArgb(220, 220, 170) : Drawing.Color.FromArgb(64, 174, 215), backgroundColor);
+            SetColor(Section.Preprocessor, darkMode ? Drawing.Colors.DarkGray : Drawing.Colors.DimGray, backgroundColor);
+            SetColor(Section.FoldingMargin, darkMode ? Drawing.Color.FromArgb(160, 160, 160) : Drawing.Colors.Gray, backgroundColor);
+            TabWidth = 4;
+            ReplaceTabsWithSpaces = true;
+            BackspaceUnindents = true;
         }
 
-        void CodeEditor_CharAdded(object sender, TextChangedEventArgs e)
+        void CodeEditor_CharAdded(object sender, CharAddedEventArgs e)
         {
-            // Python auto indent
-            if (e.NewLineAdded && Language == ProgrammingLanguage.Python)
-            {
-                if (CurrentLineNumber > 0)
-                {
-                    var indentation = GetLineIndentation(CurrentLineNumber - 1);
-                    var lastChar = GetLineLastChar(CurrentLineNumber - 1);
-                    if (lastChar == ':')
-                        indentation = indentation + TabWidth;
-                    if (indentation > 0)
-                    {
-                        SetLineIndentation(CurrentLineNumber, indentation);
-                        CurrentPosition += indentation;
-                    }
-                }
-
-            }
+            if (AutoIndentEnabled)
+                AutoIndent.IndentationCheck(e.Char, this);
         }
-
 
         new IHandler Handler => (IHandler)base.Handler;
+
+        public bool AutoIndentEnabled { get; set; }
 
         public string Text
         {
@@ -83,6 +84,11 @@ namespace Eto.CodeEditor
             get => _language;
         }
 
+        public Eto.Drawing.Font Font
+        {
+            get => Handler.Font;
+            set => Handler.Font = value;
+        }
         public string FontName
         {
             get => Handler.FontName;
@@ -107,10 +113,36 @@ namespace Eto.CodeEditor
             set => Handler.ReplaceTabsWithSpaces = value;
         }
 
+        public bool BackspaceUnindents
+        {
+            get => Handler.BackspaceUnindents;
+            set => Handler.BackspaceUnindents = value;
+        }
+
         public int LineNumberColumnWidth
         {
             get => Handler.LineNumberColumnWidth;
             set => Handler.LineNumberColumnWidth = value;
+        }
+
+        public IEnumerable<int> Breakpoints => Handler.Breakpoints;
+
+        public bool IsBreakpointsMarginVisible
+        {
+            get => Handler.IsBreakpointsMarginVisible;
+            set => Handler.IsBreakpointsMarginVisible = value;
+        }
+
+        public void BreakOnLine(int lineNumber) => Handler.BreakOnLine(lineNumber - 1);
+
+        public void ClearBreak() => Handler.ClearBreak();
+
+        public void ClearBreakpoints() => Handler.ClearBreakpoints();
+
+        public bool IsFoldingMarginVisible
+        {
+            get => Handler.IsFoldingMarginVisible;
+            set => Handler.IsFoldingMarginVisible = value;
         }
 
         public void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background)
@@ -124,7 +156,11 @@ namespace Eto.CodeEditor
             set => Handler.CurrentPosition = value;
         }
 
+        public int CurrentPositionInLine => Handler.CurrentPositionInLine;
+
         public int CurrentLineNumber => Handler.CurrentLineNumber;
+
+        public string WordAtCurrentPosition => Handler.WordAtCurrentPosition;
 
         public int GetLineIndentation(int lineNumber) => Handler.GetLineIndentation(lineNumber);
         public void SetLineIndentation(int lineNumber, int indentation) => Handler.SetLineIndentation(lineNumber, indentation);
@@ -132,6 +168,8 @@ namespace Eto.CodeEditor
         public char GetLineLastChar(int lineNumber) => Handler.GetLineLastChar(lineNumber);
 
         public string GetLineText(int lineNumber) => Handler.GetLineText(lineNumber);
+
+        public int GetLineLength(int lineNumber) => Handler.GetLineLength(lineNumber);
 
         public void SetupIndicatorStyles()
         {
@@ -161,6 +199,18 @@ namespace Eto.CodeEditor
         {
             Handler.AddTypeNameIndicator(position, length);
         }
+        public Eto.Drawing.Color HighlightColor
+        {
+            get => Handler.HighlightColor;
+            set => Handler.HighlightColor = value;
+        }
+        public void HighlightRange(int position, int length)
+        {
+            Handler.HighlightRange(position, length);
+        }
+        public void ClearHighlights() => Handler.ClearHighlights();
+
+        public void SelectRange(int start, int length) => Handler.SelectRange(start, length);
 
         public bool IsWhitespaceVisible => Handler.IsWhitespaceVisible;
         public void ShowWhitespace() => Handler.ShowWhitespace();
@@ -171,20 +221,110 @@ namespace Eto.CodeEditor
 
         public void ShowWhitespaceWithColor(Eto.Drawing.Color color) => Handler.ShowWhitespaceWithColor(color);
 
-        public void Rnd() { Handler.Rnd(); }
+        public bool AutoCompleteActive { get => Handler.AutoCompleteActive; }
+        public void InsertText(int position, string text) { Handler.InsertText(position, text); }
+        public void DeleteRange(int position, int length) { Handler.DeleteRange(position, length); }
+
+        public IList<int> SearchInAll(string text, bool matchCase = false, bool wholeWord = false, bool highlight = false)
+            => Handler.SearchInAll(text, matchCase, wholeWord, highlight);
+
+        private bool regexPatternIsInvalid(string pattern)
+        {
+            // I don't see any other way to validate w/o throwing an exception
+            try
+            {
+                new Regex(pattern);
+                return false;
+            }
+            catch { }
+            return true;
+        }
+
+        public IList<Tuple<int,string>> SearchInAll(string pattern, bool matchCase, bool highlight)
+        {
+            ClearHighlights();
+            if (string.IsNullOrEmpty(pattern) || regexPatternIsInvalid(pattern))
+                return new List<Tuple<int, string>>();
+
+            Func<bool, RegexOptions> combineRegexOptions = mc =>
+              mc
+                ? RegexOptions.Multiline
+                : RegexOptions.Multiline | RegexOptions.IgnoreCase;
+
+            // scintilla regex search implementation is not well developed. There's a way to build Scintilla with an alternate
+            // regex implementation but doing it in .Net and reading he whole doc into a string is much simpler even though not efficient.
+            var hits = Regex.Matches(Text, pattern, combineRegexOptions(matchCase)); ///*.Cast<Match>()*/.ToList();
+            if (highlight)
+                foreach (Match hit in hits)
+                    HighlightRange(hit.Index, hit.Value.Length);
+            return hits.Cast<Match>().Select(h => Tuple.Create<int, string>(h.Index, h.Value)).ToList();
+        }
+
+
+        public void ReplaceTarget(string text, int start, int end) => Handler.ReplaceTarget(text, start, end);
+        public void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber) =>
+            Handler.ReplaceFirstOccuranceInLine(oldText, newText, lineNumber);
+
+        public int WordStartPosition(int position, bool onlyWordCharacters) { return Handler.WordStartPosition(position, onlyWordCharacters); }
+        public string GetTextRange(int position, int length) { return Handler.GetTextRange(position, length); }
+        public void AutoCompleteShow(int lenEntered, string list) { Handler.AutoCompleteShow(lenEntered, list); }
+
+
+        public event EventHandler<CharAddedEventArgs> CharAdded
+        {
+            add { Handler.CharAdded += value; }
+            remove { Handler.CharAdded -= value; }
+        }
+
+        public event EventHandler<EventArgs> TextChanged
+        {
+            add { Handler.TextChanged += value; }
+            remove { Handler.TextChanged -= value; }
+        }
+
+        public event EventHandler<SelectionChangedEventArgs> SelectionChanged
+        {
+            add { Handler.SelectionChanged += value; }
+            remove { Handler.SelectionChanged -= value; }
+        }
+
+        public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged
+        {
+            add { Handler.BreakpointsChanged += value; }
+            remove { Handler.BreakpointsChanged -= value; }
+        }
+
+        // only call from InsertCheck handler
+        //public void ChangeInsertion(string text)
+        //{
+        //    Handler.ChangeInsertion(text);
+        //}
+
+
 
         public new interface IHandler : Control.IHandler
         {
             string Text { get; set; }
             void SetProgrammingLanguage(ProgrammingLanguage language, string[] keywordSets);
+            Eto.Drawing.Font Font { get; set; }
             string FontName { get; set; }
             int FontSize { get; set; }
             int TabWidth { get; set; }
             bool ReplaceTabsWithSpaces { get; set; }
+            bool BackspaceUnindents { get; set; }
             int LineNumberColumnWidth { get; set; }
+            IEnumerable<int> Breakpoints { get; }
+            bool IsBreakpointsMarginVisible { get; set; }
+            void BreakOnLine(int lineNumber);
+            void ClearBreak();
+            void ClearBreakpoints();
+            bool IsFoldingMarginVisible { get; set; }
             void SetColor(Section section, Eto.Drawing.Color foreground, Eto.Drawing.Color background);
             int CurrentPosition { get; set; }
+            int CurrentPositionInLine { get; }
             int CurrentLineNumber { get; }
+
+            string WordAtCurrentPosition { get; }
 
             int GetLineIndentation(int lineNumber);
             void SetLineIndentation(int lineNumber, int indentation);
@@ -192,6 +332,7 @@ namespace Eto.CodeEditor
             char GetLineLastChar(int lineNumber);
 
             string GetLineText(int lineNumber);
+            int GetLineLength(int lineNumber);
 
             void SetupIndicatorStyles();
             void ClearAllErrorIndicators();
@@ -200,6 +341,12 @@ namespace Eto.CodeEditor
             void AddErrorIndicator(int position, int length);
             void AddWarningIndicator(int position, int length);
             void AddTypeNameIndicator(int position, int length);
+            Eto.Drawing.Color HighlightColor { get; set; }
+            void HighlightRange(int position, int length);
+            void ClearHighlights();
+
+            void SelectRange(int start, int length);
+
             bool IsWhitespaceVisible { get; }
             void ShowWhitespace();
             void HideWhitespace();
@@ -207,17 +354,38 @@ namespace Eto.CodeEditor
             bool AreIndentationGuidesVisible { get; }
             void ShowIndentationGuides();
             void HideIndentationGuides();
-            void Rnd();
 
-            event EventHandler<TextChangedEventArgs> CharAdded;
+            bool AutoCompleteActive { get; }
+            void InsertText(int position, string text);
+            IList<int> SearchInAll(string text, bool matchCase = false, bool wholeWord = false, bool highlight = false);
+            int ReplaceTarget(string text, int start, int end);
+            void ReplaceFirstOccuranceInLine(string oldText, string newText, int lineNumber);
+            void DeleteRange(int position, int length);
+            int WordStartPosition(int position, bool onlyWordCharacters);
+            string GetTextRange(int position, int length);
+            void AutoCompleteShow(int lenEntered, string list);
+
+
+            event EventHandler<CharAddedEventArgs> CharAdded;
+            event EventHandler<EventArgs> TextChanged;
+            event EventHandler<SelectionChangedEventArgs> SelectionChanged;
+            event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
+            //event EventHandler<InsertCheckEventArgs> InsertCheck;
+            //void ChangeInsertion(string text); // only call from InsertCheck handler
         }
     }
 
     public enum Section
     {
+        Default,
         Comment,
-        Keyword,
-        LineNumber
+        Keyword1,
+        Keyword2,
+        Strings,
+        LineNumber,
+        DefName,
+        Preprocessor,
+        FoldingMargin
     }
 
     public enum ProgrammingLanguage
@@ -431,4 +599,201 @@ memoryBarrierImage
 groupMemoryBarrier
 ";
     }
+
+
+    class LanguageVbNet
+    {
+        public static void GetKeywords(out string keywords, out string functions)
+        {
+            keywords = _keywords.Replace("\r", " ").Replace("\n", " ").Replace("  ", " ");
+            functions = _functions.Replace('\r', ' ').Replace('\n', ' ').Replace("  ", " ");
+        }
+        const string _keywords = @"debug
+release
+addhandler
+addressof
+aggregate
+alias
+and
+andalso
+ansi
+as
+assembly
+auto
+binary
+boolean
+byref
+byte
+byval
+call
+case
+catch
+cbool
+cbyte
+cchar
+cdate
+cdbl
+cdec
+char
+cint
+class
+clng
+cobj
+compare
+const
+continue
+csbyte
+cshort
+csng
+cstr
+ctype
+cuint
+culng
+cushort
+custom
+date
+decimal
+declare
+default
+delegate
+dim
+directcast
+distinct
+do
+double
+each
+else
+elseif
+end
+endif
+enum
+equals
+erase
+error
+event
+exit
+explicit
+false
+finally
+for
+friend
+from
+function
+get
+gettype
+getxmlnamespace
+global
+gosub
+goto
+group
+handles
+if
+implements
+imports
+in
+inherits
+integer
+interface
+into
+is
+isfalse
+isnot
+istrue
+join
+key
+let
+lib
+like
+long
+loop
+me
+mid
+mod
+module
+mustinherit
+mustoverride
+my
+mybase
+myclass
+namespace
+narrowing
+new
+next
+not
+nothing
+notinheritable
+notoverridable
+object
+of
+off
+on
+operator
+option
+optional
+or
+order
+orelse
+overloads
+overridable
+overrides
+paramarray
+partial
+preserve
+private
+property
+protected
+public
+raiseevent
+readonly
+redim
+rem
+removehandler
+resume
+return
+sbyte
+select
+set
+shadows
+shared
+short
+single
+skip
+static
+step
+stop
+strict
+string
+structure
+sub
+synclock
+take
+text
+then
+throw
+to
+true
+try
+trycast
+typeof
+uinteger
+ulong
+unicode
+until
+ushort
+using
+variant
+wend
+when
+where
+while
+widening
+with
+withevents
+writeonly
+xor";
+
+        const string _functions = @"
+";
+    }
+
 }

@@ -9,10 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup Condition="$(EtoBasePath) == ''">
-    <PackageReference Include="Eto.Forms" Version="2.5.0-rc.4" />
-    <PackageReference Include="Eto.Platform.Wpf" Version="2.5.0-rc.4" />
-    <PackageReference Include="Eto.Platform.Mac64" Version="2.5.0-rc.4" />
-    <PackageReference Include="Eto.Platform.Gtk" Version="2.5.0-rc.4" />
+    <PackageReference Include="Eto.Forms" Version="2.5.2" />
+    <PackageReference Include="Eto.Platform.Wpf" Version="2.5.2" />
+    <PackageReference Include="Eto.Platform.Mac64" Version="2.5.2" />
+    <PackageReference Include="Eto.Platform.Gtk" Version="2.5.2" />
   </ItemGroup>
   <ItemGroup Condition="$(EtoBasePath) != ''">
     <ProjectReference Include="$(EtoBasePath)src\Eto\Eto.csproj" />
