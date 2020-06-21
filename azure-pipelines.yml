@@ -1,6 +1,6 @@
 variables:
   solution: 'src/Eto.Toolkit.sln'
-  build.version: '0.1.0-ci-$(Build.BuildNumber)'
+  build.version: 'ci-$(Build.BuildNumber)'
   build.configuration: 'Release'
   build.basearguments: '/v:minimal /p:BuildVersion=$(build.version) /p:BuildBranch=$(Build.SourceBranch)'
   build.arguments: '/restore /t:Build;Pack $(build.basearguments)'

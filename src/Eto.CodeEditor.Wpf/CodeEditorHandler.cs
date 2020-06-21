@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Eto;
 using Eto.Forms;
 using Eto.CodeEditor;
-using Eto.CodeEditor.Wpf;
 using ScintillaNET;
 using Eto.Drawing;
 using System.Windows.Forms;

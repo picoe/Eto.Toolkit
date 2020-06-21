@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup Condition="$(HasWindowsDesktopSdk) == 'False'">
+    <Reference Include="System" Pack="False" />
+    <Reference Include="System.Core" Pack="False" />
+    <Reference Include="System.Design" Pack="False" />
+    <Reference Include="System.Drawing" Pack="False" />
+    <Reference Include="System.Windows.Forms" Pack="False" />
+    <Reference Include="System.Xaml" Pack="False" />
+    <Reference Include="Microsoft.CSharp" Pack="False" />
+    <Reference Include="System.Xml" Pack="False" />
+    <Reference Include="WindowsBase" Pack="False" />
+    <Reference Include="System.Xml.Linq" Pack="False" />
+    <Reference Include="PresentationCore" Pack="False" />
+    <Reference Include="PresentationFramework" Pack="False" />
+    <Reference Include="ReachFramework" Pack="False" />
+    <Reference Include="System.Printing" Pack="False" />
+    <Reference Include="UIAutomationProvider" Pack="False" />
+    <Reference Include="WindowsFormsIntegration" Pack="False" />
+  </ItemGroup>
+
+  <!-- Automatically added by WindowsDesktop SDK -->
+  <ItemGroup Condition="'$(HaveWindowsDesktopSdk)' != 'true'">
+    <Page Include="**\*.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>$([System.String]::Copy('%(Filename)').Replace('.xaml', ''))%(Extension)</DependentUpon>
+    </Compile>
+    <None Remove="**\*.xaml" />
+  </ItemGroup>
+
+
+  <PropertyGroup>
+    <!-- Cannot use these if the sdk doesn't exist.. /; -->
+    <UseWPF Condition="$(HaveWindowsDesktopSdk) == 'False'"></UseWPF>
+    <UseWindowsForms Condition="$(HaveWindowsDesktopSdk) == 'False'"></UseWindowsForms>
+  </PropertyGroup>
+
+  <Import Condition="'$(HaveWindowsDesktopSdk)' != 'true'" Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <Import Condition="'$(HaveWindowsDesktopSdk)' == 'true'" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Project="Sdk.targets" />
+
+</Project>

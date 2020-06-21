@@ -1,0 +1,17 @@
+{
+    "omnisharp.enableEditorConfigSupport": true,
+    "terminal.integrated.environmentChangesIndicator": "on",
+    "[powershell]": {
+    },
+    "terminal.integrated.env.windows": {
+        "PATH": "${env:PATH};C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\MSBuild\\Current\\Bin\\"
+    },
+    "var": {
+        "buildParameters": "/p:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:Configuration=Debug /v:Minimal"
+    },
+    "omnisharp.defaultLaunchSolution": "src/Eto.Toolkit.sln",
+    "files.exclude": {
+        "lib/HtmlRenderer/Source/Demo/**": true,
+        "lib/HtmlRenderer/Source/HtmlRenderer.*/**": true
+    }
+}

@@ -1,0 +1,79 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Eto.CodeEditor.TestApp.Wpf",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/artifacts/test/Debug/net461/Eto.CodeEditor.TestApp.Wpf.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole"
+        },
+        {
+            "name": "Eto.CodeEditor.TestApp.XamMac2",
+            "type": "mono",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/artifacts/test/Debug/net461/Eto.CodeEditor.TestApp.XamMac2.app/Contents/MacOS/Eto.CodeEditor.TestApp.XamMac2",
+            "useRuntime": false,
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole"
+        },
+        {
+            "name": "Eto.HtmlRenderer.TestApp.Mac64",
+            "type": "mono",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/artifacts/test/Debug/net461/Eto.HtmlRenderer.TestApp.app/Contents/MacOS/Eto.HtmlRenderer.TestApp",
+            "useRuntime": false,
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole"
+        },
+        {
+            "name": "Eto.HtmlRenderer.TestApp",
+            "type": "clr",
+            "osx": {
+                "type": "mono"
+            },
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/artifacts/test/Debug/net461/Eto.HtmlRenderer.TestApp.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole"
+        },
+        {
+            "name": "Eto.UnitTest.Desktop.Mac64",
+            "type": "mono",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/artifacts/core/Debug/net461/Eto.UnitTest.Desktop.app/Contents/MacOS/Eto.UnitTest.Desktop",
+            "useRuntime": false,
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole"
+        },
+        {
+            "name": "Eto.UnitTest.Desktop",
+            "type": "clr",
+            "osx": {
+                "type": "mono"
+            },
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/artifacts/core/Debug/net461/Eto.UnitTest.Desktop.exe",
+            "env": {
+                "LD_LIBRARY_PATH": "/usr/local/lib"
+            },
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole"
+        }
+    ]
+}
