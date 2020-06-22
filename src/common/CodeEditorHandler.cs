@@ -10,8 +10,6 @@ using Eto.CodeEditor;
 using ScintillaNET;
 using ed = Eto.Drawing;
 
-[assembly: ExportHandler(typeof(CodeEditor), typeof(CodeEditorHandler))]
-
 namespace Eto.CodeEditor
 {
     public partial class CodeEditorHandler

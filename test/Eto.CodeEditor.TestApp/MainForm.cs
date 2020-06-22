@@ -16,6 +16,8 @@ namespace Eto.CodeEditor.TestApp
             Title = $"CodeEditor Test, Platform: {Platform.ID}";
             ClientSize = new Size(1400, 800);
 
+            Menu = new MenuBar(); // show standard macOS menu.
+
 
             var editor = new CodeEditor(ProgrammingLanguage.CSharp, true);
             editor.Text =
@@ -54,7 +56,7 @@ for( int i=0; i<10; i++ )
             };
             
 
-            var tests = new Eto.UnitTest.UI.UnitTestPanel(true);
+            var tests = new Eto.UnitTest.UI.UnitTestPanel(true, Orientation.Vertical);
 
             this.LoadComplete += async (s,e) =>
             {
@@ -66,7 +68,7 @@ for( int i=0; i<10; i++ )
                 RegexTests.editor = editor;
             };
 
-            var ta = new TextArea();
+            var ta = new TextArea { Height = 200 };
 
             editor.SelectionChanged += (s, e) =>
                 ta.Text += $"empty: {e.SelectionIsEmpty}, s:{e.SelectionStart}, e:{e.SelectionEnd}, txt:{e.SelectionText}\n";
@@ -74,7 +76,7 @@ for( int i=0; i<10; i++ )
             var splitter = new Splitter
             {
                 Panel1 = tests,
-                Panel2 = new Splitter { Panel1 = editor, Panel2 = ta, Orientation = Orientation.Vertical, Panel1MinimumSize = 100 }
+                Panel2 = new Splitter { Panel1 = editor, Panel2 = ta, Orientation = Orientation.Vertical, Panel1MinimumSize = 100, FixedPanel = SplitterFixedPanel.Panel2 }
             };
             Content = new TableLayout { Rows = { splitter } };
         }

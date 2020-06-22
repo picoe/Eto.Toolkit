@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <UseXamarinMac>True</UseXamarinMac>
+    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks Condition="$(HasXamarinMac) == 'True'">$(TargetFrameworks);xamarinmac20</TargetFrameworks>
+    
+    <RootNamespace>Eto.CodeEditor</RootNamespace>
+    <DefineConstants>$(DefineConstants);OSX</DefineConstants>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Eto.CodeEditor.XamMac2</PackageId>
+    <Title>Eto.CodeEditor adapter for Eto.XamMac2</Title>
+    <Description>This is the Xamarin.Mac implementation of Eto.CodeEditor.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\common\*.cs" Link="common\%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Eto.Platform.XamMac2" Version="2.5.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eto.CodeEditor\Eto.CodeEditor.csproj" />
+    <ProjectReference Include="..\Scintilla.XamMac2\Scintilla.XamMac2.csproj" Pack="True" />
+  </ItemGroup>
+
+  <Import Project="..\..\build\Xamarin.Mac.targets" />
+  
+</Project>

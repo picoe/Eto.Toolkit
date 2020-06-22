@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <UseXamarinMac>True</UseXamarinMac>
+    <TargetFramework>net461</TargetFramework>
+    <TargetFrameworks Condition="$(HasXamarinMac) == 'True'">$(TargetFrameworks);xamarinmac20</TargetFrameworks>
+    <RootNamespace>Eto.HtmlRenderer.Mac</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Title>Eto.HtmlRenderer adapter for Eto.XamMac2</Title>
+    <Description>This can be optionally used to extract animated image frames when using the Eto.XamMac2 platform.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eto.HtmlRenderer\Eto.HtmlRenderer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Eto.Platform.XamMac2" Version="2.5.2" />
+  </ItemGroup>
+  
+  <Import Project="..\..\build\Xamarin.Mac.targets" />
+
+</Project>
+

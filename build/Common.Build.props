@@ -2,9 +2,29 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <BasePath>$(MSBuildThisFileDirectory)..\</BasePath>
-    <BaseIntermediateOutputPath Condition="$(BaseIntermediateOutputPath) == ''">$(BasePath)artifacts\obj\$(OS)\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-    <BaseOutputPath Condition="$(BaseOutputPath) == ''">$(BasePath)\artifacts\$(OutputArtifactName)\</BaseOutputPath>
+    <ArtifactsDir>$(BasePath)artifacts\</ArtifactsDir>
+    <BaseIntermediateOutputPath Condition="$(BaseIntermediateOutputPath) == ''">$(ArtifactsDir)obj\$(OS)\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath Condition="$(BaseOutputPath) == ''">$(ArtifactsDir)$(OutputArtifactName)\</BaseOutputPath>
+    <PackageOutputPath Condition="$(PackageOutputPath) == ''">$(ArtifactsDir)nuget\$(Configuration)\</PackageOutputPath>
     <RestoreProjectStyle Condition="'$(RestoreProjectStyle)' == ''">PackageReference</RestoreProjectStyle>
+    
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <DevVersion>0.3.0</DevVersion>
+
+    <!-- set version from tag -->
+    <Version Condition="$(BuildBranch.StartsWith('refs/tags/'))">$(BuildBranch.Substring(10))</Version>
+    <!-- set version for CI build -->
+    <Version Condition="$(Version) == '' AND $(BuildVersion) != ''">$(DevVersion)-$(BuildVersion)</Version>
+    
+    <Version Condition="$(Version) == ''">$(DevVersion)-dev</Version>
+    <Authors>Eto.Toolkit Authors</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/picoe/Eto.Toolkit</RepositoryUrl>
+    <Copyright>Copyright (c) 2016-2019 Eto.Toolkit authors, see AUTHORS file.</Copyright>
+  </PropertyGroup>
+
   <Import Condition="Exists('$(BasePath)..\Eto.Toolkit.props')" Project="$(BasePath)..\Eto.Toolkit.props" />
 </Project>

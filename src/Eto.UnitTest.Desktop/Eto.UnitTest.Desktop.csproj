@@ -1,0 +1,36 @@
+﻿<Project>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net461</TargetFramework>
+    <IsPackable>False</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(EtoBasePath) == ''">
+    <PackageReference Include="Eto.Forms" Version="2.5.2" />
+    <PackageReference Include="Eto.Platform.Wpf" Version="2.5.2" />
+    <PackageReference Include="Eto.Platform.Mac64" Version="2.5.2" />
+    <PackageReference Include="Eto.Platform.Gtk" Version="2.5.2" />
+  </ItemGroup>
+  <ItemGroup Condition="$(EtoBasePath) != ''">
+    <ProjectReference Include="$(EtoBasePath)src\Eto\Eto.csproj" />
+    <ProjectReference Include="$(EtoBasePath)src\Eto.Mac\Eto.Mac64.csproj" />
+    <ProjectReference Include="$(EtoBasePath)src\Eto.Gtk\Eto.Gtk.csproj" />
+    <ProjectReference Include="$(EtoBasePath)src\Eto.Wpf\Eto.Wpf.csproj" Condition="$(OS) == 'Windows_NT'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eto.UnitTest\Eto.UnitTest.csproj" />
+    <ProjectReference Include="..\Eto.UnitTest.NUnit\Eto.UnitTest.NUnit.csproj" />
+    <ProjectReference Include="..\Eto.UnitTest.Xunit\Eto.UnitTest.Xunit.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20071.2" />
+  </ItemGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <Import Condition="$(EtoBasePath) != ''" Project="$(EtoBasePath)build\Common.Mac.targets" />
+</Project>
