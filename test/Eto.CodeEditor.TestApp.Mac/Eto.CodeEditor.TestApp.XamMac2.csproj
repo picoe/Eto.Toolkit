@@ -27,7 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Eto.CodeEditor\Eto.CodeEditor.csproj" />
-    <ProjectReference Include="..\..\src\Eto.CodeEditor.XamMac\Eto.CodeEditor.XamMac2.csproj" />
+    <ProjectReference Include="..\..\src\Eto.CodeEditor.Mac\Eto.CodeEditor.XamMac2.csproj" />
     <ProjectReference Include="..\..\src\Scintilla.XamMac2\Scintilla.XamMac2.csproj" />
     <ProjectReference Include="..\Eto.CodeEditor.TestApp\Eto.CodeEditor.TestApp.csproj" />
   </ItemGroup>
