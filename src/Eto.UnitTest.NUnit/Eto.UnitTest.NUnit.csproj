@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <DefineConstants Condition="$(Configuration) == 'Debug'">$(DefineConstants);INCLUDE_TESTS</DefineConstants>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <Title>NUnit testing UI and utilities for Eto.Forms</Title>
+    <Description>Provides a control to use in Eto.Forms applications that can be used to display, filter, and run unit tests.</Description>
+    <PackageTags>xunit;unit test;test;testing;tdd</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.12.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eto.UnitTest\Eto.UnitTest.csproj" />
+  </ItemGroup>
+
+</Project>

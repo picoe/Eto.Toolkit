@@ -1,22 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\artifacts\test\Debug</OutputPath>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\artifacts\test\Release</OutputPath>
-  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Eto.Forms" Version="2.5.0" />
-    <PackageReference Include="Eto.UnitTest.NUnit" Version="0.3.0" />
+    <PackageReference Include="Eto.Forms" Version="2.5.2" />
     <PackageReference Include="NUnit" Version="3.12.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Eto.CodeEditor\Eto.CodeEditor.csproj" />
+    <ProjectReference Include="..\..\src\Eto.UnitTest.NUnit\Eto.UnitTest.NUnit.csproj" />
   </ItemGroup>
 </Project>

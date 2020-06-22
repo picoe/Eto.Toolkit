@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net45</TargetFramework>
+    <MacBuildBundle>False</MacBuildBundle>
+    <Title>Eto.HtmlRenderer adapter for Eto.Mac64</Title>
+    <Description>This can be optionally used to extract animated image frames when using the Eto.Mac64 platform.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Eto.Platform.Mac64" Version="2.5.2" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Eto.HtmlRenderer\Eto.HtmlRenderer.csproj" AdditionalProperties="TargetFramework=net45" />
+  </ItemGroup>
+</Project>

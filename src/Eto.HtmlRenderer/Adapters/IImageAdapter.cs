@@ -10,6 +10,7 @@
 // - Sun Tsu,
 // "The Art of War"
 
+using System.IO;
 using Eto.Drawing;
 
 namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
@@ -17,5 +18,7 @@ namespace TheArtOfDev.HtmlRenderer.Eto.Adapters
 	public interface IImageAdapter
 	{
 		Image Image { get; }
+
+        bool Load(Stream stream);
 	}
 }

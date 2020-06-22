@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net461</TargetFramework>
     <OutputPath>$(BasePath)\artifacts\test\$(Configuration)</OutputPath>
+    <IsPackable>False</IsPackable>
   </PropertyGroup>
 	
   <ItemGroup>
@@ -16,10 +17,13 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Eto.HtmlRenderer\Eto.HtmlRenderer.csproj" AdditionalProperties="TargetFramework=net45" />
+    <ProjectReference Include="..\..\src\Eto.HtmlRenderer.Mac\Eto.HtmlRenderer.Mac64.csproj" />
+    <ProjectReference Include="..\..\src\Eto.HtmlRenderer.Wpf\Eto.HtmlRenderer.Wpf.csproj" />
+    <ProjectReference Include="..\..\src\Eto.HtmlRenderer.ImageSharp\Eto.HtmlRenderer.ImageSharp.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Eto.Platform.Wpf" Version="2.4.1" />
-    <PackageReference Include="Eto.Platform.Gtk" Version="2.4.1" />
-    <PackageReference Include="Eto.Platform.Mac64" Version="2.4.1" />
+    <PackageReference Include="Eto.Platform.Wpf" Version="2.5.2" />
+    <PackageReference Include="Eto.Platform.Gtk" Version="2.5.2" />
+    <PackageReference Include="Eto.Platform.Mac64" Version="2.5.2" />
   </ItemGroup>
 </Project>
