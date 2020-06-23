@@ -23,7 +23,17 @@
     <Authors>Eto.Toolkit Authors</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/picoe/Eto.Toolkit</RepositoryUrl>
-    <Copyright>Copyright (c) 2016-2019 Eto.Toolkit authors, see AUTHORS file.</Copyright>
+    <Copyright>Copyright (c) 2016-2020 Eto.Toolkit authors, see AUTHORS file.</Copyright>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <AssemblyVersionMajorMinor>$([System.Version]::Parse($([System.String]::Copy('$(DevVersion)').Replace('.*', ''))).ToString(2))</AssemblyVersionMajorMinor>
+    <DaysSince2000>$([System.DateTime]::Today.Subtract($([System.DateTime]::Parse('2000-01-01T00:00:00Z'))).TotalDays.ToString('0'))</DaysSince2000>
+    <SecondsOfTodayHalved>$([MSBuild]::Divide($([System.DateTime]::Now.Subtract($([System.DateTime]::Today)).TotalSeconds), 2).ToString('0'))</SecondsOfTodayHalved>
+    <FileVersion>$(AssemblyVersionMajorMinor).$(DaysSince2000).$(SecondsOfTodayHalved)</FileVersion>
+    
+    <!-- we add this manually in .targets so it doesn't trigger a rebuild each time -->
+    <GenerateAssemblyFileVersionAttribute>False</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <Import Condition="Exists('$(BasePath)..\Eto.Toolkit.props')" Project="$(BasePath)..\Eto.Toolkit.props" />
