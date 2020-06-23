@@ -6,6 +6,20 @@
       <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('Pack', 'True'))"/>
     </ItemGroup>
   </Target>
+  
+  <PropertyGroup>
+    <!-- why oh why do we need to specify both explicitly -->
+    <AssemblyTitle Condition="$(Title) != '' AND $(AssemblyTitle) == ''">$(Title)</AssemblyTitle>
+  </PropertyGroup>
+  
+  <Target Name="_AddFileVersionAttribute" BeforeTargets="CoreGenerateAssemblyInfo">
+    <!-- We add this here so it doesn't trigger a rebuild due to changing based on time -->
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Reflection.AssemblyFileVersionAttribute" Condition="'$(FileVersion)' != ''">
+        <_Parameter1>$(FileVersion)</_Parameter1>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
 
   <Import Condition="Exists('$(BasePath)..\Eto.Toolkit.targets')" Project="$(BasePath)..\Eto.Toolkit.targets" />
 </Project>
