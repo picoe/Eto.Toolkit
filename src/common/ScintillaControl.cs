@@ -109,6 +109,7 @@ namespace Scintilla
             }
         }
         #region IHandler impl
+
         public unsafe override string Text
         {
             get
@@ -255,7 +256,7 @@ namespace Scintilla
 
         public bool BackspaceUnindents
         {
-            get => DirectMessage(NativeMethods.SCI_GETBACKSPACEUNINDENTS) == IntPtr.Zero;
+            get => DirectMessage(NativeMethods.SCI_GETBACKSPACEUNINDENTS) == new IntPtr(1);
             set
             {
                 var bsUnindents = value ? new IntPtr(1) : IntPtr.Zero;

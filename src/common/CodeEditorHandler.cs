@@ -211,6 +211,10 @@ namespace Eto.CodeEditor
             add { scintilla.BreakpointsChanged += value; }
             remove { scintilla.BreakpointsChanged -= value; }
         }
-        #endregion
+
+#if DEBUG
+        public int direct_message(int msg, int val) => scintilla.DirectMessage(msg, new IntPtr(val), IntPtr.Zero).ToInt32();
+#endif
+#endregion
     }
 }
