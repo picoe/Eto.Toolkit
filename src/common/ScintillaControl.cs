@@ -785,13 +785,11 @@ namespace Scintilla
             return position;
         }
 
-        public string GetTextRange(int position, int length)
+        public unsafe string GetTextRange(int position, int length)
         {
-            //return scintilla.GetTextRange(position, length);
-            //TODO: use SCI_GETRANGEPOINTER instead
-            string txt = Text;
-            return txt.Substring(position, length);
-        }
+            var textLength = DirectMessage(NativeMethods.SCI_GETTEXTLENGTH).ToInt32();            position = Helpers.Clamp(position, 0, textLength);            length = Helpers.Clamp(length, 0, textLength - position);
+
+            var ptr = DirectMessage(NativeMethods.SCI_GETRANGEPOINTER, position, length);            if (ptr == IntPtr.Zero)                return string.Empty;            return new string((sbyte*)ptr, 0, length, /*Encoding*/System.Text.Encoding.UTF8);        }
 
         public unsafe void AutoCompleteShow(int lenEntered, string list)
         {
