@@ -188,6 +188,18 @@ namespace Eto.CodeEditor
             scintilla.AutoCompleteShow(lenEntered, list);
         }
 
+        public unsafe void CallTipsShow(int position, string calltips)
+        {
+            scintilla.CallTipsShow(position, calltips);
+        }
+
+        public unsafe void CallTipsSetHighlight(int start, int end)
+        {
+            scintilla.CallTipSetHighlight(start, end);
+        }
+
+        public bool CallTipIsActive => scintilla.CallTipIsActive;
+
         public event EventHandler<CharAddedEventArgs> CharAdded
         {
             add { scintilla.CharAdded += value; }

@@ -268,6 +268,9 @@ namespace Eto.CodeEditor
         public int WordStartPosition(int position, bool onlyWordCharacters) { return Handler.WordStartPosition(position, onlyWordCharacters); }
         public string GetTextRange(int position, int length) { return Handler.GetTextRange(position, length); }
         public void AutoCompleteShow(int lenEntered, string list) { Handler.AutoCompleteShow(lenEntered, list); }
+        public void CallTipsShow(int position, string calltips) { Handler.CallTipsShow(position, calltips); }
+        public void CallTipsSetHighlight(int start, int end) { Handler.CallTipsSetHighlight(start, end); }
+        public bool CallTipIsActive => Handler.CallTipIsActive;
 
 
         public event EventHandler<CharAddedEventArgs> CharAdded
@@ -366,6 +369,9 @@ namespace Eto.CodeEditor
             int WordStartPosition(int position, bool onlyWordCharacters);
             string GetTextRange(int position, int length);
             void AutoCompleteShow(int lenEntered, string list);
+            void CallTipsShow(int position, string calltips);
+            void CallTipsSetHighlight(int start, int end);
+            bool CallTipIsActive { get; }
 
 
             event EventHandler<CharAddedEventArgs> CharAdded;

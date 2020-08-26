@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ScintillaNET;
 using Eto.CodeEditor;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace Scintilla
 {
@@ -814,6 +815,20 @@ namespace Scintilla
             // in the list.
             DirectMessage(NativeMethods.SCI_AUTOCSETIGNORECASE, new IntPtr(1), IntPtr.Zero);
         }
+
+        public unsafe void CallTipsShow(int position, string calltips)
+        {
+            var bytes = Helpers.GetBytes(calltips, Encoding.UTF8, zeroTerminated: true);
+            fixed (byte* bp = bytes)
+                DirectMessage(NativeMethods.SCI_CALLTIPSHOW, new IntPtr(position), new IntPtr(bp));
+        }
+
+        public unsafe void CallTipSetHighlight(int start, int end)
+        {
+            DirectMessage(NativeMethods.SCI_CALLTIPSETHLT, new IntPtr(start), new IntPtr(end));
+        }
+
+        public unsafe bool CallTipIsActive => DirectMessage(NativeMethods.SCI_CALLTIPACTIVE).ToInt32() == 1;
         #endregion
         
         private void SetTargetRange(int start, int end)
