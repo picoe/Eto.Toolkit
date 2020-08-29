@@ -271,6 +271,7 @@ namespace Eto.CodeEditor
         public void CallTipsShow(int position, string calltips) { Handler.CallTipsShow(position, calltips); }
         public void CallTipsSetHighlight(int start, int end) { Handler.CallTipsSetHighlight(start, end); }
         public bool CallTipIsActive => Handler.CallTipIsActive;
+        public void CallTipCancel() => Handler.CallTipCancel();
 
 
         public event EventHandler<CharAddedEventArgs> CharAdded
@@ -283,6 +284,12 @@ namespace Eto.CodeEditor
         {
             add { Handler.TextChanged += value; }
             remove { Handler.TextChanged -= value; }
+        }
+
+        public event EventHandler<CallTipClickedEventArgs> CallTipClicked
+        {
+            add { Handler.CallTipClicked += value; }
+            remove { Handler.CallTipClicked -= value; }
         }
 
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged
@@ -372,10 +379,12 @@ namespace Eto.CodeEditor
             void CallTipsShow(int position, string calltips);
             void CallTipsSetHighlight(int start, int end);
             bool CallTipIsActive { get; }
+            void CallTipCancel();
 
 
             event EventHandler<CharAddedEventArgs> CharAdded;
             event EventHandler<EventArgs> TextChanged;
+            event EventHandler<CallTipClickedEventArgs> CallTipClicked;
             event EventHandler<SelectionChangedEventArgs> SelectionChanged;
             event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
             //event EventHandler<InsertCheckEventArgs> InsertCheck;

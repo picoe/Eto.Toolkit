@@ -342,6 +342,7 @@ namespace Scintilla
 
         public event EventHandler<CharAddedEventArgs> CharAdded;
         public new event EventHandler<EventArgs> TextChanged; // hides inherited TextChanged
+        public event EventHandler<CallTipClickedEventArgs> CallTipClicked;
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
 
@@ -829,6 +830,8 @@ namespace Scintilla
         }
 
         public unsafe bool CallTipIsActive => DirectMessage(NativeMethods.SCI_CALLTIPACTIVE).ToInt32() == 1;
+
+        public void CallTipCancel() => DirectMessage(NativeMethods.SCI_CALLTIPCANCEL);
         #endregion
         
         private void SetTargetRange(int start, int end)
@@ -990,7 +993,9 @@ namespace Scintilla
         {
             switch (message)
             {
-
+                case NativeMethods.SCN_CALLTIPCLICK:
+                    CallTipClicked?.Invoke(this, new CallTipClickedEventArgs(position));
+                    break;
                 case NativeMethods.SCN_CHARADDED:
                     CharAdded?.Invoke(this, new CharAddedEventArgs(c));
                     break;

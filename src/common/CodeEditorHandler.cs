@@ -200,6 +200,8 @@ namespace Eto.CodeEditor
 
         public bool CallTipIsActive => scintilla.CallTipIsActive;
 
+        public void CallTipCancel() => scintilla.CallTipCancel();
+
         public event EventHandler<CharAddedEventArgs> CharAdded
         {
             add { scintilla.CharAdded += value; }
@@ -210,6 +212,12 @@ namespace Eto.CodeEditor
         {
             add { scintilla.TextChanged += value; }
             remove { scintilla.TextChanged -= value; }
+        }
+
+        public event EventHandler<CallTipClickedEventArgs> CallTipClicked
+        {
+            add { scintilla.CallTipClicked += value; }
+            remove { scintilla.CallTipClicked -= value; }
         }
 
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged
