@@ -35,6 +35,18 @@ namespace Eto.CodeEditor
         public bool HasNoParameters => parameterCount == 0;
 
         public Tuple<int, int> CurrentParameterStartAndEndIndex => currentParameterIndex == -1 ? Tuple.Create(-1, -1) : parameterStartAndEndIndexes[currentParameterIndex];
+        public bool CurrentParameterStartAndEndIndexTrySetNext()
+        {
+            bool b = false;
+            if (HasMultipleParameters)
+            {
+                currentParameterIndex++;
+                if (currentParameterIndex >= parameterCount)
+                    currentParameterIndex = 0;
+                b = true;
+            }
+            return b;
+        }
 
         private int parameterCount;
         private int currentParameterIndex = -1;
@@ -89,6 +101,8 @@ namespace Eto.CodeEditor
         public bool CurrentSignatureHasNoParameters => signatures[currentSignatureIndex].HasNoParameters;
 
         public Tuple<int,int> CurrentSignatureCurrentParameterIndexes => signatures[currentSignatureIndex].CurrentParameterStartAndEndIndex;
+
+        public bool CurrentSignatureCurrentParameterindexsTrySetNext() => signatures[currentSignatureIndex].CurrentParameterStartAndEndIndexTrySetNext();
 
         public void SetPreviousAsCurrent() => SetCurrent(false);
 
