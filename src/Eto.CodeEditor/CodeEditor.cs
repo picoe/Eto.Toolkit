@@ -3,12 +3,23 @@ using Eto.Forms;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Eto.CodeEditor
 {
     [Handler(typeof(IHandler))]
     public class CodeEditor : Control
     {
+        private Action<string> logger;
+        private Func<string, int, char, Task<List<string>>> GetCompletions;
+
+        private Signatures signatures;
+        private void ResetCallTipsAndSignatures()
+        {
+          CallTipCancel();
+          signatures = null;
+        }
+
         static string[] GetKeywords(ProgrammingLanguage language)
         {
             switch (language)
@@ -41,8 +52,90 @@ namespace Eto.CodeEditor
         }
 
         readonly ProgrammingLanguage _language;
-        public CodeEditor(ProgrammingLanguage language, bool darkMode=false)
+        public CodeEditor(ProgrammingLanguage language, bool darkMode=false, 
+            Func<string, int, char, Task<List<string>>> getCompletions = null,
+            Action<string> logger = null)
         {
+            if (getCompletions != null)
+            {
+                // todo: the rest of this 'if' block assumes C#
+                GetCompletions = getCompletions;
+
+                CallTipClicked += (s, e) =>
+                {
+                  logger?.Invoke($"ctclicked: {e.Move}");
+                  if (e.Move == CallTipMove.Current)
+                    return;
+                  if (e.Move == CallTipMove.Next)
+                    signatures?.SetNextAsCurrent();
+                  else
+                    signatures?.SetPreviousAsCurrent();
+                  CallTipCancel();
+                  CallTipsShow(CurrentPosition, signatures.CurrentSignatureDisplay);
+                  if (!(signatures?.CurrentSignatureHasNoParameters ?? true))
+                  {
+                    var t = signatures.CurrentSignatureCurrentParameterIndexes;
+                    var pfxLen = signatures.DisplayPrefix.Length;
+                    logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
+                    CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
+                  }
+                };
+
+
+                CharAdded += async (s, e) =>
+                {
+                  char key = e.Char;
+            
+                  if (CallTipIsActive)
+                  {
+                    if (key == ',')
+                    {
+                      if (signatures?.CurrentSignatureCurrentParameterindexsTrySetNext() ?? false)
+                      {
+                        var t = signatures.CurrentSignatureCurrentParameterIndexes;
+                        var pfxLen = signatures.DisplayPrefix.Length;
+                        logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
+                        CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
+                      }
+                    }
+                    if (key == ')')
+                      ResetCallTipsAndSignatures();
+                    return;
+                  }
+            
+                  if (key != ' ' && key != '.' && key != '(')
+                      return;
+                  logger?.Invoke("GetCompletions before");
+                  List<string> completionItems = await GetCompletions(Text, CurrentPosition, key);
+                  if (completionItems == null || completionItems.Count == 0)
+                      return;
+                  logger?.Invoke("GetCompletions after");
+                  if (key == '(')
+                  {
+                    ResetCallTipsAndSignatures();
+                    signatures = new Signatures(completionItems, logger);
+                    CallTipsShow(CurrentPosition, signatures.CurrentSignatureDisplay);
+                    if (!signatures.CurrentSignatureHasNoParameters)
+                    {
+                      var t = signatures.CurrentSignatureCurrentParameterIndexes;
+                      var pfxLen = signatures.DisplayPrefix.Length;
+                      logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
+                      CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
+                    }
+                  }
+                  else
+                  {
+                    var completionString = completionItems
+                      .OrderBy(i => i)
+                      .Aggregate((a, b) => $"{a} {b}");
+                    logger?.Invoke($"completionString: {completionString}");
+                    logger?.Invoke("AutoCompleteShow before");
+                    AutoCompleteShow(0, completionString);
+                    logger?.Invoke("AutoCompleteShow after");
+                  }
+                };
+            }
+
             AutoIndentEnabled = true;
             _language = language;
             Handler.SetProgrammingLanguage( language, GetKeywords(language) );
