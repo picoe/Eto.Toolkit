@@ -21,7 +21,6 @@ namespace Eto.CodeEditor
             var methodName = s.Substring(0, s.IndexOf('('));
             var shortMethodName = methodName.Substring(s.LastIndexOf('.') + 1);
             var parameterString = s.Substring(s.IndexOf('('));
-            //parameterString = parameterString.Replace(" ", "X");
             parameterCount = parameterString.Replace(" ", "").Equals("()") ? 0 : parameterString.Cast<char>().Count(c => c == parameterSeparator) + 1;
             
             Display = $"{shortMethodName}{parameterString}";
