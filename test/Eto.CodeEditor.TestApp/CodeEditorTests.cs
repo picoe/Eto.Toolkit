@@ -50,6 +50,37 @@ namespace Eto.CodeEditor.TestApp
         }
 
         [Test, InvokeOnUI]
+        public void GetTextRange_OutOfRange()
+        {
+            var text = "Be who you are and say what you feel, because those who mind don't matter, and those who matter don't mind";
+            editor.Text = text;
+
+            var range = editor.GetTextRange(3, 11);
+            Assert.AreEqual("who you are", range);
+
+            range = editor.GetTextRange(0, 0);
+            Assert.AreEqual("", range);
+
+            range = editor.GetTextRange(10, 0);
+            Assert.AreEqual("", range);
+
+            range = editor.GetTextRange(-1, -1);
+            Assert.AreEqual("", range);
+
+            range = editor.GetTextRange(-2, 6); // clamp 1st param to 0
+            Assert.AreEqual("Be who", range);
+
+            range = editor.GetTextRange(text.Length - 4, 10); // clamp 2nd param so it doesn't bleed past the end of the string
+            Assert.AreEqual("mind", range);
+
+            range = editor.GetTextRange(10, 0);
+            Assert.AreEqual("", range);
+
+            range = editor.GetTextRange(10, -1);
+            Assert.AreEqual("", range);
+        }
+
+        [Test, InvokeOnUI]
         public void SearchInAllWithMatchCaseAndWholeWord()
         {
             editor.Text = "Who is WHO? Whoever knows WHO speak up.";
