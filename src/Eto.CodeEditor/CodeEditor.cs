@@ -14,10 +14,46 @@ namespace Eto.CodeEditor
         private Func<string, int, char, Task<List<string>>> GetCompletions;
 
         private Signatures signatures;
-        private void ResetCallTipsAndSignatures()
+        public void ResetCallTipsAndSignatures(List<string> signatureList = null)
         {
           CallTipCancel();
           signatures = null;
+          
+          if(signatureList != null) {
+            signatures = new Signatures(signatureList, logger);
+            CallTipsShow(CurrentPosition, signatures.CurrentSignatureDisplay);
+            if (!signatures.CurrentSignatureHasNoParameters)
+            {
+              var t = signatures.CurrentSignatureCurrentParameterIndexes;
+              var pfxLen = signatures.DisplayPrefix.Length;
+              //logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
+              CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
+            }
+          }
+        }
+
+        private void CodeEditor_KeyDown(Object sender, KeyEventArgs e)
+        {
+            if (CallTipIsActive && (e.Key == Keys.Up || e.Key == Keys.Down)) {
+                logger?.Invoke("TODO: implement CodeEditor_KeyDown handler");
+            }
+        }
+
+        public void KeyPressedInCallTips(char key) {
+          logger?.Invoke($"KeyPressedInCallTips TOP. key: {key}");
+          if (key == ',')
+          {
+            logger?.Invoke($"KeyPressidInCallTips: char:{key}");
+            if (signatures?.CurrentSignatureCurrentParameterindexsTrySetNext() ?? false)
+            {
+              var t = signatures.CurrentSignatureCurrentParameterIndexes;
+              var pfxLen = signatures.DisplayPrefix.Length;
+              logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
+              CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
+            }
+          }
+          if (key == ')')
+            ResetCallTipsAndSignatures();
         }
 
         static string[] GetKeywords(ProgrammingLanguage language)
@@ -51,36 +87,37 @@ namespace Eto.CodeEditor
             }
         }
 
+        private void Handler_CallTipClicked(Object sender, CallTipClickedEventArgs e)
+        {
+          logger?.Invoke($"ctclicked: {e.Move}");
+          if (e.Move == CallTipMove.Current)
+            return;
+          if (e.Move == CallTipMove.Next)
+            signatures?.SetNextAsCurrent();
+          else
+            signatures?.SetPreviousAsCurrent();
+          CallTipCancel();
+          CallTipsShow(CurrentPosition, signatures.CurrentSignatureDisplay);
+          if (!(signatures?.CurrentSignatureHasNoParameters ?? true))
+          {
+            var t = signatures.CurrentSignatureCurrentParameterIndexes;
+            var pfxLen = signatures.DisplayPrefix.Length;
+            logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
+            CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
+          }
+        }
+
         readonly ProgrammingLanguage _language;
         public CodeEditor(ProgrammingLanguage language, bool darkMode=false, 
             Func<string, int, char, Task<List<string>>> getCompletions = null,
             Action<string> logger = null)
         {
+            CallTipClicked += Handler_CallTipClicked;
+
             if (getCompletions != null)
             {
                 // todo: the rest of this 'if' block assumes C#
                 GetCompletions = getCompletions;
-
-                CallTipClicked += (s, e) =>
-                {
-                  logger?.Invoke($"ctclicked: {e.Move}");
-                  if (e.Move == CallTipMove.Current)
-                    return;
-                  if (e.Move == CallTipMove.Next)
-                    signatures?.SetNextAsCurrent();
-                  else
-                    signatures?.SetPreviousAsCurrent();
-                  CallTipCancel();
-                  CallTipsShow(CurrentPosition, signatures.CurrentSignatureDisplay);
-                  if (!(signatures?.CurrentSignatureHasNoParameters ?? true))
-                  {
-                    var t = signatures.CurrentSignatureCurrentParameterIndexes;
-                    var pfxLen = signatures.DisplayPrefix.Length;
-                    logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
-                    CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
-                  }
-                };
-
 
                 CharAdded += async (s, e) =>
                 {
@@ -140,7 +177,7 @@ namespace Eto.CodeEditor
             _language = language;
             Handler.SetProgrammingLanguage( language, GetKeywords(language) );
 
-            Handler.CharAdded += CodeEditor_CharAdded;
+            Handler.CharAdded += Handler_CharAdded;
             var backgroundColor = darkMode ? Eto.Drawing.Color.FromArgb(30,30,30) : Eto.Drawing.Colors.White;
             SetColor(Section.Default, darkMode ? Drawing.Color.FromArgb(212,212,212) : Drawing.Colors.Black, backgroundColor);
             SetColor(Section.Comment, darkMode ? Drawing.Color.FromArgb(106, 153, 85) : Drawing.Colors.DimGray, backgroundColor);
@@ -156,10 +193,11 @@ namespace Eto.CodeEditor
             BackspaceUnindents = true;
         }
 
-        void CodeEditor_CharAdded(object sender, CharAddedEventArgs e)
+        void Handler_CharAdded(object sender, CharAddedEventArgs e)
         {
             if (AutoIndentEnabled)
                 AutoIndent.IndentationCheck(e.Char, this);
+            CharAdded?.Invoke(this, e);
         }
 
         new IHandler Handler => (IHandler)base.Handler;
@@ -366,12 +404,7 @@ namespace Eto.CodeEditor
         public bool CallTipIsActive => Handler.CallTipIsActive;
         public void CallTipCancel() => Handler.CallTipCancel();
 
-
-        public event EventHandler<CharAddedEventArgs> CharAdded
-        {
-            add { Handler.CharAdded += value; }
-            remove { Handler.CharAdded -= value; }
-        }
+        public event EventHandler<CharAddedEventArgs> CharAdded;
 
         public event EventHandler<EventArgs> TextChanged
         {
