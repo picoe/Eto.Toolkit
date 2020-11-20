@@ -29,12 +29,25 @@
     <TargetFrameworkIdentifier Condition="$(IsXamarinMacMobile) == 'True'">Xamarin.Mac</TargetFrameworkIdentifier>
     <TargetFrameworkVersion Condition="$(IsXamarinMacMobile) == 'True'">v2.0</TargetFrameworkVersion>
 
-    <UseXamMacFullFramework Condition="$(TargetFrameworkIdentifier) != 'Xamarin.Mac'">true</UseXamMacFullFramework>
     <MacBuildBundle>False</MacBuildBundle>
     <UseSGen Condition="$(UseSGen) == ''">True</UseSGen>
     <AOTMode Condition="$(AOTMode) == ''">None</AOTMode>
+
+    <!-- stuff needed for .NET Core tooling -->
+    <FrameworkPathOverride Condition="$(IsXamarinMacMobile) != 'True'">$(XamarinMacLibPath)4.5\</FrameworkPathOverride>
+    <FrameworkPathOverride Condition="$(IsXamarinMacMobile) == 'True'">$(XamarinMacLibPath)Xamarin.Mac\</FrameworkPathOverride>
+    <MSBuildRuntimeVersion Condition="$(MSBuildRuntimeVersion) == ''">16.8</MSBuildRuntimeVersion>
   </PropertyGroup>
 
+    <!-- stuff needed for .NET Core tooling -->
+  <PropertyGroup Condition="'$(FrameworkPathOverride)' != '' AND $(IsXamarinMacMobile) == 'True'">
+    <_FullFrameworkReferenceAssemblyPaths>$(FrameworkPathOverride)</_FullFrameworkReferenceAssemblyPaths>
+    <_TargetFrameworkDirectories>$(FrameworkPathOverride)</_TargetFrameworkDirectories>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(UseXamarinMac) == 'True' AND $(TargetFramework.StartsWith('xamarinmac')) != 'True'">
+    <UseXamMacFullFramework>true</UseXamMacFullFramework>
+  </PropertyGroup>
 
   <ItemGroup Condition="$(UseXamarinMac) == 'True' AND $(DisableImplicitFrameworkReferences) != 'True'">
     <Reference Include="System" />
@@ -43,10 +56,16 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(UseXamarinMac) == 'True'">
+    <ProjectReference Update="@(ProjectReference)" />
+
     <AvailableItemName Include="ObjcBindingApiDefinition" />
     <AvailableItemName Include="ObjcBindingCoreSource" />
     <AvailableItemName Include="NativeReference" />
     <AvailableItemName Include="ImageAsset" />
+
+    <Compile Update="**\*.designer.cs">
+      <DependentUpon>$([System.String]::Copy('%(Filename)').Replace('.designer', ''))%(Extension)</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup Condition="$(UseXamarinMac) == 'True'">
@@ -57,9 +76,7 @@
   <ItemGroup Condition="$(UseXamarinMac) == 'True' AND $(EnableDefaultCompileItems) != 'False'">
     <Compile Remove="@(ObjcBindingApiDefinition)" />
     <Compile Remove="@(ObjcBindingCoreSource)" />
-  </ItemGroup>
 
-  <ItemGroup Condition="$(UseXamarinMac) == 'True' AND $(EnableDefaultNoneItems) != 'False'">
     <None Remove="@(ImageAsset)" />
 
     <!-- Xamarin.Mac looks for the logical name, but implicit entries don't have it -->
@@ -70,6 +87,15 @@
     <ItemGroup>
       <!-- System.Drawing doesn't exist even when targetting full framework -->
       <Reference Remove="System.Drawing" Condition="$(DisableImplicitFrameworkReferences) != 'True'" />
+      <_XamarinMacNativeReferences Include="@(NativeReferences)" />
+      <NativeReference Remove="@(NativeReference)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_XamarinMacRestoreNativeReferences" BeforeTargets="_ExpandNativeReferences;_ExpandNativeReferences;_PrepareNativeReferences;_CompileToNative" Condition="$(UseXamarinMac) == 'True'">
+    <ItemGroup>
+      <NativeReference Remove="@(NativeReference)" />
+      <NativeReference Include="@(_XamarinMacNativeReferences)" />
     </ItemGroup>
   </Target>
 
