@@ -3,12 +3,59 @@ using Eto.Forms;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Eto.CodeEditor
 {
     [Handler(typeof(IHandler))]
     public class CodeEditor : Control
     {
+        private Action<string> logger;
+        private Func<string, int, char, Task<List<string>>> GetCompletions;
+
+        private Signatures signatures;
+        public void ResetCallTipsAndSignatures(List<string> signatureList = null)
+        {
+          CallTipCancel();
+          signatures = null;
+          
+          if(signatureList != null) {
+            signatures = new Signatures(signatureList, logger);
+            CallTipsShow(CurrentPosition, signatures.CurrentSignatureDisplay);
+            if (!signatures.CurrentSignatureHasNoParameters)
+            {
+              var t = signatures.CurrentSignatureCurrentParameterIndexes;
+              var pfxLen = signatures.DisplayPrefix.Length;
+              //logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
+              CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
+            }
+          }
+        }
+
+        private void CodeEditor_KeyDown(Object sender, KeyEventArgs e)
+        {
+            if (CallTipIsActive && (e.Key == Keys.Up || e.Key == Keys.Down)) {
+                logger?.Invoke("TODO: implement CodeEditor_KeyDown handler");
+            }
+        }
+
+        public void KeyPressedInCallTips(char key) {
+          logger?.Invoke($"KeyPressedInCallTips TOP. key: {key}");
+          if (key == ',')
+          {
+            logger?.Invoke($"KeyPressidInCallTips: char:{key}");
+            if (signatures?.CurrentSignatureCurrentParameterindexsTrySetNext() ?? false)
+            {
+              var t = signatures.CurrentSignatureCurrentParameterIndexes;
+              var pfxLen = signatures.DisplayPrefix.Length;
+              logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
+              CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
+            }
+          }
+          if (key == ')')
+            ResetCallTipsAndSignatures();
+        }
+
         static string[] GetKeywords(ProgrammingLanguage language)
         {
             switch (language)
@@ -40,14 +87,97 @@ namespace Eto.CodeEditor
             }
         }
 
-        readonly ProgrammingLanguage _language;
-        public CodeEditor(ProgrammingLanguage language, bool darkMode=false)
+        private void Handler_CallTipClicked(Object sender, CallTipClickedEventArgs e)
         {
+          logger?.Invoke($"ctclicked: {e.Move}");
+          if (e.Move == CallTipMove.Current)
+            return;
+          if (e.Move == CallTipMove.Next)
+            signatures?.SetNextAsCurrent();
+          else
+            signatures?.SetPreviousAsCurrent();
+          CallTipCancel();
+          CallTipsShow(CurrentPosition, signatures.CurrentSignatureDisplay);
+          if (!(signatures?.CurrentSignatureHasNoParameters ?? true))
+          {
+            var t = signatures.CurrentSignatureCurrentParameterIndexes;
+            var pfxLen = signatures.DisplayPrefix.Length;
+            logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
+            CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
+          }
+        }
+
+        readonly ProgrammingLanguage _language;
+        public CodeEditor(ProgrammingLanguage language, bool darkMode=false, 
+            Func<string, int, char, Task<List<string>>> getCompletions = null,
+            Action<string> logger = null)
+        {
+            CallTipClicked += Handler_CallTipClicked;
+
+            if (getCompletions != null)
+            {
+                // todo: the rest of this 'if' block assumes C#
+                GetCompletions = getCompletions;
+
+                CharAdded += async (s, e) =>
+                {
+                  char key = e.Char;
+            
+                  if (CallTipIsActive)
+                  {
+                    if (key == ',')
+                    {
+                      if (signatures?.CurrentSignatureCurrentParameterindexsTrySetNext() ?? false)
+                      {
+                        var t = signatures.CurrentSignatureCurrentParameterIndexes;
+                        var pfxLen = signatures.DisplayPrefix.Length;
+                        logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
+                        CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
+                      }
+                    }
+                    if (key == ')')
+                      ResetCallTipsAndSignatures();
+                    return;
+                  }
+            
+                  if (key != ' ' && key != '.' && key != '(')
+                      return;
+                  logger?.Invoke("GetCompletions before");
+                  List<string> completionItems = await GetCompletions(Text, CurrentPosition, key);
+                  if (completionItems == null || completionItems.Count == 0)
+                      return;
+                  logger?.Invoke("GetCompletions after");
+                  if (key == '(')
+                  {
+                    ResetCallTipsAndSignatures();
+                    signatures = new Signatures(completionItems, logger);
+                    CallTipsShow(CurrentPosition, signatures.CurrentSignatureDisplay);
+                    if (!signatures.CurrentSignatureHasNoParameters)
+                    {
+                      var t = signatures.CurrentSignatureCurrentParameterIndexes;
+                      var pfxLen = signatures.DisplayPrefix.Length;
+                      logger?.Invoke($"pfxLen:{pfxLen}, s:{pfxLen + t.Item1}, e:{pfxLen + t.Item2}");
+                      CallTipsSetHighlight(pfxLen + t.Item1, pfxLen+ t.Item2);
+                    }
+                  }
+                  else
+                  {
+                    var completionString = completionItems
+                      .OrderBy(i => i)
+                      .Aggregate((a, b) => $"{a} {b}");
+                    logger?.Invoke($"completionString: {completionString}");
+                    logger?.Invoke("AutoCompleteShow before");
+                    AutoCompleteShow(0, completionString);
+                    logger?.Invoke("AutoCompleteShow after");
+                  }
+                };
+            }
+
             AutoIndentEnabled = true;
             _language = language;
             Handler.SetProgrammingLanguage( language, GetKeywords(language) );
 
-            Handler.CharAdded += CodeEditor_CharAdded;
+            Handler.CharAdded += Handler_CharAdded;
             var backgroundColor = darkMode ? Eto.Drawing.Color.FromArgb(30,30,30) : Eto.Drawing.Colors.White;
             SetColor(Section.Default, darkMode ? Drawing.Color.FromArgb(212,212,212) : Drawing.Colors.Black, backgroundColor);
             SetColor(Section.Comment, darkMode ? Drawing.Color.FromArgb(106, 153, 85) : Drawing.Colors.DimGray, backgroundColor);
@@ -63,10 +193,11 @@ namespace Eto.CodeEditor
             BackspaceUnindents = true;
         }
 
-        void CodeEditor_CharAdded(object sender, CharAddedEventArgs e)
+        void Handler_CharAdded(object sender, CharAddedEventArgs e)
         {
             if (AutoIndentEnabled)
                 AutoIndent.IndentationCheck(e.Char, this);
+            CharAdded?.Invoke(this, e);
         }
 
         new IHandler Handler => (IHandler)base.Handler;
@@ -268,18 +399,23 @@ namespace Eto.CodeEditor
         public int WordStartPosition(int position, bool onlyWordCharacters) { return Handler.WordStartPosition(position, onlyWordCharacters); }
         public string GetTextRange(int position, int length) { return Handler.GetTextRange(position, length); }
         public void AutoCompleteShow(int lenEntered, string list) { Handler.AutoCompleteShow(lenEntered, list); }
+        public void CallTipsShow(int position, string calltips) { Handler.CallTipsShow(position, calltips); }
+        public void CallTipsSetHighlight(int start, int end) { Handler.CallTipsSetHighlight(start, end); }
+        public bool CallTipIsActive => Handler.CallTipIsActive;
+        public void CallTipCancel() => Handler.CallTipCancel();
 
-
-        public event EventHandler<CharAddedEventArgs> CharAdded
-        {
-            add { Handler.CharAdded += value; }
-            remove { Handler.CharAdded -= value; }
-        }
+        public event EventHandler<CharAddedEventArgs> CharAdded;
 
         public event EventHandler<EventArgs> TextChanged
         {
             add { Handler.TextChanged += value; }
             remove { Handler.TextChanged -= value; }
+        }
+
+        public event EventHandler<CallTipClickedEventArgs> CallTipClicked
+        {
+            add { Handler.CallTipClicked += value; }
+            remove { Handler.CallTipClicked -= value; }
         }
 
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged
@@ -366,10 +502,15 @@ namespace Eto.CodeEditor
             int WordStartPosition(int position, bool onlyWordCharacters);
             string GetTextRange(int position, int length);
             void AutoCompleteShow(int lenEntered, string list);
+            void CallTipsShow(int position, string calltips);
+            void CallTipsSetHighlight(int start, int end);
+            bool CallTipIsActive { get; }
+            void CallTipCancel();
 
 
             event EventHandler<CharAddedEventArgs> CharAdded;
             event EventHandler<EventArgs> TextChanged;
+            event EventHandler<CallTipClickedEventArgs> CallTipClicked;
             event EventHandler<SelectionChangedEventArgs> SelectionChanged;
             event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
             //event EventHandler<InsertCheckEventArgs> InsertCheck;

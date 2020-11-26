@@ -188,6 +188,20 @@ namespace Eto.CodeEditor
             scintilla.AutoCompleteShow(lenEntered, list);
         }
 
+        public unsafe void CallTipsShow(int position, string calltips)
+        {
+            scintilla.CallTipsShow(position, calltips);
+        }
+
+        public unsafe void CallTipsSetHighlight(int start, int end)
+        {
+            scintilla.CallTipSetHighlight(start, end);
+        }
+
+        public bool CallTipIsActive => scintilla.CallTipIsActive;
+
+        public void CallTipCancel() => scintilla.CallTipCancel();
+
         public event EventHandler<CharAddedEventArgs> CharAdded
         {
             add { scintilla.CharAdded += value; }
@@ -198,6 +212,12 @@ namespace Eto.CodeEditor
         {
             add { scintilla.TextChanged += value; }
             remove { scintilla.TextChanged -= value; }
+        }
+
+        public event EventHandler<CallTipClickedEventArgs> CallTipClicked
+        {
+            add { scintilla.CallTipClicked += value; }
+            remove { scintilla.CallTipClicked -= value; }
         }
 
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged

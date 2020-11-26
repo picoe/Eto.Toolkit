@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ScintillaNET;
 using Eto.CodeEditor;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace Scintilla
 {
@@ -341,6 +342,7 @@ namespace Scintilla
 
         public event EventHandler<CharAddedEventArgs> CharAdded;
         public new event EventHandler<EventArgs> TextChanged; // hides inherited TextChanged
+        public event EventHandler<CallTipClickedEventArgs> CallTipClicked;
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
         public event EventHandler<BreakpointsChangedEventArgs> BreakpointsChanged;
 
@@ -814,6 +816,22 @@ namespace Scintilla
             // in the list.
             DirectMessage(NativeMethods.SCI_AUTOCSETIGNORECASE, new IntPtr(1), IntPtr.Zero);
         }
+
+        public unsafe void CallTipsShow(int position, string calltips)
+        {
+            var bytes = Helpers.GetBytes(calltips, Encoding.UTF8, zeroTerminated: true);
+            fixed (byte* bp = bytes)
+                DirectMessage(NativeMethods.SCI_CALLTIPSHOW, new IntPtr(position), new IntPtr(bp));
+        }
+
+        public unsafe void CallTipSetHighlight(int start, int end)
+        {
+            DirectMessage(NativeMethods.SCI_CALLTIPSETHLT, new IntPtr(start), new IntPtr(end));
+        }
+
+        public unsafe bool CallTipIsActive => DirectMessage(NativeMethods.SCI_CALLTIPACTIVE).ToInt32() == 1;
+
+        public void CallTipCancel() => DirectMessage(NativeMethods.SCI_CALLTIPCANCEL);
         #endregion
         
         private void SetTargetRange(int start, int end)
@@ -975,7 +993,9 @@ namespace Scintilla
         {
             switch (message)
             {
-
+                case NativeMethods.SCN_CALLTIPCLICK:
+                    CallTipClicked?.Invoke(this, new CallTipClickedEventArgs(position));
+                    break;
                 case NativeMethods.SCN_CHARADDED:
                     CharAdded?.Invoke(this, new CharAddedEventArgs(c));
                     break;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Eto.Forms;
 
 namespace Eto.CodeEditor
 {
@@ -16,6 +17,7 @@ namespace Eto.CodeEditor
     public class TextChangedEventArgs : EventArgs
     {
     }
+
 
     //public class InsertCheckEventArgs : EventArgs
     //{

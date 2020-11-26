@@ -15,8 +15,10 @@ using Scintilla;
 
 namespace Eto.CodeEditor
 {
-    public partial class CodeEditorHandler : Eto.Mac.Forms.MacView<Scintilla.ScintillaControl, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler
+    public partial class CodeEditorHandler : Eto.Mac.Forms.MacView<Scintilla.ScintillaControl, CodeEditor, CodeEditor.ICallback>, CodeEditor.IHandler, Eto.Mac.Forms.IMacControl
     {
+        public WeakReference WeakHandler { get; set; }
+
         static CodeEditorHandler()
         {
             var path = Path.Combine(NSBundle.MainBundle.PrivateFrameworksPath, "Scintilla.framework", "Scintilla");
