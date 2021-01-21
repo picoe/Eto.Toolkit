@@ -8,7 +8,7 @@ using Eto.UnitTest;
 using Eto.UnitTest.Runners;
 using nua = NUnit.Framework.Api;
 using nui = NUnit.Framework.Interfaces;
-using nuint = NUnit.Framework.Internal;
+using nufint = NUnit.Framework.Internal;
 
 [assembly: TestRunnerType(typeof(Eto.UnitTest.NUnit.NUnitTestRunnerType))]
 
@@ -40,7 +40,7 @@ namespace Eto.UnitTest.NUnit
             return Task.CompletedTask;
         }
 
-        public override ITest TestSuite => new TestWrapper(_runner.ExploreTests(nuint.TestFilter.Empty));
+        public override ITest TestSuite => new TestWrapper(_runner.ExploreTests(nufint.TestFilter.Empty));
 
         public override Task<IEnumerable<string>> GetCategories(ITestFilter filter)
         {
@@ -55,7 +55,7 @@ namespace Eto.UnitTest.NUnit
         protected override Task<ITestResult> RunInternalAsync(ITestFilter filter)
         {
             _tcs = new TaskCompletionSource<ITestResult>();
-            new nuint.TestExecutionContext.AdhocContext().EstablishExecutionEnvironment();
+            new nufint.TestExecutionContext.AdhocContext().EstablishExecutionEnvironment();
             _runner.RunAsync(this, new TestFilterWrapper(filter));
             return _tcs.Task;
         }
@@ -79,7 +79,7 @@ namespace Eto.UnitTest.NUnit
             var wrappedResult = new TestResultWrapper(result);
             OnTestFinished(new UnitTestResultEventArgs(wrappedResult));
 
-            if (result.Test is nuint.TestAssembly)
+            if (result.Test is nufint.TestAssembly)
             {
                 _tcs.SetResult(new TestResultWrapper(_runner.Result));
             }

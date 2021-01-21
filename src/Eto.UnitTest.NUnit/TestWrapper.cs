@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using nui = NUnit.Framework.Interfaces;
-using nuint = NUnit.Framework.Internal;
+using nufint = NUnit.Framework.Internal;
 
 namespace Eto.UnitTest.NUnit
 {
@@ -22,11 +22,11 @@ namespace Eto.UnitTest.NUnit
         {
         }
 
-        public bool IsAssembly => _test is nuint.TestAssembly;
+        public bool IsAssembly => _test is nufint.TestAssembly;
 
         public bool IsSuite => _test.IsSuite;
 
-        public bool IsParameterized => _test is nuint.ParameterizedMethodSuite;
+        public bool IsParameterized => _test is nufint.ParameterizedMethodSuite;
 
         public string Name => _test.Name;
 
@@ -53,7 +53,7 @@ namespace Eto.UnitTest.NUnit
 
         public Type Type => _test.TypeInfo.Type;
 
-        public Assembly Assembly => (_test is nuint.TestAssembly testAssembly) ? testAssembly.Assembly : _test.TypeInfo?.Assembly;
+        public Assembly Assembly => (_test is nufint.TestAssembly testAssembly) ? testAssembly.Assembly : _test.TypeInfo?.Assembly;
 
         public override int GetHashCode() => _test.GetHashCode();
 
