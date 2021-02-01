@@ -437,7 +437,9 @@ namespace Scintilla
             set => DirectMessage(NativeMethods./*SCI_SETCURRENTPOS*/SCI_GOTOPOS, new IntPtr(value));
         }
 
-        public int CurrentPositionInLine => CurrentPosition - DirectMessage(NativeMethods.SCI_POSITIONFROMLINE, new IntPtr(CurrentPosition)).ToInt32();
+        public int CurrentPositionInLine => CurrentPosition - PositionAtBeginingOfCurrentLine;
+
+        private int PositionAtBeginingOfCurrentLine => DirectMessage(NativeMethods.SCI_POSITIONFROMLINE, new IntPtr(CurrentLineNumber)).ToInt32();
 
         public int CurrentLineNumber => DirectMessage(NativeMethods.SCI_LINEFROMPOSITION, new IntPtr(CurrentPosition)).ToInt32();
 
