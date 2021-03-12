@@ -287,7 +287,16 @@ namespace Eto.CodeEditor
             set => Handler.CurrentPosition = value;
         }
 
-        public int CurrentPositionInLine => Handler.CurrentPositionInLine;
+        public int CurrentPositionInLine
+        {
+            get
+            {
+                // scintilla returns the byte position and needs to be converted to character (grapheme cluster) position
+                var bytePosition = Handler.CurrentPositionInLine;
+                var currentLineText = GetLineText(CurrentLineNumber);
+                return TextFunctions.GraphemeIndexFromByteIndex(currentLineText, bytePosition);
+            }
+        }
 
         public int CurrentLineNumber => Handler.CurrentLineNumber;
 

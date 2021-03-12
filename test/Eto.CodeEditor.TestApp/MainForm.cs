@@ -19,7 +19,7 @@ namespace Eto.CodeEditor.TestApp
             Menu = new MenuBar(); // show standard macOS menu.
 
 
-            var editor = new CodeEditor(ProgrammingLanguage.CSharp, true);
+            var editor = new CodeEditor(ProgrammingLanguage.CSharp, false);
             editor.Text =
 @"// Just some sample code
 for( int i=0; i<10; i++ )
@@ -65,6 +65,7 @@ for( int i=0; i<10; i++ )
                 await mtr.Load(testSource);
                 tests.Runner = new UnitTest.Runners.LoggingTestRunner(mtr);
                 CodeEditorTests.editor = editor;
+                TestsThatRequireUserInteraction.editor = editor;
                 RegexTests.editor = editor;
             };
 
