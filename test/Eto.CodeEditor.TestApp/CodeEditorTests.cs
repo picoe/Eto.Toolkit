@@ -14,34 +14,6 @@ namespace Eto.CodeEditor.TestApp
         public static CodeEditor editor { get; set; }
 
         [Test, InvokeOnUI]
-        public void Rnd()
-        {
-            editor.HighlightRange(13, 5);
-            Assert.IsTrue(true);
-        }
-
-        [Test, InvokeOnUI]
-        public void Rnd2()
-        {
-            editor.HighlightColor = Colors.Fuchsia;
-            Assert.IsTrue(true);
-        }
-
-        [Test, InvokeOnUI]
-        public void Rnd3()
-        {
-            editor.HighlightRange(20, 5);
-            Assert.IsTrue(true);
-        }
-
-        [Test, InvokeOnUI]
-        public void Rnd4()
-        {
-            editor.ClearHighlights();
-            Assert.IsTrue(true);
-        }
-
-        [Test, InvokeOnUI]
         public void SearchInAll()
         {
             editor.Text = "Be who you are and say what you feel, because those who mind don't matter, and those who matter don't mind";
@@ -92,16 +64,6 @@ namespace Eto.CodeEditor.TestApp
             Assert.AreEqual(3, found);
             found = editor.SearchInAll("whoever").Count;
             Assert.AreEqual(1, found);
-        }
-
-        [Test, InvokeOnUI]
-        public void FindAndSelectRange()
-        {
-            var searchText = "syntax";
-            editor.Text = "import rhinoscriptsyntax as rs";
-            var hit = editor.SearchInAll(searchText).First();
-            editor.SelectRange(hit, searchText.Length);
-            Eto.Forms.MessageBox.Show("check that the word 'syntax' is selected");
         }
 
         [Test, InvokeOnUI]
