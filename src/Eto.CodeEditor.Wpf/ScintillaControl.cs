@@ -14,7 +14,7 @@ namespace Scintilla
     {
         private IntPtr moduleHandle;
         private IntPtr sciPtr;
-        private BorderStyle borderStyle;
+        private BorderStyle borderStyle = BorderStyle.None;
         //private static NativeMethods.Scintilla_DirectFunction directFunction;
 
         private IntPtr SciPointer

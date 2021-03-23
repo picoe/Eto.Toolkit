@@ -10,7 +10,7 @@ namespace Eto.CodeEditor
     [Handler(typeof(IHandler))]
     public class CodeEditor : Control
     {
-        private Action<string> logger;
+        private Action<string> logger = null;
         private Func<string, int, char, Task<List<string>>> GetCompletions;
 
         private Signatures signatures;
