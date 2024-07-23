@@ -16,6 +16,6 @@ To load the adapter, do this before creating the HtmlRenderer control:
     <ProjectReference Include="..\Eto.HtmlRenderer\Eto.HtmlRenderer.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.8" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.9" />
   </ItemGroup>
 </Project>
